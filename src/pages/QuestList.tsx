@@ -7,7 +7,6 @@ import {
 import { Button, Input, Pagination, Select, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import React from "react";
-import styled from "styled-components";
 
 export interface Quest {
   id: string;
@@ -59,42 +58,6 @@ const staticQuests: Quest[] = [
   },
 ];
 
-const FilterBar = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  align-items: center;
-  background: #fff;
-  padding: 16px 24px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-`;
-
-const FilterItem = styled.div<{ minW: number }>`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: ${({ minW }) => `${minW}px`};
-`;
-
-const TableContainer = styled.div`
-  padding: 24px;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const HeaderbBar = styled.div`
-  margin-bottom: 20px;
-`;
-
-const FooterBar = styled.div`
-  margin-top: 20px;
-  display: flex;
-  justify-content: end;
-  align-items: center;
-`;
-
 const QuestList: React.FC = () => {
   // pagination state
   const totalItems = 85;
@@ -106,7 +69,6 @@ const QuestList: React.FC = () => {
     if (size) setPageSize(size);
   };
 
-  // table columns
   const columns: ColumnsType<Quest> = [
     { title: "Quest ID", dataIndex: "id", key: "id" },
     { title: "Quest Title", dataIndex: "title", key: "title" },
@@ -133,56 +95,59 @@ const QuestList: React.FC = () => {
   ];
 
   return (
-    <>
-      {/* 🔎 Filter Bar */}
-      <FilterBar>
-        {/* Keywords field: about 300px wide */}
-        <FilterItem minW={500}>
+    <div className="bg-gray-100 min-h-screen space-y-6">
+      {/* Filter Section */}
+      <div className="flex flex-wrap md:flex-row flex-col gap-6 items-center bg-white p-4 sm:p-6 rounded-lg">
+        <div className="flex items-center gap-2 flex-1 min-w-[300px] md:min-w-[500px]">
           <span className="font-medium text-gray-700">Keywords:</span>
           <Input
             placeholder="Search by Quest ID/Quest Title"
             suffix={<SearchOutlined />}
             className="flex-1"
           />
-        </FilterItem>
+        </div>
 
-        {/* Status field: about 200px wide */}
-        <FilterItem minW={250}>
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] md:min-w-[250px]">
           <span className="font-medium text-gray-700">Status:</span>
           <Select defaultValue="Active" className="flex-1">
             <Select.Option value="Active">Active</Select.Option>
             <Select.Option value="Inactive">Inactive</Select.Option>
             <Select.Option value="Approved">Approved</Select.Option>
           </Select>
-        </FilterItem>
+        </div>
 
-        {/* Buttons */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 w-full md:w-auto">
           <Button type="primary" icon={<SearchOutlined />}>
             Search
           </Button>
           <Button icon={<ReloadOutlined />}>Reset</Button>
         </div>
-      </FilterBar>
+      </div>
 
-      {/* ➕ Add Button + Table */}
-      <TableContainer>
-        <HeaderbBar className="mb-6">
+      {/* Table Section */}
+      <div className="bg-white p-6 rounded-lg overflow-hidden space-y-6">
+        {/* Header */}
+        <div className="mb-4">
           <Button type="primary" icon={<PlusOutlined />}>
             Add
           </Button>
-        </HeaderbBar>
+        </div>
 
-        <Table<Quest>
-          columns={columns}
-          dataSource={staticQuests}
-          rowKey="id"
-          pagination={false}
-          bordered={true}
-        />
+        {/* Responsive Table */}
+        <div className="overflow-x-auto">
+          <Table<Quest>
+            columns={columns}
+            dataSource={staticQuests}
+            rowKey="id"
+            pagination={false}
+            bordered
+            scroll={{ x: "max-content" }}
+          />
+        </div>
 
-        <FooterBar>
-          <div className="me-4">Total {totalItems} items</div>
+        {/* Footer */}
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
+          <div>Total {totalItems} items</div>
           <Pagination
             current={current}
             pageSize={pageSize}
@@ -191,9 +156,9 @@ const QuestList: React.FC = () => {
             pageSizeOptions={["10", "20", "50"]}
             onChange={onPageChange}
           />
-        </FooterBar>
-      </TableContainer>
-    </>
+        </div>
+      </div>
+    </div>
   );
 };
 
