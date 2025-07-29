@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import {
   BellOutlined,
   GlobalOutlined,
@@ -89,7 +88,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
       </Left>
 
       <Right>
-        {/* On desktop/tablet: show language + notifications */}
         {!isMobile && (
           <>
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -102,7 +100,6 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
           </>
         )}
 
-        {/* Always show profile */}
         <Avatar icon={<UserOutlined />} />
       </Right>
     </StyledHeader>

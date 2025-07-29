@@ -120,10 +120,12 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
   const menuContent = (
     <>
       <Logo>
-        <img
-          src={isMobile ? WmtLogo : collapsed ? WmtIcon : WmtLogo}
-          alt="WeMasterTrade"
-        />
+        <a href="/">
+          <img
+            src={isMobile ? WmtLogo : collapsed ? WmtIcon : WmtLogo}
+            alt="WeMasterTrade"
+          />
+        </a>
       </Logo>
 
       <Menu

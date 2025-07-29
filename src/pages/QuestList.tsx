@@ -4,88 +4,133 @@ import {
   ReloadOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Pagination, Select, Table, Tag } from "antd";
-import type { ColumnsType } from "antd/lib/table";
-import React from "react";
+import { Button, Input, Pagination, Select, Table, Tag, message } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../lib/api";
 
-export interface Quest {
-  id: string;
+const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
+
+const PLATFORM_LABELS: Record<number, string> = {
+  0: "Other",
+  1: "Facebook",
+  2: "Instagram",
+  3: "YouTube",
+  4: "Telegram",
+  5: "TikTok",
+  6: "Twitter",
+  7: "Discord",
+};
+
+interface QuestRow {
+  key: string;
+  challengeCode: string;
   title: string;
-  platform: string;
+  platform: number;
   point: number;
-  expiryDate: string;
+  expiryDate: string | null;
   createdAt: string;
-  status: "Active" | "Inactive" | "Approved";
+  status: boolean;
 }
 
-// — Static data matching your mockup —
-const staticQuests: Quest[] = [
-  {
-    id: "C0000027",
-    title: "Invite New Friends",
-    platform: "Facebook",
-    point: 1000,
-    expiryDate: "-",
-    createdAt: "Jun 26, 2025, 22:00:30",
-    status: "Inactive",
-  },
-  {
-    id: "C0000027",
-    title: "Invite New Friends",
-    platform: "Other",
-    point: 1000,
-    expiryDate: "-",
-    createdAt: "Jun 26, 2025, 22:00:30",
-    status: "Approved",
-  },
-  {
-    id: "C0000027",
-    title: "Invite New Friends",
-    platform: "Instagram",
-    point: 1000,
-    expiryDate: "-",
-    createdAt: "Jun 26, 2025, 22:00:30",
-    status: "Active",
-  },
-  {
-    id: "C0000027",
-    title: "Invite New Friends",
-    platform: "Other",
-    point: 1000,
-    expiryDate: "-",
-    createdAt: "Jun 26, 2025, 22:00:30",
-    status: "Active",
-  },
-];
+export default function QuestList() {
+  const navigate = useNavigate();
 
-const QuestList: React.FC = () => {
-  // pagination state
-  const totalItems = 85;
-  const [current, setCurrent] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [data, setData] = useState<QuestRow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const onPageChange = (page: number, size?: number) => {
-    setCurrent(page);
-    if (size) setPageSize(size);
+  // paging & filters
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [keyword, setKeyword] = useState("");
+  const [statusFilter, setStatusFilter] = useState<boolean | undefined>(
+    undefined
+  );
+
+  const fetchQuests = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Application-Id": APPLICATION_ID,
+      };
+      const payload = {
+        page,
+        limit,
+        keywords: keyword || undefined,
+        sortFields: [{ fieldName: "createdAt", order: "DESC" }],
+        status: statusFilter,
+      };
+
+      const res = await api.post(
+        `${import.meta.env.VITE_API_BASE}/api/v1/wmt/quest/search`,
+        payload,
+        { headers }
+      );
+
+      const items = res.data.data as QuestRow[];
+      setTotalItems(res.data.paging.totalItem);
+
+      setData(
+        items.map((i) => ({
+          key: i.challengeCode,
+          challengeCode: i.challengeCode,
+          title: i.title,
+          platform: i.platform,
+          point: i.point,
+          expiryDate: i.expiryDate,
+          createdAt: i.createdAt,
+          status: i.status,
+        }))
+      );
+    } catch (err: unknown) {
+      const msg =
+        axios.isAxiosError(err) && err.response?.data?.message
+          ? err.response.data.message
+          : "Failed to load quests";
+      message.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const columns: ColumnsType<Quest> = [
-    { title: "Quest ID", dataIndex: "id", key: "id" },
+  useEffect(() => {
+    fetchQuests();
+  }, [page, limit, statusFilter]);
+
+  const columns: ColumnsType<QuestRow> = [
+    { title: "Quest ID", dataIndex: "challengeCode", key: "challengeCode" },
     { title: "Quest Title", dataIndex: "title", key: "title" },
-    { title: "Platform", dataIndex: "platform", key: "platform" },
+    {
+      title: "Platform",
+      dataIndex: "platform",
+      key: "platform",
+      render: (p) => PLATFORM_LABELS[p] ?? `#${p}`,
+    },
     { title: "Point", dataIndex: "point", key: "point" },
-    { title: "Expiry Date", dataIndex: "expiryDate", key: "expiryDate" },
-    { title: "Created At", dataIndex: "createdAt", key: "createdAt" },
+    {
+      title: "Expiry Date",
+      dataIndex: "expiryDate",
+      key: "expiryDate",
+      render: (d) => (d ? new Date(d).toLocaleDateString() : "—"),
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (d) => new Date(d).toLocaleString(),
+    },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: Quest["status"]) => {
-        let color = "blue";
-        if (status === "Inactive") color = "red";
-        if (status === "Approved") color = "green";
-        return <Tag color={color}>{status}</Tag>;
-      },
+      render: (s) =>
+        s ? <Tag color="green">Active</Tag> : <Tag color="red">Inactive</Tag>,
     },
     {
       title: "",
@@ -95,71 +140,90 @@ const QuestList: React.FC = () => {
   ];
 
   return (
-    <div className="bg-gray-100 min-h-screen space-y-6">
-      {/* Filter Section */}
-      <div className="flex flex-wrap md:flex-row flex-col gap-6 items-center bg-white p-4 sm:p-6 rounded-lg">
-        <div className="flex items-center gap-2 flex-1 min-w-[300px] md:min-w-[500px]">
-          <span className="font-medium text-gray-700">Keywords:</span>
-          <Input
-            placeholder="Search by Quest ID/Quest Title"
-            suffix={<SearchOutlined />}
-            className="flex-1"
-          />
-        </div>
+    <div className="space-y-6">
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center gap-4 bg-white px-6 py-4 rounded-lg shadow">
+        {/* Keywords */}
+        <span className="whitespace-nowrap">Keywords:</span>
+        <Input
+          placeholder="Search by Quest ID/Quest Title"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          suffix={<SearchOutlined />}
+          className="flex-1"
+        />
 
-        <div className="flex items-center gap-2 flex-1 min-w-[200px] md:min-w-[250px]">
-          <span className="font-medium text-gray-700">Status:</span>
-          <Select defaultValue="Active" className="flex-1">
-            <Select.Option value="Active">Active</Select.Option>
-            <Select.Option value="Inactive">Inactive</Select.Option>
-            <Select.Option value="Approved">Approved</Select.Option>
-          </Select>
-        </div>
+        {/* Status */}
+        <span className="whitespace-nowrap">Status:</span>
+        <Select
+          value={statusFilter}
+          onChange={(v) => setStatusFilter(v)}
+          allowClear
+          placeholder="All"
+          className="w-40"
+        >
+          <Select.Option value={true}>Active</Select.Option>
+          <Select.Option value={false}>Inactive</Select.Option>
+        </Select>
 
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <Button type="primary" icon={<SearchOutlined />}>
-            Search
-          </Button>
-          <Button icon={<ReloadOutlined />}>Reset</Button>
-        </div>
+        {/* Actions */}
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          onClick={fetchQuests}
+          className="flex-none"
+        >
+          Search
+        </Button>
+        <Button
+          icon={<ReloadOutlined />}
+          onClick={() => {
+            setKeyword("");
+            setStatusFilter(undefined);
+            setPage(1);
+            fetchQuests();
+          }}
+          className="flex-none"
+        >
+          Reset
+        </Button>
       </div>
 
-      {/* Table Section */}
-      <div className="bg-white p-6 rounded-lg overflow-hidden space-y-6">
-        {/* Header */}
+      {/* Table */}
+      <div className="bg-white p-6 rounded-lg shadow">
         <div className="mb-4">
-          <Button type="primary" icon={<PlusOutlined />}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate("/quests/add-new-quest")}
+          >
             Add
           </Button>
         </div>
-
-        {/* Responsive Table */}
-        <div className="overflow-x-auto">
-          <Table<Quest>
-            columns={columns}
-            dataSource={staticQuests}
-            rowKey="id"
-            pagination={false}
-            bordered
-            scroll={{ x: "max-content" }}
-          />
-        </div>
-
-        {/* Footer */}
-        <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
+        <Table<QuestRow>
+          columns={columns}
+          dataSource={data}
+          loading={loading}
+          pagination={false}
+          bordered
+          rowKey="key"
+          scroll={{ x: "max-content" }}
+        />
+        <div className="flex items-center justify-end mt-4 gap-4">
           <div>Total {totalItems} items</div>
           <Pagination
-            current={current}
-            pageSize={pageSize}
+            current={page}
+            pageSize={limit}
             total={totalItems}
             showSizeChanger
+            onChange={(p, sz) => {
+              setPage(p);
+              if (sz) setLimit(sz);
+            }}
             pageSizeOptions={["10", "20", "50"]}
-            onChange={onPageChange}
           />
         </div>
       </div>
     </div>
   );
-};
-
-export default QuestList;
+}
