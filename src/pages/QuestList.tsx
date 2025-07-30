@@ -142,15 +142,15 @@ export default function QuestList() {
   return (
     <div className="space-y-6">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-4 bg-white px-6 py-4 rounded-lg shadow">
+      <div className="flex items-center gap-4 bg-white px-6 py-4 rounded-lg shadow">
         {/* Keywords */}
         <span className="whitespace-nowrap">Keywords:</span>
         <Input
           placeholder="Search by Quest ID/Quest Title"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          suffix={<SearchOutlined />}
-          className="flex-1"
+          suffix={<SearchOutlined style={{}} />}
+          style={{ width: 356 }}
         />
 
         {/* Status */}

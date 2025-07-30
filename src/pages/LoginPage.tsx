@@ -2,7 +2,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 import WmtLogo from "../assets/WeMasterTrade-logo.png";
 import api from "../lib/api";
@@ -12,6 +11,7 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  // only check for EXISTENCE, not validity:
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
       navigate("/quests", { replace: true });
@@ -35,7 +35,7 @@ const LoginPage = () => {
       localStorage.setItem("refreshToken", refreshToken);
 
       message.success("Login successful!");
-      window.location.href = "/quests";
+      navigate("/quests", { replace: true });
     } catch (err: unknown) {
       const error = err as AxiosError<{ message: string }>;
       const errorMsg =

@@ -13,7 +13,6 @@ interface RefreshResponse {
   expiresIn: number;
 }
 
-// 1) Create a dedicated axios instance
 const api = axios.create({
   baseURL: API_BASE,
   headers: {
@@ -21,7 +20,6 @@ const api = axios.create({
   },
 });
 
-// 2) Request interceptor: attach the access token
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken");
@@ -33,7 +31,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 3) Response interceptor: on 401, call refresh and retry original request
 api.interceptors.response.use(
   (res) => res,
   async (err: AxiosError) => {
@@ -56,19 +53,15 @@ api.interceptors.response.use(
           { refreshToken }
         );
 
-        // persist new tokens
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
 
-        // update header on the original request
         if (originalReq.headers) {
           originalReq.headers.Authorization = `Bearer ${data.accessToken}`;
         }
 
-        // retry it
-        return axios(originalReq);
+        return api(originalReq);
       } catch (refreshError) {
-        // if refresh also fails, redirect to login
         window.location.href = "/";
         return Promise.reject(refreshError);
       }
