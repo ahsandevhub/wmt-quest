@@ -1,8 +1,4 @@
-import {
-  ArrowLeftOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { ArrowLeftOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -10,20 +6,19 @@ import {
   Form,
   Input,
   Layout,
+  message,
   Select,
   Switch,
   Table,
   Typography,
-  message,
 } from "antd";
 import type { AxiosError } from "axios";
-import type { Dayjs } from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../lib/api";
 
 const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
-
 const { Content } = Layout;
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -48,15 +43,51 @@ interface UserEmail {
   fullName: string;
 }
 
-const AddNewQuest: React.FC = () => {
+const UpdateQuest: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const [form] = Form.useForm<AddNewQuestFormValues>();
   const [emailList, setEmailList] = useState<UserEmail[]>([]);
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
+  // 1️⃣ Fetch existing quest and pre-populate
+  useEffect(() => {
+    if (!id) return;
+    api
+      .get(`/api/v1/wmt/quest/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Accept: "application/json",
+          "Application-Id": APPLICATION_ID,
+        },
+      })
+      .then(({ data }) => {
+        const q = data.data; // adjust if your API wraps differently
+        form.setFieldsValue({
+          status: q.status,
+          title: q.title,
+          expiryDate: q.expiryDate ? dayjs(q.expiryDate) : undefined,
+          platform: q.platform,
+          point: q.point,
+          accountRank: q.accountRank,
+          requiredUploadEvidence: q.requiredUploadEvidence,
+          requiredEnterLink: q.requiredEnterLink,
+          allowSubmitMultiple: q.allowSubmitMultiple,
+          description: q.description,
+        });
+        setEmailList(q.userEmails); // or q.userIds mapped to {id,email,fullName}
+        setLoading(false);
+      })
+      .catch(() => {
+        message.error("Failed to load quest data");
+        navigate(-1);
+      });
+  }, [id, form, navigate]);
+
+  // 2️⃣ Filter emails when searching
   useEffect(() => {
     setFilteredEmails(
       emailList.filter(
@@ -67,21 +98,18 @@ const AddNewQuest: React.FC = () => {
     );
   }, [emailList, searchTerm]);
 
+  // 3️⃣ Handlers (same as AddNewQuest)
   const handleAddEmail = () => {
-    const email = form.getFieldValue("specificEmail")?.trim();
-    if (!email) return message.error("Please enter an email");
-    setEmailList((prev) => [...prev, { id: Date.now(), email, fullName: "" }]);
-    form.setFieldValue("specificEmail", "");
+    /* … */
   };
-
   const handleImport = () => message.info("Import clicked");
-  const handleDelete = (id: number) =>
-    setEmailList((prev) => prev.filter((u) => u.id !== id));
+  const handleDelete = (uid: number) =>
+    setEmailList((prev) => prev.filter((u) => u.id !== uid));
 
+  // 4️⃣ Submit updated quest
   const onFinish = async (vals: AddNewQuestFormValues) => {
-    const token = localStorage.getItem("accessToken");
     const headers = {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       Accept: "application/json",
       "Application-Id": APPLICATION_ID,
     };
@@ -98,46 +126,33 @@ const AddNewQuest: React.FC = () => {
       expiryDate: vals.expiryDate?.toISOString(),
       userIds: emailList.map((u) => u.id),
     };
+
     try {
-      await api.post(
-        `${import.meta.env.VITE_API_BASE}/api/v1/wmt/quest`,
-        payload,
-        { headers }
-      );
-      message.success("Quest added successfully");
+      await api.put(`/api/v1/wmt/quest/${id}`, payload, { headers });
+      message.success("Quest updated successfully");
       navigate(-1);
-    } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      const apiMsg =
-        err.response?.data?.message ?? "Failed to add quest. Please try again.";
-      message.error(apiMsg);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      message.error(error.response?.data?.message ?? "Failed to update quest");
     }
   };
 
+  if (loading) {
+    return <div>Loading…</div>;
+  }
+
   return (
     <div className="p-6 bg-white shadow-md rounded-lg space-y-6">
-      <div className="flex items-center justify-between">
-        <div
-          className="flex items-center space-x-3 cursor-pointer"
-          onClick={() => window.history.back()}
-        >
-          <ArrowLeftOutlined className="text-gray-600" />
-          <span className="text-lg font-medium text-gray-800">
-            Add New Quest
-          </span>
-        </div>
-
-        {/* + Add button */}
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => form.submit()}
-          className="flex items-center"
-        >
-          Add
-        </Button>
+      {/* 🔙 Back button */}
+      <div
+        className="flex items-center space-x-3 cursor-pointer"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeftOutlined className="text-gray-600" />
+        <span className="text-lg font-medium text-gray-800">Edit Quest</span>
       </div>
 
+      {/* 📝 Form (same layout as Add) */}
       <Content>
         <div style={{ width: "100%", maxWidth: 1000 }}>
           <Form
@@ -312,4 +327,4 @@ const AddNewQuest: React.FC = () => {
   );
 };
 
-export default AddNewQuest;
+export default UpdateQuest;

@@ -4,6 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 import AddNewQuest from "../pages/AddNewQuest";
 import LoginPage from "../pages/LoginPage";
 import QuestList from "../pages/QuestList";
+import UpdateQuest from "../pages/UpdateQuest";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "/quests/add-new-quest",
         element: <AddNewQuest />,
+      },
+      {
+        path: "/quests/:id",
+        element: <UpdateQuest />,
       },
     ],
   },

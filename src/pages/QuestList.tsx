@@ -1,14 +1,11 @@
 // src/pages/QuestList.tsx
-import {
-  PlusOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined, SyncOutlined } from "@ant-design/icons";
 import { Button, Input, Pagination, Select, Table, Tag, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import axios from "axios";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 
 const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
@@ -117,13 +114,13 @@ export default function QuestList() {
       title: "Expiry Date",
       dataIndex: "expiryDate",
       key: "expiryDate",
-      render: (d) => (d ? new Date(d).toLocaleDateString() : "—"),
+      render: (d) => (d ? dayjs(d).format("DD/MM/YYYY") : "—"),
     },
     {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (d) => new Date(d).toLocaleString(),
+      render: (d) => dayjs(d).format("DD/MM/YYYY HH:mm:ss"),
     },
     {
       title: "Status",
@@ -135,21 +132,39 @@ export default function QuestList() {
     {
       title: "",
       key: "detail",
-      render: () => <a className="text-blue-600">Detail</a>,
+      align: "right",
+      render: (quest) => (
+        <Link to={`/quests/${quest.challengeCode}`} className="text-blue-600">
+          Detail
+        </Link>
+      ),
     },
   ];
 
   return (
     <div className="space-y-6">
       {/* Toolbar */}
-      <div className="flex items-center gap-4 bg-white px-6 py-4 rounded-lg shadow">
+      <div className="flex items-center gap-4 bg-white px-6 py-4 rounded-lg border border-gray-200">
         {/* Keywords */}
         <span className="whitespace-nowrap">Keywords:</span>
         <Input
           placeholder="Search by Quest ID/Quest Title"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          suffix={<SearchOutlined style={{}} />}
+          suffix={
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                height: "140%",
+                borderLeft: "1px solid #d9d9d9",
+                paddingLeft: 8,
+                marginLeft: 8,
+              }}
+            >
+              <SearchOutlined />
+            </span>
+          }
           style={{ width: 356 }}
         />
 
@@ -161,6 +176,7 @@ export default function QuestList() {
           allowClear
           placeholder="All"
           className="w-40"
+          style={{ width: 356 }}
         >
           <Select.Option value={true}>Active</Select.Option>
           <Select.Option value={false}>Inactive</Select.Option>
@@ -176,7 +192,7 @@ export default function QuestList() {
           Search
         </Button>
         <Button
-          icon={<ReloadOutlined />}
+          icon={<SyncOutlined />}
           onClick={() => {
             setKeyword("");
             setStatusFilter(undefined);
@@ -190,7 +206,7 @@ export default function QuestList() {
       </div>
 
       {/* Table */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-6 rounded-lg border border-gray-200">
         <div className="mb-4">
           <Button
             type="primary"
@@ -205,20 +221,21 @@ export default function QuestList() {
           dataSource={data}
           loading={loading}
           pagination={false}
-          bordered
+          // bordered
           rowKey="key"
+          className=""
           scroll={{ x: "max-content" }}
         />
-        <div className="flex items-center justify-end mt-4 gap-4">
+        <div className="flex items-center justify-end mt-5 gap-4">
           <div>Total {totalItems} items</div>
           <Pagination
             current={page}
             pageSize={limit}
             total={totalItems}
             showSizeChanger
-            onChange={(p, sz) => {
-              setPage(p);
-              if (sz) setLimit(sz);
+            onChange={(page, size) => {
+              setPage(page);
+              if (size) setLimit(size);
             }}
             pageSizeOptions={["10", "20", "50"]}
           />
