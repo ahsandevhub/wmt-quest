@@ -20,7 +20,6 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
-      // turn off no-explicit-any everywhere in .ts/.tsx
       "@typescript-eslint/no-explicit-any": "off",
     },
   },

@@ -21,7 +21,6 @@ const router = createBrowserRouter([
       {
         path: "/quests",
         element: <QuestList />,
-        // loader: questListLoader,
       },
       {
         path: "/quests/add-new-quest",

@@ -18,7 +18,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../lib/api";
 
-const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
 const { Content } = Layout;
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -57,13 +56,7 @@ const UpdateQuest: React.FC = () => {
   useEffect(() => {
     if (!id) return;
     api
-      .get(`/api/v1/wmt/quest/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          Accept: "application/json",
-          "Application-Id": APPLICATION_ID,
-        },
-      })
+      .get(`/api/v1/wmt/quest/${id}`)
       .then(({ data }) => {
         const q = data.data; // adjust if your API wraps differently
         form.setFieldsValue({
@@ -78,7 +71,7 @@ const UpdateQuest: React.FC = () => {
           allowSubmitMultiple: q.allowSubmitMultiple,
           description: q.description,
         });
-        setEmailList(q.userEmails); // or q.userIds mapped to {id,email,fullName}
+        setEmailList(q.userEmails);
         setLoading(false);
       })
       .catch(() => {
@@ -90,7 +83,7 @@ const UpdateQuest: React.FC = () => {
   // 2️⃣ Filter emails when searching
   useEffect(() => {
     setFilteredEmails(
-      emailList.filter(
+      emailList?.filter(
         (u) =>
           u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
           u.fullName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -98,21 +91,21 @@ const UpdateQuest: React.FC = () => {
     );
   }, [emailList, searchTerm]);
 
-  // 3️⃣ Handlers (same as AddNewQuest)
   const handleAddEmail = () => {
-    /* … */
+    const email = form.getFieldValue("specificEmail")?.trim();
+    if (!email) return message.error("Please enter an email");
+    setEmailList((prev) => [...prev, { id: Date.now(), email, fullName: "" }]);
+    form.setFieldValue("specificEmail", "");
   };
+
   const handleImport = () => message.info("Import clicked");
+
   const handleDelete = (uid: number) =>
     setEmailList((prev) => prev.filter((u) => u.id !== uid));
 
-  // 4️⃣ Submit updated quest
   const onFinish = async (vals: AddNewQuestFormValues) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      Accept: "application/json",
-      "Application-Id": APPLICATION_ID,
-    };
+    console.log("Form submitted:", vals);
+
     const payload = {
       title: vals.title,
       description: vals.description,
@@ -124,11 +117,11 @@ const UpdateQuest: React.FC = () => {
       requiredEnterLink: vals.requiredEnterLink,
       allowSubmitMultiple: vals.allowSubmitMultiple,
       expiryDate: vals.expiryDate?.toISOString(),
-      userIds: emailList.map((u) => u.id),
+      userIds: emailList?.map((u) => u.id) ?? [],
     };
 
     try {
-      await api.put(`/api/v1/wmt/quest/${id}`, payload, { headers });
+      await api.put(`/api/v1/wmt/quest/${id}`, payload);
       message.success("Quest updated successfully");
       navigate(-1);
     } catch (err) {
@@ -142,17 +135,26 @@ const UpdateQuest: React.FC = () => {
   }
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg space-y-6">
+    <div className="p-6 bg-white border border-gray-200 rounded-lg space-y-6">
       {/* 🔙 Back button */}
-      <div
-        className="flex items-center space-x-3 cursor-pointer"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeftOutlined className="text-gray-600" />
-        <span className="text-lg font-medium text-gray-800">Edit Quest</span>
+      <div className="flex items-center justify-between">
+        <div
+          className="flex items-center space-x-3 cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeftOutlined className="text-gray-600" />
+          <span className="text-lg font-medium text-gray-800">Edit Quest</span>
+        </div>
+
+        <Button
+          type="primary"
+          onClick={() => form.submit()}
+          className="flex items-center"
+        >
+          Update
+        </Button>
       </div>
 
-      {/* 📝 Form (same layout as Add) */}
       <Content>
         <div style={{ width: "100%", maxWidth: 1000 }}>
           <Form
@@ -281,7 +283,7 @@ const UpdateQuest: React.FC = () => {
               }}
             >
               <Text>
-                Total Email: <Text strong>{emailList.length}</Text>
+                Total Email: <Text strong>{emailList?.length}</Text>
               </Text>
               <Input
                 placeholder="Search by Email / Full Name"
