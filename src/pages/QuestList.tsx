@@ -8,8 +8,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../lib/api";
 
-const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
-
 const PLATFORM_LABELS: Record<number, string> = {
   0: "Other",
   1: "Facebook",
@@ -22,7 +20,8 @@ const PLATFORM_LABELS: Record<number, string> = {
 };
 
 interface QuestRow {
-  key: string;
+  id: number;
+  key: number;
   challengeCode: string;
   title: string;
   platform: number;
@@ -50,12 +49,6 @@ export default function QuestList() {
   const fetchQuests = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken");
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Application-Id": APPLICATION_ID,
-      };
       const payload = {
         page,
         limit,
@@ -66,8 +59,7 @@ export default function QuestList() {
 
       const res = await api.post(
         `${import.meta.env.VITE_API_BASE}/api/v1/wmt/quest/search`,
-        payload,
-        { headers }
+        payload
       );
 
       const items = res.data.data as QuestRow[];
@@ -75,7 +67,8 @@ export default function QuestList() {
 
       setData(
         items.map((i) => ({
-          key: i.challengeCode,
+          key: i.id,
+          id: i.id,
           challengeCode: i.challengeCode,
           title: i.title,
           platform: i.platform,
@@ -134,7 +127,7 @@ export default function QuestList() {
       key: "detail",
       align: "right",
       render: (quest) => (
-        <Link to={`/quests/${quest.challengeCode}`} className="text-blue-600">
+        <Link to={`/quests/${quest.id}`} className="text-blue-600">
           Detail
         </Link>
       ),

@@ -22,8 +22,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../lib/api";
 
-const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
-
 const { Content } = Layout;
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -75,16 +73,11 @@ const AddNewQuest: React.FC = () => {
   };
 
   const handleImport = () => message.info("Import clicked");
+
   const handleDelete = (id: number) =>
     setEmailList((prev) => prev.filter((u) => u.id !== id));
 
   const onFinish = async (vals: AddNewQuestFormValues) => {
-    const token = localStorage.getItem("accessToken");
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-      "Application-Id": APPLICATION_ID,
-    };
     const payload = {
       title: vals.title,
       description: vals.description,
@@ -101,8 +94,7 @@ const AddNewQuest: React.FC = () => {
     try {
       await api.post(
         `${import.meta.env.VITE_API_BASE}/api/v1/wmt/quest`,
-        payload,
-        { headers }
+        payload
       );
       message.success("Quest added successfully");
       navigate(-1);
@@ -115,7 +107,7 @@ const AddNewQuest: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg space-y-6">
+    <div className="p-6 bg-white border border-gray-200 rounded-lg space-y-6">
       <div className="flex items-center justify-between">
         <div
           className="flex items-center space-x-3 cursor-pointer"

@@ -117,26 +117,43 @@ export default function UpdateQuest() {
 
   // prepare form values
   useEffect(() => {
-    form.setFieldsValue({
-      status: quest.status,
-      title: quest.title,
-      expiryDate: quest.expiryDate ? dayjs(quest.expiryDate) : undefined,
-      platform: quest.platform,
-      point: quest.point,
-      accountRank: quest.accountRank,
-      requiredUploadEvidence: quest.requiredUploadEvidence,
-      requiredEnterLink: quest.requiredEnterLink,
-      allowSubmitMultiple: quest.allowSubmitMultiple,
-      description: quest.description,
-      specificEmail: "",
-    });
-  }, [form, quest]);
+    if (!id) return;
+    api
+      .get(`/api/v1/wmt/quest/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Accept: "application/json",
+          "Application-Id": APPLICATION_ID,
+        },
+      })
+      .then(({ data }) => {
+        const q = data.data; // adjust if your API wraps differently
+        form.setFieldsValue({
+          status: q.status,
+          title: q.title,
+          expiryDate: q.expiryDate ? dayjs(q.expiryDate) : undefined,
+          platform: q.platform,
+          point: q.point,
+          accountRank: q.accountRank,
+          requiredUploadEvidence: q.requiredUploadEvidence,
+          requiredEnterLink: q.requiredEnterLink,
+          allowSubmitMultiple: q.allowSubmitMultiple,
+          description: q.description,
+        });
+        setEmailList(q.userEmails); // or q.userIds mapped to {id,email,fullName}
+        setLoading(false);
+      })
+      .catch(() => {
+        message.error("Failed to load quest data");
+        navigate(-1);
+      });
+  }, [id, form, navigate]);
 
   // 2️⃣ Filter email list
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
     setFilteredEmails(
-      emailList.filter(
+      emailList?.filter(
         (u) =>
           u.email.toLowerCase().includes(term) ||
           u.fullName.toLowerCase().includes(term)
@@ -144,41 +161,37 @@ export default function UpdateQuest() {
     );
   }, [emailList, searchTerm]);
 
-  // 3️⃣ Handlers
+  // 3️⃣ Handlers (same as AddNewQuest)
   const handleAddEmail = () => {
-    const email = form.getFieldValue("specificEmail");
-    if (email) {
-      setEmailList((prev) => [
-        ...prev,
-        { id: Date.now(), email, fullName: email },
-      ]);
-      form.setFieldValue("specificEmail", "");
-    }
+    /* … */
   };
-
-  const handleImport = () => {
-    message.info("Import clicked");
-  };
-
+  const handleImport = () => message.info("Import clicked");
   const handleDelete = (uid: number) =>
     setEmailList((prev) => prev.filter((u) => u.id !== uid));
 
-  // 4️⃣ Submit update
-  const onFinish = async (vals: UpdateQuestFormValues) => {
+  // 4️⃣ Submit updated quest
+  const onFinish = async (vals: AddNewQuestFormValues) => {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      Accept: "application/json",
+      "Application-Id": APPLICATION_ID,
+    };
+    const payload = {
+      title: vals.title,
+      description: vals.description,
+      status: vals.status,
+      point: Number(vals.point),
+      platform: vals.platform ?? 0,
+      accountRank: vals.accountRank,
+      requiredUploadEvidence: vals.requiredUploadEvidence,
+      requiredEnterLink: vals.requiredEnterLink,
+      allowSubmitMultiple: vals.allowSubmitMultiple,
+      expiryDate: vals.expiryDate?.toISOString(),
+      userIds: emailList.map((u) => u.id),
+    };
+
     try {
-      await api.put(`/api/v1/wmt/quest/${quest.id}`, {
-        title: vals.title,
-        description: vals.description,
-        status: vals.status,
-        point: Number(vals.point),
-        platform: vals.platform ?? 0,
-        accountRank: vals.accountRank,
-        requiredUploadEvidence: vals.requiredUploadEvidence,
-        requiredEnterLink: vals.requiredEnterLink,
-        allowSubmitMultiple: vals.allowSubmitMultiple,
-        expiryDate: vals.expiryDate?.toISOString() ?? null,
-        userIds: emailList.map((u) => u.id),
-      });
+      await api.put(`/api/v1/wmt/quest/${id}`, payload, { headers });
       message.success("Quest updated successfully");
       navigate(-1);
     } catch (err) {
@@ -188,29 +201,42 @@ export default function UpdateQuest() {
   };
 
   return (
-    <PageWrapper>
-      <BackButton onClick={() => navigate(-1)}>
-        <ArrowLeftOutlined />
-        <span>Edit Quest</span>
-      </BackButton>
+    <div className="p-6 bg-white shadow-md rounded-lg space-y-6">
+      {/* 🔙 Back button */}
+      <div
+        className="flex items-center space-x-3 cursor-pointer"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeftOutlined className="text-gray-600" />
+        <span className="text-lg font-medium text-gray-800">Edit Quest</span>
+      </div>
 
-      <FormContainer>
-        <Form
-          form={form}
-          layout="horizontal"
-          labelAlign="left"
-          colon={false}
-          labelCol={{ flex: "0 0 300px" }}
-          wrapperCol={{ flex: "1 1 auto" }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            name="status"
-            label={<Text>Active&nbsp;:</Text>}
-            valuePropName="checked"
+      {/* 📝 Form (same layout as Add) */}
+      <Content>
+        <div style={{ width: "100%", maxWidth: 1000 }}>
+          <Form
+            form={form}
+            layout="horizontal"
+            labelAlign="left"
+            colon={false}
+            labelCol={{ flex: "0 0 300px" }}
+            wrapperCol={{ flex: "1 1 auto" }}
+            onFinish={onFinish}
+            initialValues={{
+              status: false,
+              requiredUploadEvidence: false,
+              requiredEnterLink: false,
+              allowSubmitMultiple: false,
+              accountRank: [],
+            }}
           >
-            <Switch />
-          </Form.Item>
+            <Form.Item
+              name="status"
+              label={<Text>Active&nbsp;:</Text>}
+              valuePropName="checked"
+            >
+              <Switch />
+            </Form.Item>
 
           <Form.Item
             name="title"
@@ -308,18 +334,24 @@ export default function UpdateQuest() {
             </Input.Group>
           </Form.Item>
 
-          {/* Email Stats & Search */}
-          <ControlsRow>
-            <Text>
-              Total Email: <Text strong>{emailList.length}</Text>
-            </Text>
-            <SearchInput
-              placeholder="Search by Email / Name"
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </ControlsRow>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: 16,
+              }}
+            >
+              <Text>
+                Total Email: <Text strong>{emailList.length}</Text>
+              </Text>
+              <Input
+                placeholder="Search by Email / Full Name"
+                prefix={<SearchOutlined />}
+                style={{ width: 300 }}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
 
           <Table<UserEmail>
             dataSource={filteredEmails}

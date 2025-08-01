@@ -3,6 +3,7 @@ import type { InternalAxiosRequestConfig } from "axios";
 import axios, { AxiosError } from "axios";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
+const APPLICATION_ID = "8eed2241-25c4-413b-8a40-c88ad258c62e";
 
 interface RefreshResponse {
   success: boolean;
@@ -16,7 +17,9 @@ interface RefreshResponse {
 const api = axios.create({
   baseURL: API_BASE,
   headers: {
-    "Content-Type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    Accept: "application/json",
+    "Application-Id": APPLICATION_ID,
   },
 });
 
