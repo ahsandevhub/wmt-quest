@@ -1,0 +1,21 @@
+{
+  "quests": "Quests",
+  "quest_list": "Quest List",
+  "welcome_quests": "Welcome Quests",
+  "quest_requests": "Quest Requests",
+  "redeem": "Redeem",
+  "quest_config": "Configuration",
+  "tournament_quests": "Tournament Quests",
+
+  "discount": "Discount Code",
+  "discount_main": "Discount Code",
+  "ap_discount": "AP Discount Code",
+  "discount_config": "Configuration",
+
+  "blindbox": "Blind Box",
+  "box_list": "Box List",
+  "secret_config": "Secret Configuration",
+  "probability": "Probability",
+  "spin_config": "Spin Configuration",
+  "rewards": "Rewards"
+}

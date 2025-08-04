@@ -1,0 +1,11 @@
+{
+  "language": {
+    "english": "English",
+    "bengali": "Bengali",
+    "changed_message": "Language changed successfully"
+  },
+  "profile": {
+    "my_profile": "My Profile",
+    "logout_button": "Logout"
+  }
+}

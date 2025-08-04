@@ -1,0 +1,11 @@
+{
+  "language": {
+    "english": "ইংরেজি",
+    "bengali": "বাংলা",
+    "changed_message": "ভাষা সফলভাবে পরিবর্তিত হয়েছে"
+  },
+  "profile": {
+    "my_profile": "আমার প্রোফাইল",
+    "logout_button": "লগ-আউট"
+  }
+}

@@ -1,46 +1,84 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
-import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import WmtLogo from "../assets/WeMasterTrade-logo.png";
-import api from "../lib/api";
+import useAuth from "../auth/useAuth";
 
-const LoginPage = () => {
+interface LoginFormValues {
+  username: string;
+  password: string;
+}
+
+// Styled Components
+const PageWrapper = styled.div`
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+`;
+
+const Card = styled.div`
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 450px;
+  padding: 40px 24px;
+
+  @media (min-width: 640px) {
+    padding: 30px 40px;
+  }
+`;
+
+const LogoWrapper = styled.div`
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+
+  img {
+    height: 36px;
+    transition: all 0.2s ease;
+  }
+`;
+
+const ErrorMessage = styled.div`
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 14px;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+`;
+
+const LoginPage: React.FC = () => {
+  const { accessToken, login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  // only check for EXISTENCE, not validity:
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      navigate("/quests", { replace: true });
+    if (accessToken) {
+      navigate("/quest/quest-list", { replace: true });
     }
-  }, [navigate]);
+  }, [accessToken, navigate]);
 
-  const handleSubmit = async (values: {
-    username: string;
-    password: string;
-  }) => {
+  const onFinish = async (values: LoginFormValues) => {
     setLoading(true);
     setErrorMessage("");
     try {
-      const res = await api.post(
-        `${import.meta.env.VITE_API_BASE}/api/v1/auth/login`,
-        values
-      );
-
-      const { accessToken, refreshToken } = res.data.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-
+      await login(values.username, values.password);
       message.success("Login successful!");
-      navigate("/quests", { replace: true });
-    } catch (err: unknown) {
-      const error = err as AxiosError<{ message: string }>;
+      navigate("/quest/quest-list", { replace: true });
+    } catch (err: any) {
       const errorMsg =
-        error.response?.data?.message || "Login failed. Please try again.";
-      message.error(errorMsg);
+        err?.response?.data?.message ||
+        err.message ||
+        "Login failed. Please try again.";
       setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
@@ -48,25 +86,21 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white border border-white/30 shadow-lg rounded-2xl w-full max-w-md px-6 py-10 sm:p-10">
-        <div className="text-center mb-8">
-          <a href="/" className="inline-block">
-            <img
-              src={WmtLogo}
-              alt="WeMasterTrade"
-              className="h-8 sm:h-10 transition-all duration-200"
-            />
+    <PageWrapper>
+      <Card>
+        <LogoWrapper>
+          <a href="/">
+            <img src={WmtLogo} alt="WeMasterTrade" />
           </a>
-        </div>
+        </LogoWrapper>
 
-        {errorMessage && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md px-4 py-3 mb-4">
-            {errorMessage}
-          </div>
-        )}
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
-        <Form layout="vertical" onFinish={handleSubmit} autoComplete="off">
+        <Form<LoginFormValues>
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="off"
+        >
           <Form.Item
             name="username"
             rules={[{ required: true, message: "Please enter your username" }]}
@@ -74,8 +108,7 @@ const LoginPage = () => {
             <Input
               size="large"
               placeholder="Username or email"
-              prefix={<UserOutlined className="text-gray-400" />}
-              className="rounded-lg"
+              prefix={<UserOutlined style={{ color: "#9ca3af" }} />}
             />
           </Form.Item>
 
@@ -86,8 +119,7 @@ const LoginPage = () => {
             <Input.Password
               size="large"
               placeholder="Password"
-              prefix={<LockOutlined className="text-gray-400" />}
-              className="rounded-lg"
+              prefix={<LockOutlined style={{ color: "#9ca3af" }} />}
             />
           </Form.Item>
 
@@ -98,14 +130,13 @@ const LoginPage = () => {
               loading={loading}
               size="large"
               block
-              className="rounded-lg h-12 font-medium bg-blue-600 hover:bg-blue-700"
             >
               Sign In
             </Button>
           </Form.Item>
         </Form>
-      </div>
-    </div>
+      </Card>
+    </PageWrapper>
   );
 };
 

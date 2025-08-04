@@ -20,11 +20,91 @@ import type { AxiosError } from "axios";
 import type { Dayjs } from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../lib/api";
+import styled from "styled-components";
+import api from "../lib/api/axiosInstance";
 
 const { Content } = Layout;
 const { TextArea } = Input;
 const { Text } = Typography;
+
+const PageContainer = styled.div`
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #0000000f;
+  border-radius: 0.5rem;
+`;
+
+const HeaderBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+`;
+
+const BackLink = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: #4b5563;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  width: 100%;
+  max-width: 1000px;
+`;
+
+const EmailControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .ant-input {
+    flex: 1;
+  }
+`;
+
+const StatsContainer = styled.div`
+  display: flex;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const TableWrapper = styled.div`
+  border: 1px solid #0000000f;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  padding: 1rem;
+  margin-top: 1rem;
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 6px 10px;
+  }
+`;
+
+const PLATFORM_OPTIONS = [
+  { label: "Other", value: 0 },
+  { label: "Facebook", value: 1 },
+  { label: "Instagram", value: 2 },
+  { label: "YouTube", value: 3 },
+  { label: "Telegram", value: 4 },
+  { label: "TikTok", value: 5 },
+  { label: "Twitter", value: 6 },
+  { label: "Discord", value: 7 },
+];
+
+const RANK_OPTIONS = [
+  { label: "Silver", value: 1 },
+  { label: "Gold", value: 2 },
+  { label: "Diamond", value: 3 },
+];
 
 interface AddNewQuestFormValues {
   status: boolean;
@@ -48,49 +128,57 @@ interface UserEmail {
 
 const AddNewQuest: React.FC = () => {
   const navigate = useNavigate();
-
   const [form] = Form.useForm<AddNewQuestFormValues>();
+
   const [emailList, setEmailList] = useState<UserEmail[]>([]);
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
 
+  // filter emails when list or searchTerm changes
   useEffect(() => {
+    const term = searchTerm.toLowerCase();
     setFilteredEmails(
       emailList.filter(
-        (u) =>
-          u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          u.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+        ({ email, fullName }) =>
+          email.toLowerCase().includes(term) ||
+          fullName.toLowerCase().includes(term)
       )
     );
   }, [emailList, searchTerm]);
 
-  const handleAddEmail = () => {
+  const addEmail = () => {
     const email = form.getFieldValue("specificEmail")?.trim();
-    if (!email) return message.error("Please enter an email");
+    if (!email) {
+      return message.error("Please enter an email");
+    }
     setEmailList((prev) => [...prev, { id: Date.now(), email, fullName: "" }]);
     form.setFieldValue("specificEmail", "");
   };
 
-  const handleImport = () => message.info("Import clicked");
+  const importEmails = () => {
+    message.info("Import clicked");
+  };
 
-  const handleDelete = (id: number) =>
+  const deleteEmail = (id: number) => {
     setEmailList((prev) => prev.filter((u) => u.id !== id));
+  };
 
-  const onFinish = async (vals: AddNewQuestFormValues) => {
+  const onFinish = async (values: AddNewQuestFormValues) => {
     const payload = {
-      title: vals.title,
-      description: vals.description,
-      status: vals.status,
-      point: Number(vals.point),
-      platform: vals.platform ?? 0,
-      accountRank: vals.accountRank,
-      requiredUploadEvidence: vals.requiredUploadEvidence,
-      requiredEnterLink: vals.requiredEnterLink,
-      allowSubmitMultiple: vals.allowSubmitMultiple,
-      expiryDate: vals.expiryDate?.toISOString(),
+      title: values.title,
+      description: values.description,
+      status: values.status,
+      point: Number(values.point),
+      platform: values.platform ?? 0,
+      accountRank: values.accountRank,
+      requiredUploadEvidence: values.requiredUploadEvidence,
+      requiredEnterLink: values.requiredEnterLink,
+      allowSubmitMultiple: values.allowSubmitMultiple,
+      expiryDate: values.expiryDate?.toISOString(),
       userIds: emailList.map((u) => u.id),
     };
+
     try {
       await api.post(
         `${import.meta.env.VITE_API_BASE}/api/v1/wmt/quest`,
@@ -101,37 +189,30 @@ const AddNewQuest: React.FC = () => {
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       const apiMsg =
-        err.response?.data?.message ?? "Failed to add quest. Please try again.";
+        err.response?.data?.message || "Failed to add quest. Please try again.";
       message.error(apiMsg);
     }
   };
 
   return (
-    <div className="p-6 bg-white border border-gray-200 rounded-lg space-y-6">
-      <div className="flex items-center justify-between">
-        <div
-          className="flex items-center space-x-3 cursor-pointer"
-          onClick={() => window.history.back()}
-        >
-          <ArrowLeftOutlined className="text-gray-600" />
-          <span className="text-lg font-medium text-gray-800">
-            Add New Quest
-          </span>
-        </div>
+    <PageContainer>
+      <HeaderBar>
+        <BackLink onClick={() => navigate(-1)}>
+          <ArrowLeftOutlined />
+          <Text strong>Add New Quest</Text>
+        </BackLink>
 
-        {/* + Add button */}
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => form.submit()}
-          className="flex items-center"
         >
           Add
         </Button>
-      </div>
+      </HeaderBar>
 
       <Content>
-        <div style={{ width: "100%", maxWidth: 1000 }}>
+        <ContentWrapper>
           <Form
             form={form}
             layout="horizontal"
@@ -148,45 +229,29 @@ const AddNewQuest: React.FC = () => {
               accountRank: [],
             }}
           >
-            <Form.Item
-              name="status"
-              label={<Text>Active&nbsp;:</Text>}
-              valuePropName="checked"
-            >
+            <Form.Item name="status" label="Active :" valuePropName="checked">
               <Switch />
             </Form.Item>
 
             <Form.Item
               name="title"
-              label={<Text>Title&nbsp;:</Text>}
+              label="Title :"
               rules={[{ required: true, message: "Please enter title" }]}
             >
               <Input placeholder="Enter Title" />
             </Form.Item>
 
-            <Form.Item
-              name="expiryDate"
-              label={<Text>Expiry Date&nbsp;:</Text>}
-            >
+            <Form.Item name="expiryDate" label="Expiry Date :">
               <DatePicker style={{ width: "100%" }} placeholder="Select date" />
             </Form.Item>
 
-            <Form.Item name="platform" label={<Text>Platform&nbsp;:</Text>}>
-              <Select placeholder="Select">
-                <Select.Option value={0}>Other</Select.Option>
-                <Select.Option value={1}>Facebook</Select.Option>
-                <Select.Option value={2}>Instagram</Select.Option>
-                <Select.Option value={3}>YouTube</Select.Option>
-                <Select.Option value={4}>Telegram</Select.Option>
-                <Select.Option value={5}>TikTok</Select.Option>
-                <Select.Option value={6}>Twitter</Select.Option>
-                <Select.Option value={7}>Discord</Select.Option>
-              </Select>
+            <Form.Item name="platform" label="Platform :">
+              <Select placeholder="Select" options={PLATFORM_OPTIONS} />
             </Form.Item>
 
             <Form.Item
               name="point"
-              label={<Text>Point&nbsp;:</Text>}
+              label="Point :"
               rules={[{ required: true, message: "Please enter point" }]}
             >
               <Input type="number" placeholder="Enter Point" />
@@ -194,21 +259,20 @@ const AddNewQuest: React.FC = () => {
 
             <Form.Item
               name="accountRank"
-              label={<Text>Account Ranks&nbsp;:</Text>}
+              label="Account Ranks :"
               rules={[
-                { required: true, message: "Please select at least one rank" },
+                {
+                  required: true,
+                  message: "Please select at least one rank",
+                },
               ]}
             >
-              <Checkbox.Group>
-                <Checkbox value={1}>Silver</Checkbox>
-                <Checkbox value={2}>Gold</Checkbox>
-                <Checkbox value={3}>Diamond</Checkbox>
-              </Checkbox.Group>
+              <Checkbox.Group options={RANK_OPTIONS} />
             </Form.Item>
 
             <Form.Item
               name="requiredUploadEvidence"
-              label={<Text>Required Upload Image&nbsp;:</Text>}
+              label="Required Upload Image :"
               valuePropName="checked"
             >
               <Switch />
@@ -216,7 +280,7 @@ const AddNewQuest: React.FC = () => {
 
             <Form.Item
               name="requiredEnterLink"
-              label={<Text>Required Enter Link&nbsp;:</Text>}
+              label="Required Enter Link :"
               valuePropName="checked"
             >
               <Switch />
@@ -224,7 +288,7 @@ const AddNewQuest: React.FC = () => {
 
             <Form.Item
               name="allowSubmitMultiple"
-              label={<Text>Allow Multiple Submission&nbsp;:</Text>}
+              label="Allow Multiple Submission :"
               valuePropName="checked"
             >
               <Switch />
@@ -232,75 +296,84 @@ const AddNewQuest: React.FC = () => {
 
             <Form.Item
               name="description"
-              label={<Text>Description&nbsp;:</Text>}
+              label="Description :"
               rules={[{ required: true, message: "Please enter description" }]}
             >
-              <TextArea rows={4} placeholder="Description here." />
+              <TextArea rows={2} placeholder="Description here." />
             </Form.Item>
 
-            <Form.Item label={<Text>Specific Email&nbsp;:</Text>}>
-              <Input.Group compact>
+            <Form.Item
+              label="Specific Email :"
+              labelCol={{ flex: "0 0 300px" }}
+              wrapperCol={{ flex: "1 1 auto" }}
+            >
+              <EmailControls>
                 <Form.Item name="specificEmail" noStyle>
-                  <Input style={{ width: "70%" }} placeholder="Enter Email" />
+                  <Input placeholder="Enter Email" />
                 </Form.Item>
-                <Button onClick={handleAddEmail}>Add</Button>
-                <Button type="primary" onClick={handleImport}>
+                <Button onClick={addEmail}>Add</Button>
+                <Button type="primary" onClick={importEmails}>
                   Import
                 </Button>
-              </Input.Group>
+              </EmailControls>
+              <TableWrapper>
+                <StatsContainer>
+                  <Text>
+                    Total Email: <Text strong>{emailList.length}</Text>
+                  </Text>
+                  <Input.Group style={{ width: "max-content" }} compact>
+                    <Input
+                      style={{ width: 247 }}
+                      placeholder="Search by Email / Full Name"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <Button>
+                      <SearchOutlined />
+                    </Button>
+                  </Input.Group>
+                </StatsContainer>
+
+                <Table<UserEmail>
+                  dataSource={filteredEmails}
+                  rowKey="id"
+                  pagination={{
+                    current: page,
+                    pageSize: 10,
+                    onChange: setPage,
+                  }}
+                >
+                  <Table.Column<UserEmail>
+                    title="Email"
+                    dataIndex="email"
+                    key="email"
+                  />
+                  <Table.Column<UserEmail>
+                    title="Full Name"
+                    dataIndex="fullName"
+                    key="fullName"
+                  />
+                  <Table.Column<UserEmail>
+                    key="action"
+                    width={100}
+                    align="right"
+                    render={(_, record) => (
+                      <Button
+                        type="link"
+                        danger
+                        onClick={() => deleteEmail(record.id)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  />
+                </Table>
+              </TableWrapper>
             </Form.Item>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 16,
-              }}
-            >
-              <Text>
-                Total Email: <Text strong>{emailList.length}</Text>
-              </Text>
-              <Input
-                placeholder="Search by Email / Full Name"
-                prefix={<SearchOutlined />}
-                style={{ width: 300 }}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
-            <Table<UserEmail>
-              dataSource={filteredEmails}
-              rowKey="id"
-              pagination={{ current: page, pageSize: 10, onChange: setPage }}
-            >
-              <Table.Column<UserEmail>
-                title="Email"
-                dataIndex="email"
-                key="email"
-              />
-              <Table.Column<UserEmail>
-                title="Full Name"
-                dataIndex="fullName"
-                key="fullName"
-              />
-              <Table.Column<UserEmail>
-                key="action"
-                render={(_txt, record) => (
-                  <Button
-                    type="link"
-                    danger
-                    onClick={() => handleDelete(record.id)}
-                  >
-                    Delete
-                  </Button>
-                )}
-              />
-            </Table>
           </Form>
-        </div>
+        </ContentWrapper>
       </Content>
-    </div>
+    </PageContainer>
   );
 };
 

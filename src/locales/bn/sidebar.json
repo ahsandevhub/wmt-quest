@@ -1,0 +1,21 @@
+{
+  "quests": "কোয়েস্ট",
+  "quest_list": "কোয়েস্ট তালিকা",
+  "welcome_quests": "ওয়েলকাম কোয়েস্ট",
+  "quest_requests": "কোয়েস্ট অনুরোধ",
+  "redeem": "রিডিম",
+  "quest_config": "কনফিগারেশন",
+  "tournament_quests": "টুর্নামেন্ট কোয়েস্ট",
+
+  "discount": "ডিসকাউন্ট কোড",
+  "discount_main": "ডিসকাউন্ট কোড",
+  "ap_discount": "এপি ডিসকাউন্ট কোড",
+  "discount_config": "কনফিগারেশন",
+
+  "blindbox": "ব্লাইন্ড বক্স",
+  "box_list": "বক্স তালিকা",
+  "secret_config": "সিক্রেট কনফিগারেশন",
+  "probability": "সম্ভাব্যতা",
+  "spin_config": "স্পিন কনফিগারেশন",
+  "rewards": "পুরস্কার"
+}

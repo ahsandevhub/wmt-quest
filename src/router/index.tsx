@@ -1,34 +1,55 @@
 import { createBrowserRouter } from "react-router-dom";
-import RequireAuth from "../components/RequireAuth";
+import AuthProvider from "../auth/AuthProvider";
+import ProtectedRoute from "../components/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
+import { questListLoader } from "../loaders/QuestList.loader";
+import { questRequestLoader } from "../loaders/QuestRequest.loader";
 import AddNewQuest from "../pages/AddNewQuest";
 import LoginPage from "../pages/LoginPage";
+import NotFound from "../pages/NotFound";
 import QuestList from "../pages/QuestList";
+import QuestRequest from "../pages/QuestRequest";
 import UpdateQuest from "../pages/UpdateQuest";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginPage />,
+    element: (
+      <AuthProvider>
+        <LoginPage />
+      </AuthProvider>
+    ),
   },
   {
     element: (
-      <RequireAuth>
-        <MainLayout />
-      </RequireAuth>
+      <AuthProvider>
+        <ProtectedRoute>
+          <MainLayout />
+        </ProtectedRoute>
+      </AuthProvider>
     ),
     children: [
       {
-        path: "/quests",
+        path: "/quest/quest-list",
         element: <QuestList />,
+        loader: questListLoader,
       },
       {
-        path: "/quests/add-new-quest",
+        path: "/quest/quest-list/add-new-quest",
         element: <AddNewQuest />,
       },
       {
-        path: "/quests/:id",
+        path: "/quest/quest-list/:id",
         element: <UpdateQuest />,
+      },
+      {
+        path: "/quest/quest-requests",
+        element: <QuestRequest />,
+        loader: questRequestLoader,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },
