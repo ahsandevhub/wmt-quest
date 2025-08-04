@@ -11,7 +11,7 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "bn"],
     debug: true,
-    ns: ["sidebar", "header", "quest"],
+    ns: ["sidebar", "header", "quest_list"],
     defaultNS: "common",
     interpolation: {
       escapeValue: false, // Not needed for React

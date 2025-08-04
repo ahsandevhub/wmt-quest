@@ -1,7 +1,9 @@
 import { PlusOutlined, SearchOutlined, SyncOutlined } from "@ant-design/icons";
-import { Button, Input, Pagination, Select, Table, Tag } from "antd";
+import { Button, Input, Pagination, Select, Table, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Link,
   useLoaderData,
@@ -10,6 +12,7 @@ import {
 } from "react-router-dom";
 import styled from "styled-components";
 import { PlatformLabels, type PlatformEnum } from "../types/platform";
+const { Search } = Input;
 
 interface QuestRow {
   id: number;
@@ -43,7 +46,7 @@ const Toolbar = styled.div`
 const ToolbarItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   white-space: nowrap;
 `;
 
@@ -62,58 +65,106 @@ const PaginationContainer = styled.div`
   margin-top: 24px;
 `;
 
+const EllipsisText = styled.span`
+  display: inline-block;
+  max-width: 300px; /* adjust as needed */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export default function QuestList() {
+  const { t } = useTranslation("quest_list");
   const navigate = useNavigate();
-  const loaderData = useLoaderData() as {
+  const { quests, totalItems, filters } = useLoaderData() as {
     quests: QuestRow[];
     totalItems: number;
     filters: {
       page: number;
       limit: number;
       keywords: string;
-      status: boolean | undefined;
+      status: "" | "true" | "false";
     };
   };
-
   const [searchParams, setSearchParams] = useSearchParams();
-  const { quests, totalItems, filters } = loaderData;
+
+  // local “draft” state for filter
+  const [local, setLocal] = useState({
+    keywords: filters.keywords,
+    status: filters.status,
+  });
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (local.keywords) params.set("keywords", local.keywords);
+    if (local.status) params.set("status", local.status);
+    setSearchParams(params);
+  };
+
+  const handleReset = () => {
+    setLocal({ keywords: "", status: "" });
+    setSearchParams({}); // clears all
+  };
 
   const columns: ColumnsType<QuestRow> = [
-    { title: "Quest ID", dataIndex: "challengeCode", key: "challengeCode" },
-    { title: "Quest Title", dataIndex: "title", key: "title" },
     {
-      title: "Platform",
+      title: t("columns.questId"),
+      dataIndex: "challengeCode",
+      key: "challengeCode",
+    },
+    {
+      title: t("columns.questTitle"),
+      dataIndex: "title",
+      key: "title",
+      width: 300,
+      ellipsis: { showTitle: false },
+      render: (text: string) => (
+        <Tooltip placement="topLeft" title={text}>
+          <EllipsisText>{text}</EllipsisText>
+        </Tooltip>
+      ),
+    },
+    {
+      title: t("columns.platform"),
       dataIndex: "platform",
       key: "platform",
-      render: (platform: PlatformEnum) => PlatformLabels[platform] ?? "—",
+      render: (p: PlatformEnum) => PlatformLabels[p] ?? "—",
     },
-    { title: "Point", dataIndex: "point", key: "point" },
     {
-      title: "Expiry Date",
+      title: t("columns.point"),
+      dataIndex: "point",
+      key: "point",
+    },
+    {
+      title: t("columns.expiryDate"),
       dataIndex: "expiryDate",
       key: "expiryDate",
       render: (d) => (d ? dayjs(d).format("MM/DD/YYYY hh:mm:ss") : "—"),
     },
     {
-      title: "Created At",
+      title: t("columns.createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
       render: (d) => dayjs(d).format("MM/DD/YYYY hh:mm:ss"),
     },
     {
-      title: "Status",
+      title: t("columns.status"),
       dataIndex: "status",
       key: "status",
       render: (s) =>
-        s ? <Tag color="green">Active</Tag> : <Tag color="red">Inactive</Tag>,
+        s ? (
+          <Tag color="green">{t("status.active")}</Tag>
+        ) : (
+          <Tag color="red">{t("status.inactive")}</Tag>
+        ),
     },
     {
-      title: "",
+      title: t("columns.actions"),
       key: "detail",
       align: "right",
       render: (quest) => (
         <Link to={`/quest/quest-list/${quest.id}`} style={{ color: "#1890ff" }}>
-          Detail
+          {t("detail")}
         </Link>
       ),
     },
@@ -121,58 +172,50 @@ export default function QuestList() {
 
   return (
     <PageWrapper>
-      {/* Toolbar */}
       <Toolbar>
         <ToolbarItem>
-          <span>Keywords:</span>
-          <Input
-            placeholder="Search by Quest ID/Quest Title"
-            defaultValue={filters.keywords}
-            onChange={(e) => {
-              searchParams.set("keywords", e.target.value);
-              setSearchParams(searchParams);
-            }}
-            suffix={<SearchOutlined />}
-            style={{ width: 356 }}
+          <span>{t("toolbar.search_box.label")}</span>
+          <Search
+            placeholder={t("toolbar.search_box.placeholderSearch")}
+            value={local.keywords}
+            onChange={(e) =>
+              setLocal((l) => ({ ...l, keywords: e.target.value }))
+            }
+            onSubmit={handleSearch}
+            allowClear
+            maxLength={50}
+            style={{ width: 410 }}
           />
         </ToolbarItem>
 
         <ToolbarItem>
-          <span>Status:</span>
-          <Select
-            value={filters.status}
-            onChange={(v) => {
-              if (v === undefined) searchParams.delete("status");
-              else searchParams.set("status", String(v));
-              setSearchParams(searchParams);
-            }}
+          <span>{t("toolbar.status_filter.label")}</span>
+          <Select<"" | "true" | "false">
+            value={local.status}
+            onChange={(v) => setLocal((l) => ({ ...l, status: v ?? "" }))}
             allowClear
-            placeholder="All"
-            style={{ width: 180 }}
+            style={{ width: 432 }}
           >
-            <Select.Option value={true}>Active</Select.Option>
-            <Select.Option value={false}>Inactive</Select.Option>
+            <Select.Option value="">
+              {t("toolbar.status_filter.all")}
+            </Select.Option>
+            <Select.Option value="true">
+              {t("toolbar.status_filter.active")}
+            </Select.Option>
+            <Select.Option value="false">
+              {t("toolbar.status_filter.inactive")}
+            </Select.Option>
           </Select>
         </ToolbarItem>
 
-        <Button
-          type="primary"
-          icon={<SearchOutlined />}
-          onClick={() => setSearchParams(searchParams)}
-        >
-          Search
+        <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
+          {t("toolbar.search_button")}
         </Button>
-        <Button
-          icon={<SyncOutlined />}
-          onClick={() => {
-            setSearchParams({});
-          }}
-        >
-          Reset
+        <Button icon={<SyncOutlined />} onClick={handleReset}>
+          {t("toolbar.reset_button")}
         </Button>
       </Toolbar>
 
-      {/* Table Section */}
       <TableContainer>
         <div style={{ marginBottom: 16 }}>
           <Button
@@ -180,17 +223,19 @@ export default function QuestList() {
             icon={<PlusOutlined />}
             onClick={() => navigate("/quest/quest-list/add-new-quest")}
           >
-            Add
+            {t("add_button")}
           </Button>
         </div>
+
         <Table<QuestRow>
           columns={columns}
-          dataSource={quests.map((i) => ({ ...i, key: i.id }))}
+          dataSource={quests.map((q) => ({ ...q, key: q.id }))}
           pagination={false}
           scroll={{ x: "max-content" }}
         />
+
         <PaginationContainer>
-          <div>Total {totalItems} items</div>
+          <div>{t("totalItems", { count: totalItems })}</div>
           <Pagination
             current={filters.page}
             pageSize={filters.limit}

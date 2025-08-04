@@ -1,0 +1,33 @@
+{
+  "columns": {
+    "questId": "কোয়েস্ট আইডি",
+    "questTitle": "কোয়েস্ট শিরোনাম",
+    "platform": "প্ল্যাটফর্ম",
+    "point": "পয়েন্ট",
+    "expiryDate": "সমাপ্তির তারিখ",
+    "createdAt": "তৈরির তারিখ",
+    "status": "স্ট্যাটাস",
+    "actions": ""
+  },
+  "status": {
+    "active": "সক্রিয়",
+    "inactive": "নিষ্ক্রিয়"
+  },
+  "toolbar": {
+    "search_box": {
+      "label": "কীওয়ার্ড:",
+      "placeholderSearch": "কোয়েস্ট আইডি/কোয়েস্ট শিরোনাম দিয়ে অনুসন্ধান"
+    },
+    "status_filter": {
+      "label": "স্ট্যাটাস:",
+      "all": "সব স্ট্যাটাস",
+      "active": "সক্রিয়",
+      "inactive": "নিষ্ক্রিয়"
+    },
+    "search_button": "অনুসন্ধান",
+    "reset_button": "রিসেট"
+  },
+  "add_button": "যোগ করুন",
+  "detail": "বিস্তারিত",
+  "totalItems": "মোট {{count}}টি আইটেম"
+}
