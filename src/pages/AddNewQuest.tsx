@@ -176,13 +176,8 @@ const AddNewQuest: React.FC = () => {
         },
       });
 
-      if (!res.data.success) {
-        throw new Error(res.data.message || t("validation.emailNotExist"));
-      }
-
       const user = res.data.data;
 
-      // Check if the userId is already added
       if (emailList.some((u) => u.userId === user.userId)) {
         form.setFields([
           {
@@ -193,18 +188,23 @@ const AddNewQuest: React.FC = () => {
         return;
       }
 
-      // Add user to emailList
       setEmailList((prev) => [
         { userId: user.userId, email: user.email, fullName: user.fullName },
         ...prev,
       ]);
 
       form.resetFields(["specificEmail"]);
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError<{ message: string; code: string }>;
+      const apiMsg =
+        err.response?.data?.code === "CFN_ERR_035"
+          ? t("validation.emailNotExist")
+          : t("validation.requestFailed");
+
       form.setFields([
         {
           name: "specificEmail",
-          errors: [(err as Error).message],
+          errors: [apiMsg],
         },
       ]);
     }
@@ -530,6 +530,7 @@ const AddNewQuest: React.FC = () => {
               ]}
             >
               <TextEditor
+                placeholder="Description here."
                 onChange={(value) =>
                   form.setFieldsValue({ description: value })
                 }
@@ -543,7 +544,10 @@ const AddNewQuest: React.FC = () => {
             >
               <EmailControls>
                 <Form.Item name="specificEmail" noStyle>
-                  <Input placeholder={t("form.placeholders.enterEmail")} />
+                  <Input
+                    maxLength={100}
+                    placeholder={t("form.placeholders.enterEmail")}
+                  />
                 </Form.Item>
                 <Button onClick={handleAddEmail}>{t("buttons.add")}</Button>
                 <Button type="primary" onClick={importEmails}>

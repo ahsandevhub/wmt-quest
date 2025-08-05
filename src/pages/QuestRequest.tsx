@@ -1,8 +1,32 @@
 import { PlusOutlined, SearchOutlined, SyncOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Input, Pagination, Table, Tag } from "antd";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Pagination,
+  Select,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
+import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useLoaderData, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import styled from "styled-components";
+import {
+  QUEST_REQUEST_STATUS_OPTIONS,
+  QuestRequestStatusLabels,
+} from "../types/questRequestStatus";
+import {
+  buildQuestTypeMap,
+  QUEST_LIST,
+  QUEST_TYPE_OPTIONS,
+} from "../types/questType";
 
 const { RangePicker } = DatePicker;
 
@@ -48,22 +72,27 @@ const PaginationContainer = styled.div`
 interface QuestRequestRow {
   id: number;
   code: string;
+  challengeId: number;
   challengeCode: string;
   title: string;
-  point: number;
+  point: number | null;
   status: number;
   email: string;
   fullName: string;
   submittedDate: string;
   createdAt: string;
+  questType: string;
 }
+
+// Build the questTypeMap
+const questTypeMap = buildQuestTypeMap(QUEST_LIST);
 
 export default function QuestRequest() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const loaderData = useLoaderData() as {
-    data: QuestRequestRow[];
+    data: Omit<QuestRequestRow, "questType">[];
     totalItems: number;
     filters: {
       page: number;
@@ -76,45 +105,123 @@ export default function QuestRequest() {
 
   const { data, totalItems, filters } = loaderData;
 
-  const columns = [
-    { title: "Request ID", dataIndex: "code", key: "code" },
-    { title: "Quest Type", key: "questType", render: () => "Common Quest" },
-    { title: "Quest ID", dataIndex: "challengeCode", key: "challengeCode" },
-    { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Point", dataIndex: "point", key: "point" },
+  // Merge questType into each data row
+  const dataWithQuestType: QuestRequestRow[] = data.map((item) => ({
+    ...item,
+    questType: questTypeMap[item.challengeId] || "",
+  }));
+
+  const columns: ColumnsType<QuestRequestRow> = [
+    {
+      title: "Request ID",
+      dataIndex: "code",
+      key: "code",
+    },
+    {
+      title: "Quest Type",
+      dataIndex: "questType",
+      key: "questType",
+      render: (type: string) => type || "-",
+    },
+    {
+      title: "Quest ID",
+      dataIndex: "challengeCode",
+      key: "challengeCode",
+    },
+    {
+      title: "Quest Title",
+      dataIndex: "title",
+      key: "title",
+      render: (title: string) => (
+        <Tooltip title={title}>
+          <span
+            style={{
+              maxWidth: 120,
+              display: "inline-block",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              verticalAlign: "middle",
+            }}
+          >
+            {title}
+          </span>
+        </Tooltip>
+      ),
+    },
+    {
+      title: "Point",
+      dataIndex: "point",
+      key: "point",
+      render: (point: number | null, row: QuestRequestRow) =>
+        row.questType === "Common quest" && point != null
+          ? point.toLocaleString()
+          : "",
+    },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (e: string) => (
-        <span title={e}>{e.length > 20 ? e.slice(0, 20) + "..." : e}</span>
+      render: (email: string) => (
+        <Tooltip title={email}>
+          <span
+            style={{
+              maxWidth: 140,
+              display: "inline-block",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {email}
+          </span>
+        </Tooltip>
       ),
     },
-    { title: "Full Name", dataIndex: "fullName", key: "fullName" },
+    {
+      title: "Full Name",
+      dataIndex: "fullName",
+      key: "fullName",
+      render: (fullName: string) => (
+        <Tooltip title={fullName}>
+          <span
+            style={{
+              maxWidth: 120,
+              display: "inline-block",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {fullName}
+          </span>
+        </Tooltip>
+      ),
+    },
     {
       title: "Submitted Date",
       dataIndex: "submittedDate",
       key: "submittedDate",
-      render: (d: string) => dayjs(d).format("MMM DD, YYYY, HH:mm:ss"),
+      render: (d: string) => dayjs(d).format("MM/DD/YYYY HH:mm:ss"),
     },
     {
       title: "Updated Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (d: string) => dayjs(d).format("MMM DD, YYYY, HH:mm:ss"),
+      render: (d: string) => dayjs(d).format("MM/DD/YYYY HH:mm:ss"),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (s: number) => {
-        switch (s) {
+      render: (status: number) => {
+        switch (status) {
           case 1:
-            return <Tag color="blue">Pending</Tag>;
+            return <Tag color="blue">{QuestRequestStatusLabels[1]}</Tag>;
           case 2:
-            return <Tag color="green">Approved</Tag>;
+            return <Tag color="green">{QuestRequestStatusLabels[2]}</Tag>;
           case 3:
-            return <Tag color="red">Rejected</Tag>;
+            return <Tag color="red">{QuestRequestStatusLabels[3]}</Tag>;
           default:
             return <Tag>Unknown</Tag>;
         }
@@ -123,13 +230,14 @@ export default function QuestRequest() {
     {
       title: "",
       key: "detail",
-      render: (row: QuestRequestRow) => (
-        <Button
-          type="link"
-          onClick={() => navigate(`/quest/request/${row.id}`)}
+      align: "right",
+      render: (questRequest) => (
+        <Link
+          to={`/quest/quest-requests/${questRequest.id}`}
+          style={{ color: "#1890ff" }}
         >
           Detail
-        </Button>
+        </Link>
       ),
     },
   ];
@@ -138,25 +246,51 @@ export default function QuestRequest() {
     <PageWrapper>
       <Toolbar>
         <ToolbarItem>
-          <span>Keywords:</span>
           <Input
-            placeholder="Search by Quest Title"
-            defaultValue={filters.keywords}
+            placeholder="Search by Request ID/Quest ID/Email/Quest Title"
+            maxLength={50}
+            value={searchParams.get("keywords") || ""}
             onChange={(e) => {
               searchParams.set("keywords", e.target.value);
               setSearchParams(searchParams);
             }}
             suffix={<SearchOutlined />}
-            style={{ width: 220 }}
+            style={{ width: 260 }}
           />
         </ToolbarItem>
-
         <ToolbarItem>
-          <span>Submitted Date:</span>
+          <Select
+            value={searchParams.get("status") || ""}
+            onChange={(val) => {
+              searchParams.set("status", val);
+              setSearchParams(searchParams);
+            }}
+            options={QUEST_REQUEST_STATUS_OPTIONS}
+            style={{ width: 140 }}
+          />
+        </ToolbarItem>
+        <ToolbarItem>
+          <Select
+            value={searchParams.get("questType") || ""}
+            onChange={(val) => {
+              searchParams.set("questType", val);
+              setSearchParams(searchParams);
+            }}
+            options={[
+              { value: "", label: "All Quests" },
+              ...QUEST_TYPE_OPTIONS,
+            ]}
+            style={{ width: 180 }}
+          />
+        </ToolbarItem>
+        <ToolbarItem>
           <RangePicker
             value={
-              filters.from && filters.to
-                ? [dayjs(filters.from), dayjs(filters.to)]
+              searchParams.get("from") && searchParams.get("to")
+                ? [
+                    dayjs(searchParams.get("from")),
+                    dayjs(searchParams.get("to")),
+                  ]
                 : undefined
             }
             onChange={(dates) => {
@@ -171,7 +305,6 @@ export default function QuestRequest() {
             }}
           />
         </ToolbarItem>
-
         <Button
           type="primary"
           icon={<SearchOutlined />}
@@ -179,7 +312,6 @@ export default function QuestRequest() {
         >
           Search
         </Button>
-
         <Button icon={<SyncOutlined />} onClick={() => setSearchParams({})}>
           Reset
         </Button>
@@ -197,9 +329,12 @@ export default function QuestRequest() {
         </div>
         <Table
           columns={columns}
-          dataSource={data.map((i) => ({ ...i, key: i.id }))}
+          dataSource={dataWithQuestType.map((i) => ({ ...i, key: i.id }))}
           pagination={false}
           scroll={{ x: "max-content" }}
+          locale={{
+            emptyText: "No results are matching with your filter criteria",
+          }}
         />
         <PaginationContainer>
           <div>Total {totalItems} items</div>

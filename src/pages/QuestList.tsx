@@ -78,13 +78,6 @@ const EllipsisText = styled.span`
   white-space: nowrap;
 `;
 
-const QuestIdLink = styled(Link)`
-  color: inherit;
-  &:hover {
-    color: #1890ff;
-  }
-`;
-
 export default function QuestList() {
   const { t } = useTranslation("quest_list");
   const navigate = useNavigate();
@@ -123,11 +116,6 @@ export default function QuestList() {
       title: t("columns.questId"),
       dataIndex: "challengeCode",
       key: "challengeCode",
-      render: (challengeCode: string, quest: QuestRow) => (
-        <QuestIdLink to={`/quest/quest-list/${quest.id}`}>
-          {challengeCode}
-        </QuestIdLink>
-      ),
     },
     {
       title: t("columns.questTitle"),

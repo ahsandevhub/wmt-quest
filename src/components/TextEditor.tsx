@@ -13,6 +13,7 @@ export interface TextEditorProps {
   onChange?: (html: string, delta: Delta, source: Sources, editor: any) => void;
   /** Whether the editor is read-only */
   readOnly?: boolean;
+  placeholder?: string;
 }
 
 const EditorWrapper = styled.div`
@@ -52,7 +53,15 @@ const EditorWrapper = styled.div`
 `;
 
 const TextEditor = forwardRef<any, TextEditorProps>(
-  ({ defaultValue = "", onChange, readOnly = false }, ref) => {
+  (
+    {
+      defaultValue = "",
+      onChange,
+      readOnly = false,
+      placeholder = "Enter your text here...",
+    },
+    ref
+  ) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const quillRef = useRef<any>(null);
 
@@ -66,6 +75,7 @@ const TextEditor = forwardRef<any, TextEditorProps>(
         const quill = new Quill(editorDiv, {
           theme: "snow",
           readOnly,
+          placeholder,
           modules: {
             toolbar: [
               ["bold", "italic", "strike"],

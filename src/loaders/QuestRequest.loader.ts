@@ -14,7 +14,7 @@ export async function questRequestLoader({ request }: LoaderFunctionArgs) {
     page,
     limit,
     keywords: keywords || undefined,
-    sortFields: [{ fieldName: "createdAt", order: "ASC" }],
+    sortFields: [{ fieldName: "createdAt", order: "DESC" }],
     submittedDate: from && to ? { from, to } : undefined,
   };
 

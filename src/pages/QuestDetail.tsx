@@ -1,8 +1,4 @@
-import {
-  PlusOutlined,
-  QuestionCircleOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -90,7 +86,7 @@ const RANK_OPTIONS = Object.values(Rank).map((value) => ({
   value,
 }));
 
-interface AddNewQuestFormValues {
+interface QuestDetailFormValues {
   status: boolean;
   title: string;
   expiryDate?: Dayjs;
@@ -110,11 +106,11 @@ interface UserEmail {
   fullName: string;
 }
 
-const UpdateQuest: React.FC = () => {
+const QuestDetail: React.FC = () => {
   const navigate = useNavigate();
   const questData = useLoaderData() as any;
-  const [form] = Form.useForm<AddNewQuestFormValues>();
-  const { t } = useTranslation("add_new_quest");
+  const [form] = Form.useForm<QuestDetailFormValues>();
+  const { t } = useTranslation("quest_detail");
 
   const [emailList, setEmailList] = useState<UserEmail[]>(questData.usersData);
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
@@ -184,7 +180,7 @@ const UpdateQuest: React.FC = () => {
     setEmailList((prev) => prev.filter((u) => u.userId !== id));
   };
 
-  const onFinish = async (values: AddNewQuestFormValues) => {
+  const onFinish = async (values: QuestDetailFormValues) => {
     const payload = {
       title: values.title,
       description: values.description,
@@ -212,13 +208,9 @@ const UpdateQuest: React.FC = () => {
   return (
     <PageContainer>
       <TitleBarHeader
-        title="Edit Quest"
+        title={t("pageTitle")}
         actions={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => form.submit()}
-          >
+          <Button type="primary" onClick={() => form.submit()}>
             Update
           </Button>
         }
@@ -562,4 +554,4 @@ const UpdateQuest: React.FC = () => {
   );
 };
 
-export default UpdateQuest;
+export default QuestDetail;

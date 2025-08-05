@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
 import api from "../lib/api/axiosInstance";
 
-export async function updateQuestLoader({ params }: LoaderFunctionArgs) {
+export async function questDetailLoader({ params }: LoaderFunctionArgs) {
   const { id } = params;
   if (!id) throw new Error("Quest ID is required");
 
