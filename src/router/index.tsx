@@ -4,6 +4,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 import { questListLoader } from "../loaders/QuestList.loader";
 import { questRequestLoader } from "../loaders/QuestRequest.loader";
+import { updateQuestLoader } from "../loaders/updateQuest.loader";
 import AddNewQuest from "../pages/AddNewQuest";
 import LoginPage from "../pages/LoginPage";
 import NotFound from "../pages/NotFound";
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
         path: "/quest/quest-list",
         element: <QuestList />,
         loader: questListLoader,
+        handle: { showQuickTabs: true },
       },
       {
         path: "/quest/quest-list/add-new-quest",
@@ -41,11 +43,13 @@ const router = createBrowserRouter([
       {
         path: "/quest/quest-list/:id",
         element: <UpdateQuest />,
+        loader: updateQuestLoader,
       },
       {
         path: "/quest/quest-requests",
         element: <QuestRequest />,
         loader: questRequestLoader,
+        handle: { showQuickTabs: true },
       },
       {
         path: "*",

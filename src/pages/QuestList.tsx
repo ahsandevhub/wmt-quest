@@ -31,6 +31,11 @@ const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  /* phones */
+  @media (max-width: 480px) {
+    gap: 16px;
+  }
 `;
 
 const Toolbar = styled.div`
@@ -67,10 +72,17 @@ const PaginationContainer = styled.div`
 
 const EllipsisText = styled.span`
   display: inline-block;
-  max-width: 300px; /* adjust as needed */
+  max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const QuestIdLink = styled(Link)`
+  color: inherit;
+  &:hover {
+    color: #1890ff;
+  }
 `;
 
 export default function QuestList() {
@@ -111,6 +123,11 @@ export default function QuestList() {
       title: t("columns.questId"),
       dataIndex: "challengeCode",
       key: "challengeCode",
+      render: (challengeCode: string, quest: QuestRow) => (
+        <QuestIdLink to={`/quest/quest-list/${quest.id}`}>
+          {challengeCode}
+        </QuestIdLink>
+      ),
     },
     {
       title: t("columns.questTitle"),
@@ -118,9 +135,9 @@ export default function QuestList() {
       key: "title",
       width: 300,
       ellipsis: { showTitle: false },
-      render: (text: string) => (
-        <Tooltip placement="topLeft" title={text}>
-          <EllipsisText>{text}</EllipsisText>
+      render: (title: string) => (
+        <Tooltip placement="topLeft" title={title}>
+          <EllipsisText>{title}</EllipsisText>
         </Tooltip>
       ),
     },
@@ -128,31 +145,33 @@ export default function QuestList() {
       title: t("columns.platform"),
       dataIndex: "platform",
       key: "platform",
-      render: (p: PlatformEnum) => PlatformLabels[p] ?? "—",
+      render: (platform: PlatformEnum) => PlatformLabels[platform] ?? "—",
     },
     {
       title: t("columns.point"),
       dataIndex: "point",
       key: "point",
+      render: (point: number) => point.toLocaleString(), // Adds comma separators for thousands
     },
     {
       title: t("columns.expiryDate"),
       dataIndex: "expiryDate",
       key: "expiryDate",
-      render: (d) => (d ? dayjs(d).format("MM/DD/YYYY hh:mm:ss") : "—"),
+      render: (expiryDate) =>
+        expiryDate ? dayjs(expiryDate).format("MM/DD/YYYY hh:mm:ss") : "—",
     },
     {
       title: t("columns.createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (d) => dayjs(d).format("MM/DD/YYYY hh:mm:ss"),
+      render: (createdAt) => dayjs(createdAt).format("MM/DD/YYYY hh:mm:ss"),
     },
     {
       title: t("columns.status"),
       dataIndex: "status",
       key: "status",
-      render: (s) =>
-        s ? (
+      render: (status) =>
+        status ? (
           <Tag color="green">{t("status.active")}</Tag>
         ) : (
           <Tag color="red">{t("status.inactive")}</Tag>

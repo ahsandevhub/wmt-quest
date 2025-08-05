@@ -1,6 +1,6 @@
 import {
-  ArrowLeftOutlined,
   PlusOutlined,
+  QuestionCircleOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import {
@@ -9,22 +9,29 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Layout,
   Select,
   Switch,
   Table,
+  Tooltip,
   Typography,
   message,
 } from "antd";
 import type { AxiosError } from "axios";
 import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import TextEditor from "../components/TextEditor";
+import TitleBarHeader from "../components/TitleBarHeader";
 import api from "../lib/api/axiosInstance";
+import { Platform, PlatformLabels, type PlatformEnum } from "../types/platform";
+import { Rank, RankLabels, type RankEnum } from "../types/rank";
 
 const { Content } = Layout;
-const { TextArea } = Input;
 const { Text } = Typography;
 
 const PageContainer = styled.div`
@@ -32,25 +39,6 @@ const PageContainer = styled.div`
   background: #ffffff;
   border: 1px solid #0000000f;
   border-radius: 0.5rem;
-`;
-
-const HeaderBar = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-`;
-
-const BackLink = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-  color: #4b5563;
-
-  &:hover {
-    opacity: 0.8;
-  }
 `;
 
 const ContentWrapper = styled.div`
@@ -89,30 +77,30 @@ const TableWrapper = styled.div`
   }
 `;
 
-const PLATFORM_OPTIONS = [
-  { label: "Other", value: 0 },
-  { label: "Facebook", value: 1 },
-  { label: "Instagram", value: 2 },
-  { label: "YouTube", value: 3 },
-  { label: "Telegram", value: 4 },
-  { label: "TikTok", value: 5 },
-  { label: "Twitter", value: 6 },
-  { label: "Discord", value: 7 },
-];
+const QuestionIcon = styled(QuestionCircleOutlined)`
+  margin: 0 4px;
+`;
 
-const RANK_OPTIONS = [
-  { label: "Silver", value: 1 },
-  { label: "Gold", value: 2 },
-  { label: "Diamond", value: 3 },
-];
+const PLATFORM_OPTIONS: { label: string; value: PlatformEnum }[] =
+  Object.values(Platform).map((value) => ({
+    label: PlatformLabels[value],
+    value,
+  }));
+
+const RANK_OPTIONS: { label: string; value: RankEnum }[] = Object.values(
+  Rank
+).map((value) => ({
+  label: RankLabels[value],
+  value,
+}));
 
 interface AddNewQuestFormValues {
   status: boolean;
   title: string;
   expiryDate?: Dayjs;
-  platform?: number;
+  platform?: PlatformEnum;
   point: number;
-  accountRank: number[];
+  accountRank: RankEnum[];
   requiredUploadEvidence: boolean;
   requiredEnterLink: boolean;
   allowSubmitMultiple: boolean;
@@ -121,7 +109,7 @@ interface AddNewQuestFormValues {
 }
 
 interface UserEmail {
-  id: number;
+  userId: number;
   email: string;
   fullName: string;
 }
@@ -129,6 +117,7 @@ interface UserEmail {
 const AddNewQuest: React.FC = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm<AddNewQuestFormValues>();
+  const { t } = useTranslation("add_new_quest");
 
   const [emailList, setEmailList] = useState<UserEmail[]>([]);
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
@@ -147,21 +136,86 @@ const AddNewQuest: React.FC = () => {
     );
   }, [emailList, searchTerm]);
 
-  const addEmail = () => {
+  const handleAddEmail = async () => {
     const email = form.getFieldValue("specificEmail")?.trim();
     if (!email) {
-      return message.error("Please enter an email");
+      form.setFields([
+        {
+          name: "specificEmail",
+          errors: [t("validation.emailRequired")],
+        },
+      ]);
+      return;
     }
-    setEmailList((prev) => [...prev, { id: Date.now(), email, fullName: "" }]);
-    form.setFieldValue("specificEmail", "");
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      form.setFields([
+        {
+          name: "specificEmail",
+          errors: [t("validation.emailInvalid")],
+        },
+      ]);
+      return;
+    }
+
+    try {
+      const res = await api.get<{
+        success: boolean;
+        data: {
+          userId: number;
+          email: string;
+          fullName: string;
+        };
+        message?: string;
+      }>("/api/v1/wmt/user/email", {
+        params: {
+          email,
+          type: 1, // QUEST
+          objectId: 1,
+        },
+      });
+
+      if (!res.data.success) {
+        throw new Error(res.data.message || t("validation.emailNotExist"));
+      }
+
+      const user = res.data.data;
+
+      // Check if the userId is already added
+      if (emailList.some((u) => u.userId === user.userId)) {
+        form.setFields([
+          {
+            name: "specificEmail",
+            errors: [t("validation.emailDuplicate")],
+          },
+        ]);
+        return;
+      }
+
+      // Add user to emailList
+      setEmailList((prev) => [
+        { userId: user.userId, email: user.email, fullName: user.fullName },
+        ...prev,
+      ]);
+
+      form.resetFields(["specificEmail"]);
+    } catch (err) {
+      form.setFields([
+        {
+          name: "specificEmail",
+          errors: [(err as Error).message],
+        },
+      ]);
+    }
   };
 
   const importEmails = () => {
-    message.info("Import clicked");
+    message.error(t("messages.importNotImplemented"));
   };
 
   const deleteEmail = (id: number) => {
-    setEmailList((prev) => prev.filter((u) => u.id !== id));
+    setEmailList((prev) => prev.filter((u) => u.userId !== id));
   };
 
   const onFinish = async (values: AddNewQuestFormValues) => {
@@ -176,40 +230,56 @@ const AddNewQuest: React.FC = () => {
       requiredEnterLink: values.requiredEnterLink,
       allowSubmitMultiple: values.allowSubmitMultiple,
       expiryDate: values.expiryDate?.toISOString(),
-      userIds: emailList.map((u) => u.id),
+      userIds: emailList.map((u) => u.userId),
     };
 
     try {
-      await api.post(
+      const res = await api.post(
         `${import.meta.env.VITE_API_BASE}/api/v1/wmt/quest`,
         payload
       );
-      message.success("Quest added successfully");
-      navigate(-1);
+
+      if (res.data.success) {
+        message.success(t("messages.questAdded"));
+
+        // Only navigate if response contains a valid quest ID
+        const newQuestId = res.data.data?.id;
+        if (newQuestId) {
+          navigate(`/quest/edit/${newQuestId}`);
+        } else {
+          // No ID returned, just navigate back to Quest List
+          navigate("/quest/quest-list");
+        }
+      } else {
+        throw new Error(res.data.message || "Failed to add quest");
+      }
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       const apiMsg =
-        err.response?.data?.message || "Failed to add quest. Please try again.";
+        err.response?.data?.message ||
+        err.message ||
+        t(
+          "validation.questAddFailed",
+          "Failed to add quest. Please try again."
+        );
       message.error(apiMsg);
     }
   };
 
   return (
     <PageContainer>
-      <HeaderBar>
-        <BackLink onClick={() => navigate(-1)}>
-          <ArrowLeftOutlined />
-          <Text strong>Add New Quest</Text>
-        </BackLink>
-
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => form.submit()}
-        >
-          Add
-        </Button>
-      </HeaderBar>
+      <TitleBarHeader
+        title={t("pageTitle")}
+        actions={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => form.submit()}
+          >
+            {t("buttons.add")}
+          </Button>
+        }
+      />
 
       <Content>
         <ContentWrapper>
@@ -217,53 +287,147 @@ const AddNewQuest: React.FC = () => {
             form={form}
             layout="horizontal"
             labelAlign="left"
-            colon={false}
+            colon={true}
             labelCol={{ flex: "0 0 300px" }}
-            wrapperCol={{ flex: "1 1 auto" }}
+            wrapperCol={{ flex: "1 1 0%" }}
             onFinish={onFinish}
             initialValues={{
-              status: false,
-              requiredUploadEvidence: false,
-              requiredEnterLink: false,
-              allowSubmitMultiple: false,
+              status: true,
+              requiredUploadEvidence: true,
+              requiredEnterLink: true,
+              allowSubmitMultiple: true,
               accountRank: [],
+              description: "",
             }}
           >
-            <Form.Item name="status" label="Active :" valuePropName="checked">
+            <Form.Item
+              name="status"
+              label={t("form.labels.status")}
+              valuePropName="checked"
+            >
               <Switch />
             </Form.Item>
 
             <Form.Item
               name="title"
-              label="Title :"
-              rules={[{ required: true, message: "Please enter title" }]}
+              label={t("form.labels.title")}
+              rules={[
+                {
+                  required: true,
+                  message: t("validation.enterTitle"),
+                },
+                {
+                  max: 200,
+                  message: t("validation.titleMax", {
+                    count: 200,
+                  }),
+                },
+              ]}
             >
-              <Input placeholder="Enter Title" />
+              <Input placeholder={t("form.placeholders.enterTitle")} />
             </Form.Item>
 
-            <Form.Item name="expiryDate" label="Expiry Date :">
-              <DatePicker style={{ width: "100%" }} placeholder="Select date" />
+            <Form.Item
+              name="expiryDate"
+              label={
+                <>
+                  {t("form.labels.expiryDate")}
+                  <Tooltip title={t("form.tooltips.expiryDate")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
+              rules={[
+                {
+                  validator: (_, value: Dayjs | undefined) => {
+                    if (!value) {
+                      // no date selected – pass
+                      return Promise.resolve();
+                    }
+                    // only allow today or future dates
+                    if (
+                      value.isSame(dayjs(), "day") ||
+                      value.isAfter(dayjs(), "day")
+                    ) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("You can only choose a future date")
+                    );
+                  },
+                },
+              ]}
+            >
+              <DatePicker style={{ width: "100%" }} format="MM/DD/YYYY" />
             </Form.Item>
 
-            <Form.Item name="platform" label="Platform :">
-              <Select placeholder="Select" options={PLATFORM_OPTIONS} />
+            <Form.Item
+              name="platform"
+              label={
+                <>
+                  {t("form.labels.platform")}
+                  <Tooltip title={t("form.tooltips.platform")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
+              initialValue={0}
+            >
+              <Select options={PLATFORM_OPTIONS} />
             </Form.Item>
 
             <Form.Item
               name="point"
-              label="Point :"
-              rules={[{ required: true, message: "Please enter point" }]}
+              label={
+                <>
+                  {t("form.labels.point")}
+                  <Tooltip title={t("form.tooltips.point")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: t("validation.enterPoint"),
+                },
+                {
+                  type: "number",
+                  min: 1,
+                  max: 100000,
+                  message: t("validation.pointRange", {
+                    min: 1,
+                    max: 100000,
+                  }),
+                },
+              ]}
+              initialValue={1}
             >
-              <Input type="number" placeholder="Enter Point" />
+              <InputNumber<number>
+                style={{ width: "100%" }}
+                formatter={(value) =>
+                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                }
+                parser={(value) =>
+                  value?.replace(/\$\s?|(,*)/g, "") as unknown as number
+                }
+              />
             </Form.Item>
 
             <Form.Item
               name="accountRank"
-              label="Account Ranks :"
+              label={
+                <>
+                  {t("form.labels.accountRanks")}
+                  <Tooltip title={t("form.tooltips.accountRanks")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
               rules={[
                 {
                   required: true,
-                  message: "Please select at least one rank",
+                  message: t("validation.selectRank"),
                 },
               ]}
             >
@@ -271,66 +435,137 @@ const AddNewQuest: React.FC = () => {
             </Form.Item>
 
             <Form.Item
+              label={
+                <>
+                  {t("form.labels.uploadImage")}{" "}
+                  <Tooltip title={t("form.tooltips.uploadImage")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
               name="requiredUploadEvidence"
-              label="Required Upload Image :"
               valuePropName="checked"
+              dependencies={["requiredEnterLink"]}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, checked) {
+                    if (checked || getFieldValue("requiredEnterLink")) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(t("validation.imageOrLinkRequired"))
+                    );
+                  },
+                }),
+              ]}
             >
               <Switch />
             </Form.Item>
 
             <Form.Item
+              label={
+                <>
+                  {t("form.labels.enterLink")}{" "}
+                  <Tooltip title={t("form.tooltips.enterLink")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
               name="requiredEnterLink"
-              label="Required Enter Link :"
               valuePropName="checked"
+              dependencies={["requiredUploadEvidence"]}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator(_, checked) {
+                    if (checked || getFieldValue("requiredUploadEvidence")) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(t("validation.imageOrLinkRequired"))
+                    );
+                  },
+                }),
+              ]}
             >
               <Switch />
             </Form.Item>
 
             <Form.Item
               name="allowSubmitMultiple"
-              label="Allow Multiple Submission :"
               valuePropName="checked"
+              label={
+                <>
+                  {t("form.labels.allowMultiple")}
+                  <Tooltip title={t("form.tooltips.allowMultiple")}>
+                    <QuestionIcon />
+                  </Tooltip>
+                </>
+              }
+              initialValue
             >
               <Switch />
             </Form.Item>
 
             <Form.Item
               name="description"
-              label="Description :"
-              rules={[{ required: true, message: "Please enter description" }]}
+              label="Description"
+              rules={[
+                {
+                  required: true,
+                },
+                {
+                  validator: (_, value) => {
+                    const text = value?.replace(/<[^>]+>/g, "") || "";
+                    if (!text.trim()) {
+                      return Promise.reject("Description is required");
+                    }
+                    if (text.length > 2000) {
+                      return Promise.reject(
+                        "Description must be less than 2000 characters"
+                      );
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
-              <TextArea rows={2} placeholder="Description here." />
+              <TextEditor
+                onChange={(value) =>
+                  form.setFieldsValue({ description: value })
+                }
+              />
             </Form.Item>
 
             <Form.Item
-              label="Specific Email :"
+              label={t("form.labels.specificEmail")}
               labelCol={{ flex: "0 0 300px" }}
               wrapperCol={{ flex: "1 1 auto" }}
             >
               <EmailControls>
                 <Form.Item name="specificEmail" noStyle>
-                  <Input placeholder="Enter Email" />
+                  <Input placeholder={t("form.placeholders.enterEmail")} />
                 </Form.Item>
-                <Button onClick={addEmail}>Add</Button>
+                <Button onClick={handleAddEmail}>{t("buttons.add")}</Button>
                 <Button type="primary" onClick={importEmails}>
-                  Import
+                  {t("buttons.import")}
                 </Button>
               </EmailControls>
+
               <TableWrapper>
                 <StatsContainer>
                   <Text>
-                    Total Email: <Text strong>{emailList.length}</Text>
+                    {t("table.totalEmails", {
+                      count: emailList.length,
+                    })}
                   </Text>
                   <Input.Group style={{ width: "max-content" }} compact>
                     <Input
                       style={{ width: 247 }}
-                      placeholder="Search by Email / Full Name"
+                      placeholder={t("table.searchPlaceholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <Button>
-                      <SearchOutlined />
-                    </Button>
+                    <Button icon={<SearchOutlined />} />
                   </Input.Group>
                 </StatsContainer>
 
@@ -344,12 +579,12 @@ const AddNewQuest: React.FC = () => {
                   }}
                 >
                   <Table.Column<UserEmail>
-                    title="Email"
+                    title={t("table.columns.email")}
                     dataIndex="email"
                     key="email"
                   />
                   <Table.Column<UserEmail>
-                    title="Full Name"
+                    title={t("table.columns.fullName")}
                     dataIndex="fullName"
                     key="fullName"
                   />
@@ -361,9 +596,9 @@ const AddNewQuest: React.FC = () => {
                       <Button
                         type="link"
                         danger
-                        onClick={() => deleteEmail(record.id)}
+                        onClick={() => deleteEmail(record.userId)}
                       >
-                        Delete
+                        {t("table.delete")}
                       </Button>
                     )}
                   />

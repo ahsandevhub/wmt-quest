@@ -1,0 +1,66 @@
+{
+  "pageTitle": "Add New Quest",
+  "buttons": {
+    "add": "Add",
+    "import": "Import"
+  },
+  "form": {
+    "labels": {
+      "status": "Active",
+      "title": "Title",
+      "expiryDate": "Expiry Date",
+      "platform": "Platform",
+      "point": "Point",
+      "accountRanks": "Account Ranks",
+      "uploadEvidence": "Upload Evidence",
+      "allowMultiple": "Allow Multiple Submissions",
+      "description": "Description",
+      "specificEmail": "Specific Email",
+      "uploadImage": "Required Upload Image",
+      "enterLink": "Required Enter Link"
+    },
+    "placeholders": {
+      "enterTitle": "Enter title",
+      "enterEmail": "Enter email"
+    },
+    "tooltips": {
+      "expiryDate": "This Quest will expire at 23:59 on the selected date. If no date is selected, it will have no expiration",
+      "platform": "The user will participate in the Quest on selected platform",
+      "point": "The user will earn points upon completing the Quest",
+      "accountRanks": "The Quest will be displayed to accounts with the corresponding rank",
+      "uploadImage": "Require user upload evidence by providing an image or screenshot",
+      "enterLink": "Require user upload evidence by entering link (Facebook link, Instagram link...)",
+      "allowMultiple": "Allows users to participate in the Quest multiple times."
+    }
+  },
+  "table": {
+    "columns": {
+      "email": "Email",
+      "fullName": "Full Name",
+      "actions": ""
+    },
+    "delete": "Delete",
+    "totalEmails": "Total {{count}} Emails",
+    "searchPlaceholder": "Search by Email / Full Name"
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "emailNotExist": "Email not found",
+    "emailDuplicate": "This email has already been added",
+    "enterTitle": "Please enter a title",
+    "titleMax": "Title cannot exceed {{count}} characters",
+    "enterPoint": "Please enter a point value",
+    "pointRange": "Point must be between {{min}} and {{max}}",
+    "selectRank": "Please select at least one account rank",
+    "requireOne": "At least one requirement must be selected",
+    "enterDescription": "Please enter a description",
+    "descriptionMax": "Description cannot exceed {{count}} characters",
+    "imageOrLinkRequired": "At least required image or required link checked",
+    "questAddFailed": "Failed to add quest. Please try again."
+  },
+  "messages": {
+    "questAdded": "Quest added successfully",
+    "importNotImplemented": "Import functionality not implemented yet"
+  }
+}
