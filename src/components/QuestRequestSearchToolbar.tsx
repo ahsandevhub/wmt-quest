@@ -112,7 +112,7 @@ export default function QuestRequestSearchToolbar() {
             placeholder={t("toolbar.searchBox.placeholder")}
             value={local.keywords}
             onChange={(e) =>
-              setLocal((l) => ({ ...l, keywords: e.target.value }))
+              setLocal((prev) => ({ ...prev, keywords: e.target.value }))
             }
             onSearch={handleSearch}
             allowClear
@@ -124,17 +124,17 @@ export default function QuestRequestSearchToolbar() {
           <span>{t("toolbar.statusFilter.label")}</span>
           <Select<QuestRequestStatusEnum | "">
             value={local.status}
-            onChange={(v) =>
-              setLocal((l) => ({ ...l, status: (v ?? "") as any }))
+            onChange={(value) =>
+              setLocal((prev) => ({ ...prev, status: (value ?? "") as any }))
             }
             allowClear
           >
             <Select.Option value="">
               {t("toolbar.statusFilter.all")}
             </Select.Option>
-            {Object.values(QuestRequestStatus).map((val) => (
-              <Select.Option key={val} value={val}>
-                {QuestRequestStatusLabels[val]}
+            {Object.values(QuestRequestStatus).map((value) => (
+              <Select.Option key={value} value={value}>
+                {QuestRequestStatusLabels[value]}
               </Select.Option>
             ))}
           </Select>
@@ -145,17 +145,17 @@ export default function QuestRequestSearchToolbar() {
           <span>{t("toolbar.questTypeFilter.label")}</span>
           <Select<QuestTypeEnum | "">
             value={local.questType}
-            onChange={(v) =>
-              setLocal((l) => ({ ...l, questType: (v ?? "") as any }))
+            onChange={(value) =>
+              setLocal((prev) => ({ ...prev, questType: (value ?? "") as any }))
             }
             allowClear
           >
             <Select.Option value="">
               {t("toolbar.questTypeFilter.all")}
             </Select.Option>
-            {Object.values(QuestType).map((val) => (
-              <Select.Option key={val} value={val}>
-                {QuestTypeLabels[val]}
+            {Object.values(QuestType).map((value) => (
+              <Select.Option key={value} value={value}>
+                {QuestTypeLabels[value]}
               </Select.Option>
             ))}
           </Select>
@@ -167,8 +167,8 @@ export default function QuestRequestSearchToolbar() {
           <RangePicker
             value={local.submittedDateRange as any}
             onChange={(dates) =>
-              setLocal((l) => ({
-                ...l,
+              setLocal((prev) => ({
+                ...prev,
                 submittedDateRange: dates as any,
               }))
             }

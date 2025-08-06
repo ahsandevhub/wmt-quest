@@ -43,7 +43,8 @@ export const QuestSearchToolbar: React.FC = () => {
   const { t } = useTranslation("quest_list");
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [local, setLocal] = useState<{
+  // Renamed from 'local' to 'filters'
+  const [filters, setFilters] = useState<{
     keywords: string;
     status: QuestStatusEnum;
   }>({
@@ -51,7 +52,7 @@ export const QuestSearchToolbar: React.FC = () => {
     status: (searchParams.get("status") as QuestStatusEnum) ?? QuestStatus.All,
   });
 
-  const QuestStatusLabels: Record<QuestStatusEnum, string> = {
+  const statusLabels: Record<QuestStatusEnum, string> = {
     [QuestStatus.All]: t("toolbar.statusFilter.all"),
     [QuestStatus.Active]: t("toolbar.statusFilter.active"),
     [QuestStatus.Inactive]: t("toolbar.statusFilter.inactive"),
@@ -59,13 +60,13 @@ export const QuestSearchToolbar: React.FC = () => {
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (local.keywords) params.set("keywords", local.keywords);
-    if (local.status) params.set("status", local.status);
+    if (filters.keywords) params.set("keywords", filters.keywords);
+    if (filters.status) params.set("status", filters.status);
     setSearchParams(params);
   };
 
   const handleReset = () => {
-    setLocal({ keywords: "", status: "" });
+    setFilters({ keywords: "", status: QuestStatus.All });
     setSearchParams({});
   };
 
@@ -75,9 +76,12 @@ export const QuestSearchToolbar: React.FC = () => {
         <span>{t("toolbar.searchBox.label")}</span>
         <StyledSearch
           placeholder={t("toolbar.searchBox.placeholder")}
-          value={local.keywords}
-          onChange={(e) =>
-            setLocal((l) => ({ ...l, keywords: e.target.value }))
+          value={filters.keywords}
+          onChange={(event) =>
+            setFilters((previousFilters) => ({
+              ...previousFilters,
+              keywords: event.target.value,
+            }))
           }
           onSearch={handleSearch}
           allowClear
@@ -88,18 +92,18 @@ export const QuestSearchToolbar: React.FC = () => {
       <ToolbarItem>
         <span>{t("toolbar.statusFilter.label")}</span>
         <StyledSelect<QuestStatusEnum>
-          value={local.status}
-          onChange={(v) =>
-            setLocal((l) => ({
-              ...l,
-              status: (v ?? QuestStatus.All) as QuestStatusEnum,
+          value={filters.status}
+          onChange={(selectedStatus) =>
+            setFilters((previousFilters) => ({
+              ...previousFilters,
+              status: (selectedStatus ?? QuestStatus.All) as QuestStatusEnum,
             }))
           }
           allowClear
         >
-          {Object.values(QuestStatus).map((val) => (
-            <Select.Option key={val || "__all"} value={val}>
-              {QuestStatusLabels[val]}
+          {Object.values(QuestStatus).map((statusValue) => (
+            <Select.Option key={statusValue || "__all"} value={statusValue}>
+              {statusLabels[statusValue]}
             </Select.Option>
           ))}
         </StyledSelect>
