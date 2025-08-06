@@ -25,11 +25,15 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import TextEditor from "../components/TextEditor";
+import { QuillFormField } from "../components/QuilFormField";
 import TitleBarHeader from "../components/TitleBarHeader";
 import api from "../lib/api/axiosInstance";
-import { Platform, PlatformLabels, type PlatformEnum } from "../types/platform";
-import { Rank, RankLabels, type RankEnum } from "../types/rank";
+import {
+  PlatformLabels,
+  QuestPlatform,
+  type QuestPlatformEnum,
+} from "../types/questPlatform";
+import { QuestRankLabels, Rank, type QuestRankEnum } from "../types/questRank";
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -81,16 +85,16 @@ const QuestionIcon = styled(QuestionCircleOutlined)`
   margin: 0 4px;
 `;
 
-const PLATFORM_OPTIONS: { label: string; value: PlatformEnum }[] =
-  Object.values(Platform).map((value) => ({
+const PLATFORM_OPTIONS: { label: string; value: QuestPlatformEnum }[] =
+  Object.values(QuestPlatform).map((value) => ({
     label: PlatformLabels[value],
     value,
   }));
 
-const RANK_OPTIONS: { label: string; value: RankEnum }[] = Object.values(
+const RANK_OPTIONS: { label: string; value: QuestRankEnum }[] = Object.values(
   Rank
 ).map((value) => ({
-  label: RankLabels[value],
+  label: QuestRankLabels[value],
   value,
 }));
 
@@ -98,9 +102,9 @@ interface AddNewQuestFormValues {
   status: boolean;
   title: string;
   expiryDate?: Dayjs;
-  platform?: PlatformEnum;
+  platform?: QuestPlatformEnum;
   point: number;
-  accountRank: RankEnum[];
+  accountRank: QuestRankEnum[];
   requiredUploadEvidence: boolean;
   requiredEnterLink: boolean;
   allowSubmitMultiple: boolean;
@@ -529,12 +533,7 @@ const AddNewQuest: React.FC = () => {
                 },
               ]}
             >
-              <TextEditor
-                placeholder="Description here."
-                onChange={(value) =>
-                  form.setFieldsValue({ description: value })
-                }
-              />
+              <QuillFormField />
             </Form.Item>
 
             <Form.Item

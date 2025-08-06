@@ -4,15 +4,15 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 import { questDetailLoader } from "../loaders/QuestDetail.loader";
 import { questListLoader } from "../loaders/QuestList.loader";
-import { questRequestLoader } from "../loaders/QuestRequest.loader";
 import { questRequestDetailLoader } from "../loaders/QuestRequestDetails.loader";
+import { questRequestListLoader } from "../loaders/QuestRequestList.loader";
 import AddNewQuest from "../pages/AddNewQuest";
 import LoginPage from "../pages/LoginPage";
 import NotFound from "../pages/NotFound";
 import QuestDetail from "../pages/QuestDetail";
 import QuestList from "../pages/QuestList";
-import QuestRequest from "../pages/QuestRequest";
 import QuestRequestDetail from "../pages/QuestRequestDetails";
+import QuestRequestList from "../pages/QuestRequestList";
 
 const router = createBrowserRouter([
   {
@@ -49,8 +49,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/quest/quest-requests",
-        element: <QuestRequest />,
-        loader: questRequestLoader,
+        element: <QuestRequestList />,
+        loader: questRequestListLoader,
         handle: { showQuickTabs: true },
       },
       {

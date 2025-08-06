@@ -20,11 +20,15 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import TextEditor from "../components/TextEditor";
+import { QuillFormField } from "../components/QuilFormField";
 import TitleBarHeader from "../components/TitleBarHeader";
 import api from "../lib/api/axiosInstance";
-import { Platform, PlatformLabels, type PlatformEnum } from "../types/platform";
-import { Rank, RankLabels, type RankEnum } from "../types/rank";
+import {
+  PlatformLabels,
+  QuestPlatform,
+  type QuestPlatformEnum,
+} from "../types/questPlatform";
+import { QuestRankLabels, Rank, type QuestRankEnum } from "../types/questRank";
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -76,13 +80,13 @@ const QuestionIcon = styled(QuestionCircleOutlined)`
   margin: 0 4px;
 `;
 
-const PLATFORM_OPTIONS = Object.values(Platform).map((value) => ({
+const PLATFORM_OPTIONS = Object.values(QuestPlatform).map((value) => ({
   label: PlatformLabels[value],
   value,
 }));
 
 const RANK_OPTIONS = Object.values(Rank).map((value) => ({
-  label: RankLabels[value],
+  label: QuestRankLabels[value],
   value,
 }));
 
@@ -90,9 +94,9 @@ interface QuestDetailFormValues {
   status: boolean;
   title: string;
   expiryDate?: Dayjs;
-  platform?: PlatformEnum;
+  platform?: QuestPlatformEnum;
   point: number;
-  accountRank: RankEnum[];
+  accountRank: QuestRankEnum[];
   requiredUploadEvidence: boolean;
   requiredEnterLink: boolean;
   allowSubmitMultiple: boolean;
@@ -181,6 +185,15 @@ const QuestDetail: React.FC = () => {
   };
 
   const onFinish = async (values: QuestDetailFormValues) => {
+    const existingIds = new Set(
+      questData.usersData.map((u: { userId: any }) => u.userId)
+    );
+    const newlyAddedUserIds = emailList
+      .map((u) => u.userId)
+      .filter((id) => !existingIds.has(id));
+
+    console.log(newlyAddedUserIds);
+
     const payload = {
       title: values.title,
       description: values.description,
@@ -192,7 +205,7 @@ const QuestDetail: React.FC = () => {
       requiredEnterLink: values.requiredEnterLink,
       allowSubmitMultiple: values.allowSubmitMultiple,
       expiryDate: values.expiryDate?.toISOString(),
-      userIds: emailList.map((u) => u.userId),
+      ...(newlyAddedUserIds.length ? { userIds: newlyAddedUserIds } : {}),
     };
 
     try {
@@ -470,12 +483,7 @@ const QuestDetail: React.FC = () => {
                 },
               ]}
             >
-              <TextEditor
-                defaultValue={questData.description}
-                onChange={(value) =>
-                  form.setFieldsValue({ description: value })
-                }
-              />
+              <QuillFormField value={questData.description} />
             </Form.Item>
 
             <Form.Item

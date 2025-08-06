@@ -4,9 +4,9 @@ export const Rank = {
   Diamond: 3,
 } as const;
 
-export type RankEnum = (typeof Rank)[keyof typeof Rank];
+export type QuestRankEnum = (typeof Rank)[keyof typeof Rank];
 
-export const RankLabels: Record<RankEnum, string> = {
+export const QuestRankLabels: Record<QuestRankEnum, string> = {
   [Rank.Silver]: "Silver",
   [Rank.Gold]: "Gold",
   [Rank.Diamond]: "Diamond",

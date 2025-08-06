@@ -13,11 +13,3 @@ export const QuestRequestStatusLabels: Record<QuestRequestStatusEnum, string> =
     [QuestRequestStatus.Approved]: "Approved",
     [QuestRequestStatus.Rejected]: "Rejected",
   };
-
-export const QUEST_REQUEST_STATUS_OPTIONS = [
-  { value: "", label: "All Statuses" },
-  ...Object.values(QuestRequestStatus).map((value) => ({
-    value: String(value),
-    label: QuestRequestStatusLabels[value as QuestRequestStatusEnum],
-  })),
-];
