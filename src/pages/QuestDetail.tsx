@@ -252,7 +252,7 @@ const QuestDetail: React.FC = () => {
               expiryDate: questData.expiryDate
                 ? dayjs(questData.expiryDate)
                 : undefined,
-              platform: questData.platform,
+              platform: questData.platform || QuestPlatform.Other,
               point: questData.point,
               accountRank: questData.accountRank,
               requiredUploadEvidence: questData.requiredUploadEvidence,

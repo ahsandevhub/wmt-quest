@@ -8,20 +8,13 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import {
-  Avatar,
-  Badge,
-  Breadcrumb,
-  Dropdown,
-  Grid,
-  Layout,
-  message,
-} from "antd";
+import { Avatar, Badge, Dropdown, Grid, Layout, message } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import useAuth from "../auth/useAuth";
+import Breadcrumbs from "../components/Breadcrumbs"; // <-- Import Here
 
 const { Header } = Layout;
 const { useBreakpoint } = Grid;
@@ -60,26 +53,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const screens = useBreakpoint();
-  const location = useLocation();
   const { t, i18n } = useTranslation("header");
 
   const isMobile = !screens.md;
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  const formatSeg = (seg: string) =>
-    seg
-      .split("-")
-      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-      .join(" ");
-
-  const crumbs: { title: string }[] = [];
-  if (!isMobile) {
-    crumbs.push({ title: t("home") });
-  }
-  crumbs.push({
-    title: isMobile
-      ? formatSeg(pathSegments[pathSegments.length - 1] || "")
-      : formatSeg(pathSegments[1] || pathSegments[0] || ""),
-  });
 
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "logout") {
@@ -124,7 +100,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
         ) : (
           <MenuFoldOutlined onClick={onToggle} />
         )}
-        <Breadcrumb style={{ marginLeft: 16 }} items={crumbs} />
+        <div style={{ marginLeft: 16 }}>
+          <Breadcrumbs /> {/* Use Component Here */}
+        </div>
       </Left>
       <Right>
         {!isMobile && (
@@ -147,7 +125,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
               </div>
             </Dropdown>
             <Badge>
-              <BellOutlined />
+              <BellOutlined className="border border-gray-300 p-2 rounded-lg" />
             </Badge>
           </>
         )}
