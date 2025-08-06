@@ -10,7 +10,7 @@ i18n
   .init({
     fallbackLng: "en",
     supportedLngs: ["en", "bn"],
-    debug: true,
+    debug: false,
     ns: [
       "sidebar",
       "header",

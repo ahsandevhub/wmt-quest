@@ -12,6 +12,7 @@ import {
   InputNumber,
   Layout,
   Select,
+  Space,
   Switch,
   Table,
   Tooltip,
@@ -574,7 +575,7 @@ const AddNewQuest: React.FC = () => {
                       count: emailList.length,
                     })}
                   </Text>
-                  <Input.Group style={{ width: "max-content" }} compact>
+                  <Space.Compact style={{ width: "max-content" }}>
                     <Input
                       style={{ width: 247 }}
                       placeholder={t("table.searchPlaceholder")}
@@ -582,7 +583,7 @@ const AddNewQuest: React.FC = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <Button icon={<SearchOutlined />} />
-                  </Input.Group>
+                  </Space.Compact>
                 </StatsContainer>
 
                 <Table<UserEmail>
