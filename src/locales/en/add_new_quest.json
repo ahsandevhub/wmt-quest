@@ -21,7 +21,10 @@
     },
     "placeholders": {
       "enterTitle": "Enter title",
-      "enterEmail": "Enter email"
+      "selectDate": "Select date",
+      "enterDescription": "Description here.",
+      "enterEmail": "Enter email",
+      "searchEmails": "Search email"
     },
     "tooltips": {
       "expiryDate": "This Quest will expire at 23:59 on the selected date. If no date is selected, it will have no expiration",
@@ -62,5 +65,15 @@
   "messages": {
     "questAdded": "Quest added successfully",
     "importNotImplemented": "Import functionality not implemented yet"
+  },
+  "platform": {
+    "other": "Other",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "telegram": "Telegram",
+    "tiktok": "TikTok",
+    "twitter": "Twitter",
+    "discord": "Discord"
   }
 }

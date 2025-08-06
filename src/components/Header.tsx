@@ -64,29 +64,22 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
   const { t, i18n } = useTranslation("header");
 
   const isMobile = !screens.md;
-
   const pathSegments = location.pathname.split("/").filter(Boolean);
-  const formatted = (seg: string) =>
+  const formatSeg = (seg: string) =>
     seg
       .split("-")
       .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
       .join(" ");
 
   const crumbs: { title: string }[] = [];
-
   if (!isMobile) {
-    crumbs.push({
-      title: pathSegments[0] ? formatted(pathSegments[0]) : t("home"),
-    });
+    crumbs.push({ title: t("home") });
   }
-
-  const secondOrLast = isMobile
-    ? formatted(pathSegments[pathSegments.length - 1] || "")
-    : pathSegments[1]
-    ? formatted(pathSegments[1])
-    : formatted(pathSegments[0] || "");
-
-  crumbs.push({ title: secondOrLast });
+  crumbs.push({
+    title: isMobile
+      ? formatSeg(pathSegments[pathSegments.length - 1] || "")
+      : formatSeg(pathSegments[1] || pathSegments[0] || ""),
+  });
 
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "logout") {
@@ -104,8 +97,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
   };
 
   const languageMenuItems: MenuProps["items"] = [
-    { label: "English", key: "en" },
-    { label: "বাংলা", key: "bn" },
+    { label: t("language.english"), key: "en" },
+    { label: t("language.bengali"), key: "bn" },
   ];
 
   const profileMenuItems: MenuProps["items"] = [
@@ -114,10 +107,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
       key: "profile",
       icon: <ProfileOutlined />,
     },
-    {
-      type: "divider",
-      key: "divider",
-    },
+    { type: "divider", key: "divider" },
     {
       label: t("profile.logout_button"),
       key: "logout",
@@ -130,19 +120,20 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
     <StyledHeader>
       <Left>
         {collapsed ? (
-          <MenuUnfoldOutlined style={{ fontSize: 20 }} onClick={onToggle} />
+          <MenuUnfoldOutlined onClick={onToggle} />
         ) : (
-          <MenuFoldOutlined style={{ fontSize: 20 }} onClick={onToggle} />
+          <MenuFoldOutlined onClick={onToggle} />
         )}
-
         <Breadcrumb style={{ marginLeft: 16 }} items={crumbs} />
       </Left>
-
       <Right>
         {!isMobile && (
           <>
             <Dropdown
-              menu={{ items: languageMenuItems, onClick: handleLanguageChange }}
+              menu={{
+                items: languageMenuItems,
+                onClick: handleLanguageChange,
+              }}
               placement="bottomRight"
               arrow
             >
@@ -155,19 +146,17 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
                 </span>
               </div>
             </Dropdown>
-
             <Badge>
-              <BellOutlined className="border border-gray-300 p-2 rounded-lg" />
+              <BellOutlined />
             </Badge>
           </>
         )}
-
         <Dropdown
           menu={{ items: profileMenuItems, onClick: handleMenuClick }}
           placement="bottomRight"
           arrow
         >
-          <Avatar icon={<UserOutlined />} style={{ cursor: "pointer" }} />
+          <Avatar icon={<UserOutlined />} />
         </Dropdown>
       </Right>
     </StyledHeader>

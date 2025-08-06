@@ -1,6 +1,7 @@
 import { CloseOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 const TabsWrapper = styled.div`
@@ -21,12 +22,14 @@ const StyledClose = styled(CloseOutlined)`
 `;
 
 const QuickTabs: React.FC = () => {
+  const { t } = useTranslation("quick_tabs");
+
   return (
     <TabsWrapper>
       <Button size="small" type="primary">
-        Current Page's Title <StyledClose />
+        {t("tabs.currentPage")} <StyledClose />
       </Button>
-      <Button size="small">Other Page's Title</Button>
+      <Button size="small">{t("tabs.otherPage")}</Button>
     </TabsWrapper>
   );
 };

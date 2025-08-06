@@ -1,11 +1,13 @@
 {
+  "home": "হোম",
+  "logout_success": "সাফল্যের সাথে লগআউট করা হয়েছে",
   "language": {
-    "english": "ইংরেজি",
-    "bengali": "বাংলা",
-    "changed_message": "ভাষা সফলভাবে পরিবর্তিত হয়েছে"
+    "changed_message": "ভাষা সফলভাবে পরিবর্তিত হয়েছে",
+    "english": "English",
+    "bengali": "বাংলা"
   },
   "profile": {
     "my_profile": "আমার প্রোফাইল",
-    "logout_button": "লগ-আউট"
+    "logout_button": "লগআউট"
   }
 }

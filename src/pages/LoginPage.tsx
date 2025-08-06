@@ -1,6 +1,7 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import WmtLogo from "../assets/WeMasterTrade-logo.png";
@@ -56,6 +57,7 @@ const ErrorMessage = styled.div`
 `;
 
 const LoginPage: React.FC = () => {
+  const { t } = useTranslation("login");
   const { accessToken, login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -72,13 +74,12 @@ const LoginPage: React.FC = () => {
     setErrorMessage("");
     try {
       await login(values.username, values.password);
-      message.success("Login successful!");
+      message.success(t("loginSuccess"));
       navigate("/quest/quest-list", { replace: true });
     } catch (err: any) {
+      const defaultMsg = t("loginFailed");
       const errorMsg =
-        err?.response?.data?.message ||
-        err.message ||
-        "Login failed. Please try again.";
+        err?.response?.data?.message || err.message || defaultMsg;
       setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
@@ -90,7 +91,7 @@ const LoginPage: React.FC = () => {
       <Card>
         <LogoWrapper>
           <a href="/">
-            <img src={WmtLogo} alt="WeMasterTrade" />
+            <img src={WmtLogo} alt={t("logoAlt")} />
           </a>
         </LogoWrapper>
 
@@ -103,22 +104,22 @@ const LoginPage: React.FC = () => {
         >
           <Form.Item
             name="username"
-            rules={[{ required: true, message: "Please enter your username" }]}
+            rules={[{ required: true, message: t("requiredUsername") }]}
           >
             <Input
               size="large"
-              placeholder="Username or email"
+              placeholder={t("usernamePlaceholder")}
               prefix={<UserOutlined style={{ color: "#9ca3af" }} />}
             />
           </Form.Item>
 
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Please enter your password" }]}
+            rules={[{ required: true, message: t("requiredPassword") }]}
           >
             <Input.Password
               size="large"
-              placeholder="Password"
+              placeholder={t("passwordPlaceholder")}
               prefix={<LockOutlined style={{ color: "#9ca3af" }} />}
             />
           </Form.Item>
@@ -131,7 +132,7 @@ const LoginPage: React.FC = () => {
               size="large"
               block
             >
-              Sign In
+              {t("signIn")}
             </Button>
           </Form.Item>
         </Form>

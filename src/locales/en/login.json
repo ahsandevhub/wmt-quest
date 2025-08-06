@@ -1,0 +1,10 @@
+{
+  "usernamePlaceholder": "Username or email",
+  "passwordPlaceholder": "Password",
+  "requiredUsername": "Please enter your username",
+  "requiredPassword": "Please enter your password",
+  "signIn": "Sign In",
+  "loginSuccess": "Login successful!",
+  "loginFailed": "Login failed. Please try again.",
+  "logoAlt": "WeMasterTrade Logo"
+}

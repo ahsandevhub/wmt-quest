@@ -28,11 +28,7 @@ import styled from "styled-components";
 import { QuillFormField } from "../components/QuilFormField";
 import TitleBarHeader from "../components/TitleBarHeader";
 import api from "../lib/api/axiosInstance";
-import {
-  PlatformLabels,
-  QuestPlatform,
-  type QuestPlatformEnum,
-} from "../types/questPlatform";
+import { QuestPlatform, type QuestPlatformEnum } from "../types/questPlatform";
 import { QuestRankLabels, Rank, type QuestRankEnum } from "../types/questRank";
 
 const { Content } = Layout;
@@ -85,19 +81,6 @@ const QuestionIcon = styled(QuestionCircleOutlined)`
   margin: 0 4px;
 `;
 
-const PLATFORM_OPTIONS: { label: string; value: QuestPlatformEnum }[] =
-  Object.values(QuestPlatform).map((value) => ({
-    label: PlatformLabels[value],
-    value,
-  }));
-
-const RANK_OPTIONS: { label: string; value: QuestRankEnum }[] = Object.values(
-  Rank
-).map((value) => ({
-  label: QuestRankLabels[value],
-  value,
-}));
-
 interface AddNewQuestFormValues {
   status: boolean;
   title: string;
@@ -127,6 +110,30 @@ const AddNewQuest: React.FC = () => {
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+
+  const PlatformLabels: Record<QuestPlatformEnum, string> = {
+    [QuestPlatform.Other]: t("platform.other"),
+    [QuestPlatform.Facebook]: t("platform.facebook"),
+    [QuestPlatform.Instagram]: t("platform.instagram"),
+    [QuestPlatform.YouTube]: t("platform.youtube"),
+    [QuestPlatform.Telegram]: t("platform.telegram"),
+    [QuestPlatform.TikTok]: t("platform.tiktok"),
+    [QuestPlatform.Twitter]: t("platform.twitter"),
+    [QuestPlatform.Discord]: t("platform.discord"),
+  };
+
+  const PLATFORM_OPTIONS: { label: string; value: QuestPlatformEnum }[] =
+    Object.values(QuestPlatform).map((value) => ({
+      label: PlatformLabels[value],
+      value,
+    }));
+
+  const RANK_OPTIONS: { label: string; value: QuestRankEnum }[] = Object.values(
+    Rank
+  ).map((value) => ({
+    label: QuestRankLabels[value],
+    value,
+  }));
 
   // filter emails when list or searchTerm changes
   useEffect(() => {
@@ -362,7 +369,11 @@ const AddNewQuest: React.FC = () => {
                 },
               ]}
             >
-              <DatePicker style={{ width: "100%" }} format="MM/DD/YYYY" />
+              <DatePicker
+                placeholder={t("form.placeholders.selectDate")}
+                style={{ width: "100%" }}
+                format="MM/DD/YYYY"
+              />
             </Form.Item>
 
             <Form.Item
@@ -512,20 +523,22 @@ const AddNewQuest: React.FC = () => {
 
             <Form.Item
               name="description"
-              label="Description"
+              label={t("form.labels.description")}
+              validateFirst
               rules={[
                 {
                   required: true,
+                  message: t("validation.enterDescription"),
                 },
                 {
                   validator: (_, value) => {
                     const text = value?.replace(/<[^>]+>/g, "") || "";
                     if (!text.trim()) {
-                      return Promise.reject("Description is required");
+                      return Promise.reject(t("validation.enterDescription"));
                     }
                     if (text.length > 2000) {
                       return Promise.reject(
-                        "Description must be less than 2000 characters"
+                        t("validation.descriptionMax", { count: 2000 })
                       );
                     }
                     return Promise.resolve();

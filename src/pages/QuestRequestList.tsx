@@ -2,6 +2,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Button, Pagination, Table, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import {
   Link,
   useLoaderData,
@@ -10,10 +11,12 @@ import {
 } from "react-router-dom";
 import styled from "styled-components";
 import QuestRequestSearchToolbar from "../components/QuestRequestSearchToolbar";
-import { QuestRequestStatusLabels } from "../types/questRequestStatus";
-import { QuestTypeLabels, type QuestTypeEnum } from "../types/questType";
+import {
+  QuestRequestStatus,
+  type QuestRequestStatusEnum,
+} from "../types/questRequestStatus";
+import { QuestType, type QuestTypeEnum } from "../types/questType";
 
-// Styled Components
 const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -59,8 +62,21 @@ interface QuestRequestListRow {
 }
 
 export default function QuestRequestList() {
+  const { t } = useTranslation("quest_request_list");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const QuestTypeLabels: Record<QuestTypeEnum, string> = {
+    [QuestType.Common]: t("questType.common"),
+    [QuestType.Welcome]: t("questType.welcome"),
+    [QuestType.Tournament]: t("questType.tournament"),
+  };
+
+  const QuestRequestStatusLabels: Record<QuestRequestStatusEnum, string> = {
+    [QuestRequestStatus.Pending]: t("questRequestStatus.pending"),
+    [QuestRequestStatus.Approved]: t("questRequestStatus.approved"),
+    [QuestRequestStatus.Rejected]: t("questRequestStatus.rejected"),
+  };
 
   const { questRequests, totalItems, filters } = useLoaderData() as {
     questRequests: QuestRequestListRow[];
@@ -76,23 +92,23 @@ export default function QuestRequestList() {
 
   const columns: ColumnsType<QuestRequestListRow> = [
     {
-      title: "Request ID",
+      title: t("columns.requestId"),
       dataIndex: "code",
       key: "code",
     },
     {
-      title: "Quest Type",
+      title: t("columns.questType"),
       dataIndex: "challengeId",
       key: "questType",
-      render: (questType: QuestTypeEnum) => QuestTypeLabels[questType] ?? "—",
+      render: (type: QuestTypeEnum) => QuestTypeLabels[type] ?? "—",
     },
     {
-      title: "Quest ID",
+      title: t("columns.questId"),
       dataIndex: "challengeCode",
       key: "challengeCode",
     },
     {
-      title: "Quest Title",
+      title: t("columns.questTitle"),
       dataIndex: "title",
       key: "title",
       width: 150,
@@ -104,13 +120,13 @@ export default function QuestRequestList() {
       ),
     },
     {
-      title: "Point",
+      title: t("columns.point"),
       dataIndex: "point",
       key: "point",
-      render: (point: number) => point.toLocaleString(), // Adds comma separators for thousands
+      render: (point: number) => point.toLocaleString(),
     },
     {
-      title: "Email",
+      title: t("columns.email"),
       dataIndex: "email",
       key: "email",
       width: 150,
@@ -122,31 +138,31 @@ export default function QuestRequestList() {
       ),
     },
     {
-      title: "Full Name",
+      title: t("columns.fullName"),
       dataIndex: "fullName",
       key: "fullName",
       width: 150,
       ellipsis: { showTitle: false },
-      render: (fullName: string) => (
-        <Tooltip title={fullName}>
-          <EllipsisText>{fullName}</EllipsisText>
+      render: (name: string) => (
+        <Tooltip title={name}>
+          <EllipsisText>{name}</EllipsisText>
         </Tooltip>
       ),
     },
     {
-      title: "Submitted Date",
+      title: t("columns.submittedDate"),
       dataIndex: "submittedDate",
       key: "submittedDate",
-      render: (d: string) => dayjs(d).format("MM/DD/YYYY hh:mm:ss"),
+      render: (date: string) => dayjs(date).format("MM/DD/YYYY hh:mm:ss"),
     },
     {
-      title: "Updated Date",
+      title: t("columns.updatedDate"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (d: string) => dayjs(d).format("MM/DD/YYYY hh:mm:ss"),
+      render: (date: string) => dayjs(date).format("MM/DD/YYYY hh:mm:ss"),
     },
     {
-      title: "Status",
+      title: t("columns.status"),
       dataIndex: "status",
       key: "status",
       render: (status: number) => {
@@ -163,15 +179,12 @@ export default function QuestRequestList() {
       },
     },
     {
-      title: "",
+      title: t("columns.actions"),
       key: "detail",
       align: "right",
-      render: (questRequest) => (
-        <Link
-          to={`/quest/quest-requests/${questRequest.id}`}
-          style={{ color: "#1890ff" }}
-        >
-          Detail
+      render: ({ id }) => (
+        <Link to={`/quest/quest-requests/${id}`} style={{ color: "#1890ff" }}>
+          {t("detail")}
         </Link>
       ),
     },
@@ -188,20 +201,20 @@ export default function QuestRequestList() {
             icon={<PlusOutlined />}
             onClick={() => navigate("/quest/request/add")}
           >
-            Add
+            {t("addButton")}
           </Button>
         </div>
-        <Table
+
+        <Table<QuestRequestListRow>
           columns={columns}
-          dataSource={questRequests.map((i) => ({ ...i, key: i.id }))}
+          dataSource={questRequests.map((item) => ({ ...item, key: item.id }))}
           pagination={false}
           scroll={{ x: "max-content" }}
-          locale={{
-            emptyText: "No results are matching with your filter criteria",
-          }}
+          locale={{ emptyText: t("locale.emptyText") }}
         />
+
         <PaginationContainer>
-          <div>Total {totalItems} items</div>
+          <div>{t("totalItems", { count: totalItems })}</div>
           <Pagination
             current={filters.page}
             pageSize={filters.limit}

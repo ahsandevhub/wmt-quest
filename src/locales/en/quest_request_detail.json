@@ -1,0 +1,42 @@
+{
+  "labels": {
+    "requestId": "Request ID",
+    "questId": "Quest ID",
+    "questTitle": "Quest Title",
+    "questType": "Quest Type",
+    "platform": "Platform",
+    "point": "Point",
+    "description": "Description",
+    "fullName": "Full Name",
+    "email": "Email",
+    "status": "Status",
+    "rejectedReason": "Rejected Reason",
+    "submittedDate": "Submitted Date",
+    "updatedDate": "Updated Date",
+    "updatedBy": "Updated By",
+    "evidence": "Evidence",
+    "relatedLink": "Related Link"
+  },
+  "buttons": {
+    "reject": "Reject",
+    "approve": "Approve",
+    "cancel": "Cancel"
+  },
+  "modals": {
+    "approveTitle": "Approve Quest Request",
+    "approveConfirm": "Are you sure you want to approve this quest request?",
+    "rejectTitle": "Reject Quest Request",
+    "rejectPlaceholder": "Type a reason…"
+  },
+  "messages": {
+    "approveSuccess": "Quest request approved successfully!",
+    "approveError": "Failed to approve. Please try again.",
+    "rejectSuccess": "Quest request rejected successfully!",
+    "rejectError": "Failed to reject. Please try again."
+  },
+  "questRequestStatus": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  }
+}

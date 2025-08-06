@@ -2,6 +2,7 @@
   "pageTitle": "Quest Title",
   "buttons": {
     "add": "Add",
+    "update": "Update",
     "import": "Import"
   },
   "form": {
@@ -62,5 +63,15 @@
   "messages": {
     "questAdded": "Quest added successfully",
     "importNotImplemented": "Import functionality not implemented yet"
+  },
+  "platform": {
+    "other": "Other",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "telegram": "Telegram",
+    "tiktok": "TikTok",
+    "twitter": "Twitter",
+    "discord": "Discord"
   }
 }

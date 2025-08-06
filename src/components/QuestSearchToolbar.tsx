@@ -4,11 +4,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
-import {
-  QuestStatus,
-  QuestStatusLabels,
-  type QuestStatusEnum,
-} from "../types/questStatus";
+import { QuestStatus, type QuestStatusEnum } from "../types/questStatus";
 
 const { Search } = Input;
 
@@ -55,6 +51,12 @@ export const QuestSearchToolbar: React.FC = () => {
     status: (searchParams.get("status") as QuestStatusEnum) ?? QuestStatus.All,
   });
 
+  const QuestStatusLabels: Record<QuestStatusEnum, string> = {
+    [QuestStatus.All]: t("toolbar.statusFilter.all"),
+    [QuestStatus.Active]: t("toolbar.statusFilter.active"),
+    [QuestStatus.Inactive]: t("toolbar.statusFilter.inactive"),
+  };
+
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (local.keywords) params.set("keywords", local.keywords);
@@ -70,9 +72,9 @@ export const QuestSearchToolbar: React.FC = () => {
   return (
     <ToolbarContainer>
       <ToolbarItem>
-        <span>{t("toolbar.search_box.label")}</span>
+        <span>{t("toolbar.searchBox.label")}</span>
         <StyledSearch
-          placeholder={t("toolbar.search_box.placeholderSearch")}
+          placeholder={t("toolbar.searchBox.placeholder")}
           value={local.keywords}
           onChange={(e) =>
             setLocal((l) => ({ ...l, keywords: e.target.value }))
@@ -84,7 +86,7 @@ export const QuestSearchToolbar: React.FC = () => {
       </ToolbarItem>
 
       <ToolbarItem>
-        <span>{t("toolbar.status_filter.label")}</span>
+        <span>{t("toolbar.statusFilter.label")}</span>
         <StyledSelect<QuestStatusEnum>
           value={local.status}
           onChange={(v) =>
@@ -104,10 +106,10 @@ export const QuestSearchToolbar: React.FC = () => {
       </ToolbarItem>
 
       <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
-        {t("toolbar.search_button")}
+        {t("toolbar.searchButton")}
       </Button>
       <Button icon={<SyncOutlined />} onClick={handleReset}>
-        {t("toolbar.reset_button")}
+        {t("toolbar.resetButton")}
       </Button>
     </ToolbarContainer>
   );

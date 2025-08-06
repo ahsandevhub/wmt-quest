@@ -1,0 +1,50 @@
+{
+  "columns": {
+    "requestId": "রিকোয়েস্ট আইডি",
+    "questType": "কোয়েস্টের ধরন",
+    "questId": "কোয়েস্ট আইডি",
+    "questTitle": "কোয়েস্ট শিরোনাম",
+    "point": "পয়েন্ট",
+    "email": "ইমেইল",
+    "fullName": "পূর্ণ নাম",
+    "submittedDate": "জমাদানের তারিখ",
+    "updatedDate": "হালনাগাদ তারিখ",
+    "status": "স্থিতি",
+    "actions": ""
+  },
+  "detail": "বিস্তারিত",
+  "addButton": "যোগ করুন",
+  "totalItems": "মোট {{count}} টি আইটেম",
+  "locale": {
+    "emptyText": "আপনার ফিল্টার ক্রাইটেরিয়ার সাথে কোনো ফলাফল মেলে নি"
+  },
+  "toolbar": {
+    "searchBox": {
+      "label": "কীওয়ার্ড:",
+      "placeholder": "কোয়েস্ট শিরোনাম অনুসারে অনুসন্ধান করুন"
+    },
+    "statusFilter": {
+      "label": "স্থিতি:",
+      "all": "সমস্ত অবস্থা"
+    },
+    "questTypeFilter": {
+      "label": "কোয়েস্টের ধরন:",
+      "all": "সমস্ত কোয়েস্ট"
+    },
+    "submittedDate": {
+      "label": "জমাদানের তারিখ:"
+    },
+    "searchButton": "অনুসন্ধান",
+    "resetButton": "রিসেট"
+  },
+  "questType": {
+    "common": "সাধারণ কোয়েস্ট",
+    "welcome": "স্বাগত কোয়েস্ট",
+    "tournament": "টুর্নামেন্ট কোয়েস্ট"
+  },
+  "questRequestStatus": {
+    "pending": "মুলতুবি",
+    "approved": "অনুমোদিত",
+    "rejected": "প্রত্যাখ্যাত"
+  }
+}

@@ -8,6 +8,7 @@ import {
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import React, { forwardRef, useEffect, useLayoutEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 export interface TextEditorProps {
@@ -52,12 +53,16 @@ const TextEditor = forwardRef<Quill | undefined, TextEditorProps>(
     {
       readOnly = false,
       defaultValue,
-      placeholder = "Enter your text here…",
+      placeholder: rawPlaceholder,
       onTextChange,
       onSelectionChange,
     },
     ref
   ) => {
+    const { t } = useTranslation("add_new_quest");
+    const placeholder =
+      rawPlaceholder ?? t("form.placeholders.enterDescription");
+
     const containerRef = useRef<HTMLDivElement>(null);
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
@@ -120,7 +125,6 @@ const TextEditor = forwardRef<Quill | undefined, TextEditorProps>(
           onTextChangeRef.current?.(delta, oldDelta, source);
         }
       );
-
       quill.on(
         Quill.events.SELECTION_CHANGE,
         (

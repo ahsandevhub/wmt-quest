@@ -1,8 +1,10 @@
 {
+  "home": "Home",
+  "logout_success": "Logged out successfully",
   "language": {
+    "changed_message": "Language changed successfully",
     "english": "English",
-    "bengali": "Bengali",
-    "changed_message": "Language changed successfully"
+    "bengali": "বাংলা"
   },
   "profile": {
     "my_profile": "My Profile",

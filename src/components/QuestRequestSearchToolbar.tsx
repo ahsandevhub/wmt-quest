@@ -2,18 +2,14 @@ import { SearchOutlined, SyncOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Input, Select } from "antd";
 import { Dayjs } from "dayjs";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import {
   QuestRequestStatus,
-  QuestRequestStatusLabels,
   type QuestRequestStatusEnum,
 } from "../types/questRequestStatus";
-import {
-  QuestType,
-  QuestTypeLabels,
-  type QuestTypeEnum,
-} from "../types/questType";
+import { QuestType, type QuestTypeEnum } from "../types/questType";
 
 const { Search } = Input;
 const { RangePicker } = DatePicker;
@@ -53,6 +49,7 @@ const ButtonsWrapper = styled.div`
 `;
 
 export default function QuestRequestSearchToolbar() {
+  const { t } = useTranslation("quest_request_list");
   const [searchParams, setSearchParams] = useSearchParams();
   const [local, setLocal] = useState<{
     keywords: string;
@@ -69,6 +66,18 @@ export default function QuestRequestSearchToolbar() {
       : "",
     submittedDateRange: null,
   });
+
+  const QuestTypeLabels: Record<QuestTypeEnum, string> = {
+    [QuestType.Common]: t("questType.common"),
+    [QuestType.Welcome]: t("questType.welcome"),
+    [QuestType.Tournament]: t("questType.tournament"),
+  };
+
+  const QuestRequestStatusLabels: Record<QuestRequestStatusEnum, string> = {
+    [QuestRequestStatus.Pending]: t("questRequestStatus.pending"),
+    [QuestRequestStatus.Approved]: t("questRequestStatus.approved"),
+    [QuestRequestStatus.Rejected]: t("questRequestStatus.rejected"),
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -98,9 +107,9 @@ export default function QuestRequestSearchToolbar() {
       <ToolbarItemsWrapper>
         {/* Keywords */}
         <ToolbarItem>
-          <span>Keywords:</span>
+          <span>{t("toolbar.searchBox.label")}</span>
           <Search
-            placeholder="Search by Quest Title"
+            placeholder={t("toolbar.searchBox.placeholder")}
             value={local.keywords}
             onChange={(e) =>
               setLocal((l) => ({ ...l, keywords: e.target.value }))
@@ -112,7 +121,7 @@ export default function QuestRequestSearchToolbar() {
 
         {/* Status */}
         <ToolbarItem>
-          <span>Status:</span>
+          <span>{t("toolbar.statusFilter.label")}</span>
           <Select<QuestRequestStatusEnum | "">
             value={local.status}
             onChange={(v) =>
@@ -120,7 +129,9 @@ export default function QuestRequestSearchToolbar() {
             }
             allowClear
           >
-            <Select.Option value="">All Statuses</Select.Option>
+            <Select.Option value="">
+              {t("toolbar.statusFilter.all")}
+            </Select.Option>
             {Object.values(QuestRequestStatus).map((val) => (
               <Select.Option key={val} value={val}>
                 {QuestRequestStatusLabels[val]}
@@ -131,7 +142,7 @@ export default function QuestRequestSearchToolbar() {
 
         {/* Quest Type */}
         <ToolbarItem>
-          <span>Quest Type:</span>
+          <span>{t("toolbar.questTypeFilter.label")}</span>
           <Select<QuestTypeEnum | "">
             value={local.questType}
             onChange={(v) =>
@@ -139,7 +150,9 @@ export default function QuestRequestSearchToolbar() {
             }
             allowClear
           >
-            <Select.Option value="">All Quests</Select.Option>
+            <Select.Option value="">
+              {t("toolbar.questTypeFilter.all")}
+            </Select.Option>
             {Object.values(QuestType).map((val) => (
               <Select.Option key={val} value={val}>
                 {QuestTypeLabels[val]}
@@ -150,7 +163,7 @@ export default function QuestRequestSearchToolbar() {
 
         {/* Date Range */}
         <ToolbarItem>
-          <span>Submitted Date:</span>
+          <span>{t("toolbar.submittedDate.label")}</span>
           <RangePicker
             value={local.submittedDateRange as any}
             onChange={(dates) =>
@@ -166,10 +179,10 @@ export default function QuestRequestSearchToolbar() {
 
       <ButtonsWrapper>
         <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
-          Search
+          {t("toolbar.searchButton")}
         </Button>
         <Button icon={<SyncOutlined />} onClick={handleReset}>
-          Reset
+          {t("toolbar.resetButton")}
         </Button>
       </ButtonsWrapper>
     </Toolbar>

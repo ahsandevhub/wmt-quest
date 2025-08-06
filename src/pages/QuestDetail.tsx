@@ -23,11 +23,7 @@ import styled from "styled-components";
 import { QuillFormField } from "../components/QuilFormField";
 import TitleBarHeader from "../components/TitleBarHeader";
 import api from "../lib/api/axiosInstance";
-import {
-  PlatformLabels,
-  QuestPlatform,
-  type QuestPlatformEnum,
-} from "../types/questPlatform";
+import { QuestPlatform, type QuestPlatformEnum } from "../types/questPlatform";
 import { QuestRankLabels, Rank, type QuestRankEnum } from "../types/questRank";
 
 const { Content } = Layout;
@@ -80,16 +76,6 @@ const QuestionIcon = styled(QuestionCircleOutlined)`
   margin: 0 4px;
 `;
 
-const PLATFORM_OPTIONS = Object.values(QuestPlatform).map((value) => ({
-  label: PlatformLabels[value],
-  value,
-}));
-
-const RANK_OPTIONS = Object.values(Rank).map((value) => ({
-  label: QuestRankLabels[value],
-  value,
-}));
-
 interface QuestDetailFormValues {
   status: boolean;
   title: string;
@@ -120,6 +106,27 @@ const QuestDetail: React.FC = () => {
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+
+  const PlatformLabels: Record<QuestPlatformEnum, string> = {
+    [QuestPlatform.Other]: t("platform.other"),
+    [QuestPlatform.Facebook]: t("platform.facebook"),
+    [QuestPlatform.Instagram]: t("platform.instagram"),
+    [QuestPlatform.YouTube]: t("platform.youtube"),
+    [QuestPlatform.Telegram]: t("platform.telegram"),
+    [QuestPlatform.TikTok]: t("platform.tiktok"),
+    [QuestPlatform.Twitter]: t("platform.twitter"),
+    [QuestPlatform.Discord]: t("platform.discord"),
+  };
+
+  const PLATFORM_OPTIONS = Object.values(QuestPlatform).map((value) => ({
+    label: PlatformLabels[value],
+    value,
+  }));
+
+  const RANK_OPTIONS = Object.values(Rank).map((value) => ({
+    label: QuestRankLabels[value],
+    value,
+  }));
 
   useEffect(() => {
     const term = searchTerm.toLowerCase();
@@ -224,7 +231,7 @@ const QuestDetail: React.FC = () => {
         title={t("pageTitle")}
         actions={
           <Button type="primary" onClick={() => form.submit()}>
-            Update
+            {t("buttons.update")}
           </Button>
         }
       />
@@ -312,7 +319,11 @@ const QuestDetail: React.FC = () => {
                 },
               ]}
             >
-              <DatePicker style={{ width: "100%" }} format="MM/DD/YYYY" />
+              <DatePicker
+                placeholder={t("form.placeholders.selectDate")}
+                style={{ width: "100%" }}
+                format="MM/DD/YYYY"
+              />
             </Form.Item>
 
             <Form.Item
@@ -462,7 +473,7 @@ const QuestDetail: React.FC = () => {
 
             <Form.Item
               name="description"
-              label="Description"
+              label={t("form.labels.description")}
               rules={[
                 {
                   required: true,

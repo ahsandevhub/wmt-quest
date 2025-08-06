@@ -13,21 +13,21 @@
     "active": "Active",
     "inactive": "Inactive"
   },
+  "detail": "Detail",
+  "addButton": "Add",
+  "totalItems": "Total {{count}} items",
   "toolbar": {
-    "search_box": {
+    "searchBox": {
       "label": "Keywords:",
-      "placeholderSearch": "Search by Quest ID/Quest Title"
+      "placeholder": "Search by Quest ID/Quest Title"
     },
-    "status_filter": {
+    "statusFilter": {
       "label": "Status:",
-      "all": "All Statusses",
+      "all": "All Statuses",
       "active": "Active",
       "inactive": "Inactive"
     },
-    "search_button": "Search",
-    "reset_button": "Reset"
-  },
-  "add_button": "Add",
-  "detail": "Detail",
-  "totalItems": "Total {{count}} items"
+    "searchButton": "Search",
+    "resetButton": "Reset"
+  }
 }
