@@ -3,9 +3,9 @@ import { Layout, Spin } from "antd";
 import React, { useState } from "react";
 import { Outlet, useMatches, useNavigation } from "react-router-dom";
 import styled from "styled-components";
-import AppHeader from "../components/Header";
-import QuickTabs from "../components/QuickTabs";
-import Sidebar from "../components/Sidebar";
+import AppHeader from "../components/common/Header";
+import QuickTabs from "../components/common/QuickTabs";
+import Sidebar from "../components/common/Sidebar";
 
 const { Content } = Layout;
 

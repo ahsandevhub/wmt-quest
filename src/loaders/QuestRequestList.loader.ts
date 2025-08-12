@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
-import api from "../lib/api/axiosInstance";
+import api from "../services/http";
 // import {
 //   QuestRequestStatus,
 //   type QuestRequestStatusEnum,

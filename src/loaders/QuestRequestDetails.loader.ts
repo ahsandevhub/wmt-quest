@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "react-router-dom";
-import api from "../lib/api/axiosInstance";
+import api from "../services/http";
 import type { QuestRequest } from "../types/questRequest";
 
 export const questRequestDetailLoader: LoaderFunction = async ({ params }) => {

@@ -17,7 +17,7 @@ i18n
       escapeValue: false, // Not needed for React
     },
     backend: {
-      loadPath: "/src/locales/{{lng}}/{{ns}}.json",
+      loadPath: "/src/i18n/locales/{{lng}}/{{ns}}.json",
     },
     detection: {
       order: ["querystring", "cookie", "localStorage", "navigator"],

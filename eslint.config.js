@@ -20,6 +20,7 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
+      "react-refresh/only-export-components": "off",
       "@typescript-eslint/no-explicit-any": "off",
     },
   },

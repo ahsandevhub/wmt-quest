@@ -1,0 +1,34 @@
+{
+  "columns": {
+    "questId": "Quest ID",
+    "questTitle": "Quest Title",
+    "platform": "Platform",
+    "point": "Point",
+    "expiryDate": "Expiry Date",
+    "createdAt": "Created At",
+    "status": "Status",
+    "actions": ""
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "toolbar": {
+    "search_box": {
+      "label": "Keywords:",
+      "placeholderSearch": "Search by Quest ID/Quest Title"
+    },
+    "status_filter": {
+      "placeholder": "All Statusses",
+      "label": "Status:",
+      "all": "All Statusses",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "search_button": "Search",
+    "reset_button": "Reset"
+  },
+  "add_button": "Add",
+  "detail": "Detail",
+  "totalItems": "Total {{count}} items"
+}
