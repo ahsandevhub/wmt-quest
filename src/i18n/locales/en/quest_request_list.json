@@ -1,0 +1,50 @@
+{
+  "columns": {
+    "requestId": "Request ID",
+    "questType": "Quest Type",
+    "questId": "Quest ID",
+    "questTitle": "Quest Title",
+    "point": "Point",
+    "email": "Email",
+    "fullName": "Full Name",
+    "submittedDate": "Submitted Date",
+    "updatedDate": "Updated Date",
+    "status": "Status",
+    "actions": ""
+  },
+  "detail": "Detail",
+  "addButton": "Add",
+  "totalItems": "Total {{count}} items",
+  "locale": {
+    "emptyText": "No results are matching with your filter criteria"
+  },
+  "toolbar": {
+    "searchBox": {
+      "label": "Keywords:",
+      "placeholder": "Search by Quest Title"
+    },
+    "statusFilter": {
+      "label": "Status:",
+      "all": "All Statuses"
+    },
+    "questTypeFilter": {
+      "label": "Quest Type:",
+      "all": "All Quests"
+    },
+    "submittedDate": {
+      "label": "Submitted Date:"
+    },
+    "searchButton": "Search",
+    "resetButton": "Reset"
+  },
+  "questType": {
+    "common": "Common quest",
+    "welcome": "Welcome quest",
+    "tournament": "Tournament quest"
+  },
+  "questRequestStatus": {
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  }
+}

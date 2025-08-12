@@ -1,0 +1,10 @@
+{
+  "usernamePlaceholder": "ব্যবহারকারীর নাম বা ইমেইল",
+  "passwordPlaceholder": "পাসওয়ার্ড",
+  "requiredUsername": "দয়া করে আপনার ব্যবহারকারীর নাম লিখুন",
+  "requiredPassword": "দয়া করে আপনার পাসওয়ার্ড লিখুন",
+  "signIn": "সাইন ইন",
+  "loginSuccess": "সফলভাবে লগইন হয়েছে!",
+  "loginFailed": "লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+  "logoAlt": "WeMasterTrade লোগো"
+}

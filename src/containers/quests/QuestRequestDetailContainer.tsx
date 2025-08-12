@@ -8,9 +8,13 @@ import {
   Tag,
   message,
 } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLoaderData, useRevalidator } from "react-router-dom";
 import styled from "styled-components";
+<<<<<<< HEAD:src/containers/quests/QuestRequestDetailContainer.tsx
 import TitleBarHeader from "../../components/common/TitleBarHeader";
 import api from "../../services/http";
 
@@ -26,6 +30,15 @@ import {
   type QuestTypeEnum,
   QuestTypeLabels,
 } from "../../types/questType";
+=======
+import TitleBarHeader from "../components/TitleBarHeader";
+import api from "../lib/api/axiosInstance";
+import {
+  QuestRequestStatus,
+  type QuestRequestStatusEnum,
+} from "../types/questRequestStatus";
+import { QuestType, type QuestTypeEnum } from "../types/questType";
+>>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/pages/QuestRequestDetails.tsx
 
 interface Evidence {
   fileName: string;
@@ -35,8 +48,8 @@ interface Evidence {
 
 interface QuestRequest {
   id: number;
-  code: string; // PR0000001
-  challengeCode: string; // C0000003
+  code: string;
+  challengeCode: string;
   challengeType: QuestTypeEnum;
   title: string;
   platform: string;
@@ -100,20 +113,33 @@ const statusColor: Record<QuestRequestStatusEnum, string> = {
 
 export default function QuestRequestDetail() {
   const data = useLoaderData() as QuestRequest;
+  const { t } = useTranslation("quest_request_detail");
   const { revalidate } = useRevalidator();
 
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
 
+  const QuestTypeLabels: Record<QuestTypeEnum, string> = {
+    [QuestType.Common]: t("labels.questType"),
+    [QuestType.Welcome]: t("questType.welcome"),
+    [QuestType.Tournament]: t("questType.tournament"),
+  };
+
+  const QuestRequestStatusLabels: Record<QuestRequestStatusEnum, string> = {
+    [QuestRequestStatus.Pending]: t("questRequestStatus.pending"),
+    [QuestRequestStatus.Approved]: t("questRequestStatus.approved"),
+    [QuestRequestStatus.Rejected]: t("questRequestStatus.rejected"),
+  };
+
   const handleApprove = async () => {
     try {
       await api.post(`/api/v1/wmt/point-request/${data.id}/approved`);
-      message.success("Approve the quest request successfully!");
+      message.success(t("messages.approveSuccess"));
       setIsApproveModalOpen(false);
       revalidate();
     } catch {
-      message.error("Failed to approve. Please try again.");
+      message.error(t("messages.approveError"));
     }
   };
 
@@ -122,11 +148,11 @@ export default function QuestRequestDetail() {
       await api.post(`/api/v1/wmt/point-request/${data.id}/rejected`, {
         rejectedReason: rejectReason.trim(),
       });
-      message.success("Reject the quest request successfully!");
+      message.success(t("messages.rejectSuccess"));
       setIsRejectModalOpen(false);
       revalidate();
     } catch {
-      message.error("Failed to reject. Please try again.");
+      message.error(t("messages.rejectError"));
     }
   };
 
@@ -137,12 +163,14 @@ export default function QuestRequestDetail() {
         actions={
           data.status === QuestRequestStatus.Pending && (
             <>
-              <Button onClick={() => setIsRejectModalOpen(true)}>Reject</Button>
+              <Button onClick={() => setIsRejectModalOpen(true)}>
+                {t("buttons.reject")}
+              </Button>
               <Button
                 type="primary"
                 onClick={() => setIsApproveModalOpen(true)}
               >
-                Approve
+                {t("buttons.approve")}
               </Button>
             </>
           )
@@ -150,80 +178,80 @@ export default function QuestRequestDetail() {
       />
 
       <DescriptionsWrappper>
-        {/* Left column */}
         <StyledDescriptions
           column={1}
           layout="horizontal"
           colon={false}
           style={{ marginBottom: 24 }}
         >
-          <Descriptions.Item label="Request ID">{data.code}</Descriptions.Item>
+          <Descriptions.Item label={t("labels.requestId")}>
+            {data.code}
+          </Descriptions.Item>
 
-          <Descriptions.Item label="Quest ID">
+          <Descriptions.Item label={t("labels.questId")}>
             {data.challengeCode}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Quest Title">
+          <Descriptions.Item label={t("labels.questTitle")}>
             {data.title}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Quest Type">
+          <Descriptions.Item label={t("labels.questType")}>
             {QuestTypeLabels[data.challengeType]}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Platform">
+          <Descriptions.Item label={t("labels.platform")}>
             {data.platform}
           </Descriptions.Item>
 
           {data.challengeType === QuestType.Common && (
-            <Descriptions.Item label="Point">
+            <Descriptions.Item label={t("labels.point")}>
               {data.point?.toLocaleString() || "-"}
             </Descriptions.Item>
           )}
 
-          <Descriptions.Item label="Description" span={2}>
+          <Descriptions.Item label={t("labels.description")} span={2}>
             {data.description}
           </Descriptions.Item>
         </StyledDescriptions>
 
-        {/* Right column */}
         <StyledDescriptions
           column={1}
           layout="horizontal"
           colon={false}
           style={{ marginBottom: 24 }}
         >
-          <Descriptions.Item label="Full Name">
+          <Descriptions.Item label={t("labels.fullName")}>
             {data.fullName}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Email">{data.email}</Descriptions.Item>
+          <Descriptions.Item label={t("labels.email")}>
+            {data.email}
+          </Descriptions.Item>
 
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label={t("labels.status")}>
             <Tag color={statusColor[data.status]}>
               {QuestRequestStatusLabels[data.status]}
             </Tag>
           </Descriptions.Item>
 
-          {/* Rejected reason: only for status Rejected */}
           {data.status === QuestRequestStatus.Rejected && (
-            <Descriptions.Item label="Rejected Reason">
+            <Descriptions.Item label={t("labels.rejectedReason")}>
               {data.rejectedReason}
             </Descriptions.Item>
           )}
 
-          <Descriptions.Item label="Submitted Date">
+          <Descriptions.Item label={t("labels.submittedDate")}>
             {dayjs(data.submittedDate).format("MM/DD/YYYY hh:mm:ss")}
           </Descriptions.Item>
 
-          {/* Updated Date & Updated By: only for Approved or Rejected */}
           {(data.status === QuestRequestStatus.Approved ||
             data.status === QuestRequestStatus.Rejected) && (
             <>
-              <Descriptions.Item label="Updated Date">
+              <Descriptions.Item label={t("labels.updatedDate")}>
                 {dayjs(data.updatedAt).format("MM/DD/YYYY hh:mm:ss")}
               </Descriptions.Item>
-              <Descriptions.Item label="Updated By">
+              <Descriptions.Item label={t("labels.updatedBy")}>
                 {data.updatedBy}
               </Descriptions.Item>
             </>
@@ -239,7 +267,7 @@ export default function QuestRequestDetail() {
         colon={false}
         style={{ marginBottom: 24 }}
       >
-        <Descriptions.Item label="Evidence">
+        <Descriptions.Item label={t("labels.evidence")}>
           {data.evidence.length > 0 ? (
             <ImagesContainer>
               {data.evidence.map((e) => (
@@ -256,7 +284,7 @@ export default function QuestRequestDetail() {
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Related Link">
+        <Descriptions.Item label={t("labels.relatedLink")}>
           {data.relatedLink ? (
             <StyledLink
               href={data.relatedLink}
@@ -271,42 +299,41 @@ export default function QuestRequestDetail() {
         </Descriptions.Item>
       </StyledDescriptions>
 
-      {/* --- APPROVE MODAL --- */}
+      {/* Approve Modal */}
       <Modal
-        title="Approve Quest Request"
+        title={t("modals.approveTitle")}
         open={isApproveModalOpen}
         onOk={handleApprove}
         onCancel={() => setIsApproveModalOpen(false)}
-        okText="Approve"
-        cancelText="Cancel"
+        okText={t("buttons.approve")}
+        cancelText={t("buttons.cancel")}
         closable
       >
-        <p>Are you sure you want to approve this quest request?</p>
+        <p>{t("modals.approveConfirm")}</p>
       </Modal>
 
-      {/* --- REJECT MODAL --- */}
+      {/* Reject Modal */}
       <Modal
-        title="Reject Quest Request"
+        title={t("modals.rejectTitle")}
         open={isRejectModalOpen}
         onOk={handleReject}
         onCancel={() => setIsRejectModalOpen(false)}
-        okText="Reject"
-        cancelText="Cancel"
+        okText={t("buttons.reject")}
+        cancelText={t("buttons.cancel")}
         closable
         okButtonProps={{ disabled: !rejectReason.trim() }}
       >
         <p style={{ marginBottom: 4 }}>
           <span style={{ color: "red", marginRight: 4 }}>*</span>
-          <span>Reject Reason</span>
+          <span>{t("labels.rejectedReason")}</span>
         </p>
-
         <TextArea
           value={rejectReason}
           onChange={(e) => setRejectReason(e.target.value)}
           rows={2}
           maxLength={250}
           required
-          placeholder="Type a reason…"
+          placeholder={t("modals.rejectPlaceholder")}
         />
       </Modal>
     </PageWrapper>

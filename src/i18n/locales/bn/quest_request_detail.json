@@ -1,0 +1,42 @@
+{
+  "labels": {
+    "requestId": "রিকোয়েস্ট আইডি",
+    "questId": "কোয়েস্ট আইডি",
+    "questTitle": "কোয়েস্ট শিরোনাম",
+    "questType": "কোয়েস্টের ধরন",
+    "platform": "প্ল্যাটফর্ম",
+    "point": "পয়েন্ট",
+    "description": "বর্ণনা",
+    "fullName": "পূর্ণ নাম",
+    "email": "ইমেইল",
+    "status": "অবস্থা",
+    "rejectedReason": "প্রত্যাখ্যানের কারণ",
+    "submittedDate": "জমাদানের তারিখ",
+    "updatedDate": "হালনাগাদ তারিখ",
+    "updatedBy": "হালনাগাদ করেছে",
+    "evidence": "প্রমান",
+    "relatedLink": "সম্পর্কিত লিঙ্ক"
+  },
+  "buttons": {
+    "reject": "প্রত্যাখ্যান",
+    "approve": "অনুমোদন",
+    "cancel": "বাতিল"
+  },
+  "modals": {
+    "approveTitle": "কোয়েস্ট রিকোয়েস্ট অনুমোদন",
+    "approveConfirm": "আপনি কি সত্যিই এই কোয়েস্ট রিকোয়েস্টটি অনুমোদন করতে চান?",
+    "rejectTitle": "কোয়েস্ট রিকোয়েস্ট প্রত্যাখ্যান",
+    "rejectPlaceholder": "কিছু কারণ লিখুন…"
+  },
+  "messages": {
+    "approveSuccess": "কোয়েস্ট রিকোয়েস্ট সফলভাবে অনুমোদিত হয়েছে!",
+    "approveError": "অনুমোদন ব্যর্থ হয়েছে। দয়া করে আবার চেষ্টা করুন।",
+    "rejectSuccess": "কোয়েস্ট রিকোয়েস্ট সফলভাবে প্রত্যাখ্যান করা হয়েছে!",
+    "rejectError": "প্রত্যাখ্যান ব্যর্থ হয়েছে। দয়া করে আবার চেষ্টা করুন।"
+  },
+  "questRequestStatus": {
+    "pending": "প্রক্রিয়াধীন",
+    "approved": "অনুমোদিত",
+    "rejected": "বাতিল"
+  }
+}

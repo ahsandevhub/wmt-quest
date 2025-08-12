@@ -1,0 +1,83 @@
+{
+  "pageTitle": "নতুন কোয়েস্ট যোগ করুন",
+
+  "buttons": {
+    "add": "যোগ করুন",
+    "import": "ইমপোর্ট"
+  },
+
+  "form": {
+    "labels": {
+      "status": "স্ট্যাটাস",
+      "title": "শিরোনাম",
+      "expiryDate": "মেয়াদ শেষের তারিখ",
+      "platform": "প্ল্যাটফর্ম",
+      "point": "পয়েন্ট",
+      "accountRanks": "অ্যাকাউন্ট র‌্যাঙ্কসমূহ",
+      "uploadImage": "ইমেজ আপলোড",
+      "enterLink": "লিঙ্ক প্রবেশ করান",
+      "allowMultiple": "একাধিক সাবমিশন অনুমতি দিন",
+      "specificEmail": "নির্দিষ্ট ইমেইল",
+      "description": "বর্ণনা"
+    },
+    "placeholders": {
+      "enterTitle": "শিরোনাম লিখুন",
+      "enterEmail": "ইমেইল লিখুন",
+      "enterDescription": "এখানে বর্ণনা লিখুন",
+      "selectDate": "তারিখ নির্বাচন করুন",
+      "searchEmails": "ইমেইল অনুসন্ধান করুন"
+    },
+    "tooltips": {
+      "expiryDate": "শুধুমাত্র আজ এবং ভবিষ্যতের তারিখ নির্বাচন করা যাবে",
+      "platform": "কোয়েস্ট প্ল্যাটফর্ম নির্বাচন করুন",
+      "point": "এই কোয়েস্টের জন্য কত পয়েন্ট",
+      "accountRanks": "কোন র‌্যাঙ্ক সাবমিট করতে পারবে",
+      "uploadImage": "ইমেজ আপলোড বাধ্যতামূলক",
+      "enterLink": "লিঙ্ক প্রয়োজন",
+      "allowMultiple": "একাধিক সাবমিশন অনুমোদিত হবে"
+    }
+  },
+
+  "validation": {
+    "enterTitle": "অনুগ্রহ করে শিরোনাম লিখুন",
+    "titleMax": "শিরোনাম {{count}} অক্ষর ছাড়িয়ে যাবে না",
+    "enterPoint": "অনুগ্রহ করে পয়েন্ট লিখুন",
+    "pointRange": "পয়েন্ট {{min}} থেকে {{max}} এর মধ্যে হতে হবে",
+    "selectRank": "কমপক্ষে একটি র‌্যাঙ্ক নির্বাচন করুন",
+    "imageOrLinkRequired": "ইমেজ কিংবা লিঙ্কের একটি প্রয়োজন",
+    "emailRequired": "অনুগ্রহ করে ইমেইল লিখুন",
+    "emailInvalid": "বৈধ ইমেইল লিখুন",
+    "emailDuplicate": "এই ইমেইল ইতিমধ্যে যোগ করা হয়েছে",
+    "emailNotExist": "এই ইমেইল দিয়ে কোনো ব্যবহারকারী পাওয়া যায়নি",
+    "requestFailed": "রিকোয়েস্ট ব্যর্থ হয়েছে, দয়া করে আবার চেষ্টা করুন",
+    "expiryDateInvalid": "আপনি শুধুমাত্র ভবিষ্যতের তারিখ নির্বাচন করতে পারেন",
+    "enterDescription": "অনুগ্রহ করে বর্ণনা লিখুন",
+    "descriptionMax": "বর্ণনা {{count}} অক্ষর ছাড়িয়ে যাবে না",
+    "questAddFailed": "কোয়েস্ট যোগ ব্যর্থ হয়েছে, দয়া করে আবার চেষ্টা করুন"
+  },
+
+  "messages": {
+    "importNotImplemented": "ইমপোর্ট এখনও বাস্তবায়িত হয়নি",
+    "questAdded": "কোয়েস্ট সফলভাবে যোগ করা হয়েছে"
+  },
+
+  "table": {
+    "totalEmails": "মোট {{count}} টি ইমেইল",
+    "searchPlaceholder": "ইমেইল অনুসন্ধান করুন",
+    "columns": {
+      "email": "ইমেইল",
+      "fullName": "পূর্ণ নাম"
+    },
+    "delete": "মুছে ফেলুন"
+  },
+  "platform": {
+    "other": "অন্যান্য",
+    "facebook": "ফেসবুক",
+    "instagram": "ইনস্টাগ্রাম",
+    "youtube": "ইউটিউব",
+    "telegram": "টেলেগ্রাম",
+    "tiktok": "টিকটক",
+    "twitter": "টুইটার",
+    "discord": "ডিসকর্ড"
+  }
+}

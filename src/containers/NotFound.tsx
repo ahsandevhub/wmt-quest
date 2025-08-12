@@ -1,5 +1,6 @@
 import { LeftOutlined } from "@ant-design/icons";
 import { Button, Typography } from "antd";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -19,22 +20,21 @@ const Wrapper = styled.div`
 `;
 
 export default function NotFound() {
+  const { t } = useTranslation("not_found");
   const navigate = useNavigate();
 
   return (
     <Wrapper>
       <Title level={1} style={{ marginBottom: 16 }}>
-        404
+        {t("statusCode")}
       </Title>
-      <Text style={{ fontSize: 18, marginBottom: 32 }}>
-        Oops — the page you’re looking for doesn’t exist.
-      </Text>
+      <Text style={{ fontSize: 18, marginBottom: 32 }}>{t("message")}</Text>
       <Button
         type="primary"
         icon={<LeftOutlined />}
         onClick={() => navigate(-1)}
       >
-        Go Back
+        {t("goBack")}
       </Button>
     </Wrapper>
   );

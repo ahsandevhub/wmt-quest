@@ -13,22 +13,26 @@
     "active": "Active",
     "inactive": "Inactive"
   },
+  "detail": "Detail",
+  "addButton": "Add",
+  "totalItems": "Total {{count}} items",
   "toolbar": {
-    "search_box": {
+    "searchBox": {
       "label": "Keywords:",
-      "placeholderSearch": "Search by Quest ID/Quest Title"
+      "placeholder": "Search by Quest ID/Quest Title"
     },
+<<<<<<< HEAD:src/i18n/locales/en/quest_list.json
     "status_filter": {
       "placeholder": "All Statusses",
+=======
+    "statusFilter": {
+>>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/locales/en/quest_list.json
       "label": "Status:",
-      "all": "All Statusses",
+      "all": "All Statuses",
       "active": "Active",
       "inactive": "Inactive"
     },
-    "search_button": "Search",
-    "reset_button": "Reset"
-  },
-  "add_button": "Add",
-  "detail": "Detail",
-  "totalItems": "Total {{count}} items"
+    "searchButton": "Search",
+    "resetButton": "Reset"
+  }
 }

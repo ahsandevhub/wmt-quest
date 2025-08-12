@@ -12,6 +12,7 @@ import {
   InputNumber,
   Layout,
   Select,
+  Space,
   Switch,
   Table,
   Tooltip,
@@ -25,6 +26,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+<<<<<<< HEAD:src/containers/quests/AddNewQuestContainer.tsx
 import TextEditor from "../../components/common/TextEditor";
 import TitleBarHeader from "../../components/common/TitleBarHeader";
 import api from "../../services/http";
@@ -38,6 +40,13 @@ import {
   Rank,
   type QuestRankEnum,
 } from "../../types/questRank";
+=======
+import { QuillFormField } from "../components/QuilFormField";
+import TitleBarHeader from "../components/TitleBarHeader";
+import api from "../lib/api/axiosInstance";
+import { QuestPlatform, type QuestPlatformEnum } from "../types/questPlatform";
+import { QuestRankLabels, Rank, type QuestRankEnum } from "../types/questRank";
+>>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/pages/AddNewQuest.tsx
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -89,19 +98,6 @@ const QuestionIcon = styled(QuestionCircleOutlined)`
   margin: 0 4px;
 `;
 
-const PLATFORM_OPTIONS: { label: string; value: QuestPlatformEnum }[] =
-  Object.values(QuestPlatform).map((value) => ({
-    label: PlatformLabels[value],
-    value,
-  }));
-
-const RANK_OPTIONS: { label: string; value: QuestRankEnum }[] = Object.values(
-  Rank
-).map((value) => ({
-  label: QuestRankLabels[value],
-  value,
-}));
-
 interface AddNewQuestFormValues {
   status: boolean;
   title: string;
@@ -131,6 +127,30 @@ const AddNewQuest: React.FC = () => {
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+
+  const PlatformLabels: Record<QuestPlatformEnum, string> = {
+    [QuestPlatform.Other]: t("platform.other"),
+    [QuestPlatform.Facebook]: t("platform.facebook"),
+    [QuestPlatform.Instagram]: t("platform.instagram"),
+    [QuestPlatform.YouTube]: t("platform.youtube"),
+    [QuestPlatform.Telegram]: t("platform.telegram"),
+    [QuestPlatform.TikTok]: t("platform.tiktok"),
+    [QuestPlatform.Twitter]: t("platform.twitter"),
+    [QuestPlatform.Discord]: t("platform.discord"),
+  };
+
+  const PLATFORM_OPTIONS: { label: string; value: QuestPlatformEnum }[] =
+    Object.values(QuestPlatform).map((value) => ({
+      label: PlatformLabels[value],
+      value,
+    }));
+
+  const RANK_OPTIONS: { label: string; value: QuestRankEnum }[] = Object.values(
+    Rank
+  ).map((value) => ({
+    label: QuestRankLabels[value],
+    value,
+  }));
 
   // filter emails when list or searchTerm changes
   useEffect(() => {
@@ -366,7 +386,11 @@ const AddNewQuest: React.FC = () => {
                 },
               ]}
             >
-              <DatePicker style={{ width: "100%" }} format="MM/DD/YYYY" />
+              <DatePicker
+                placeholder={t("form.placeholders.selectDate")}
+                style={{ width: "100%" }}
+                format="MM/DD/YYYY"
+              />
             </Form.Item>
 
             <Form.Item
@@ -516,20 +540,22 @@ const AddNewQuest: React.FC = () => {
 
             <Form.Item
               name="description"
-              label="Description"
+              label={t("form.labels.description")}
+              validateFirst
               rules={[
                 {
                   required: true,
+                  message: t("validation.enterDescription"),
                 },
                 {
                   validator: (_, value) => {
                     const text = value?.replace(/<[^>]+>/g, "") || "";
                     if (!text.trim()) {
-                      return Promise.reject("Description is required");
+                      return Promise.reject(t("validation.enterDescription"));
                     }
                     if (text.length > 2000) {
                       return Promise.reject(
-                        "Description must be less than 2000 characters"
+                        t("validation.descriptionMax", { count: 2000 })
                       );
                     }
                     return Promise.resolve();
@@ -565,7 +591,7 @@ const AddNewQuest: React.FC = () => {
                       count: emailList.length,
                     })}
                   </Text>
-                  <Input.Group style={{ width: "max-content" }} compact>
+                  <Space.Compact style={{ width: "max-content" }}>
                     <Input
                       style={{ width: 247 }}
                       placeholder={t("table.searchPlaceholder")}
@@ -573,7 +599,7 @@ const AddNewQuest: React.FC = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <Button icon={<SearchOutlined />} />
-                  </Input.Group>
+                  </Space.Compact>
                 </StatsContainer>
 
                 <Table<UserEmail>

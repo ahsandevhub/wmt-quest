@@ -10,11 +10,16 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import styled from "styled-components";
+<<<<<<< HEAD:src/containers/quests/QuestListContainer.tsx
 import QuestFilters from "../../components/quests/list/QuestFilters";
 import {
   PlatformLabels,
   type QuestPlatformEnum,
 } from "../../types/questPlatform";
+=======
+import { QuestSearchToolbar } from "../components/QuestSearchToolbar";
+import { QuestPlatform, type QuestPlatformEnum } from "../types/questPlatform";
+>>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/pages/QuestList.tsx
 
 interface QuestRow {
   id: number;
@@ -77,6 +82,17 @@ export default function QuestList() {
       keywords: string;
       status: "" | "true" | "false";
     };
+  };
+
+  const PlatformLabels: Record<QuestPlatformEnum, string> = {
+    [QuestPlatform.Other]: t("platform.other"),
+    [QuestPlatform.Facebook]: t("platform.facebook"),
+    [QuestPlatform.Instagram]: t("platform.instagram"),
+    [QuestPlatform.YouTube]: t("platform.youtube"),
+    [QuestPlatform.Telegram]: t("platform.telegram"),
+    [QuestPlatform.TikTok]: t("platform.tiktok"),
+    [QuestPlatform.Twitter]: t("platform.twitter"),
+    [QuestPlatform.Discord]: t("platform.discord"),
   };
 
   const columns: ColumnsType<QuestRow> = [
@@ -158,7 +174,7 @@ export default function QuestList() {
             icon={<PlusOutlined />}
             onClick={() => navigate("/quest/quest-list/add-new-quest")}
           >
-            {t("add_button")}
+            {t("addButton")}
           </Button>
         </div>
 

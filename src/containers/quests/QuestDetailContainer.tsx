@@ -8,6 +8,7 @@ import {
   InputNumber,
   Layout,
   Select,
+  Space,
   Switch,
   Table,
   Tooltip,
@@ -20,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+<<<<<<< HEAD:src/containers/quests/QuestDetailContainer.tsx
 import TextEditor from "../../components/common/TextEditor";
 import TitleBarHeader from "../../components/common/TitleBarHeader";
 import api from "../../services/http";
@@ -33,6 +35,13 @@ import {
   Rank,
   type QuestRankEnum,
 } from "../../types/questRank";
+=======
+import { QuillFormField } from "../components/QuilFormField";
+import TitleBarHeader from "../components/TitleBarHeader";
+import api from "../lib/api/axiosInstance";
+import { QuestPlatform, type QuestPlatformEnum } from "../types/questPlatform";
+import { QuestRankLabels, Rank, type QuestRankEnum } from "../types/questRank";
+>>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/pages/QuestDetail.tsx
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -84,16 +93,6 @@ const QuestionIcon = styled(QuestionCircleOutlined)`
   margin: 0 4px;
 `;
 
-const PLATFORM_OPTIONS = Object.values(QuestPlatform).map((value) => ({
-  label: PlatformLabels[value],
-  value,
-}));
-
-const RANK_OPTIONS = Object.values(Rank).map((value) => ({
-  label: QuestRankLabels[value],
-  value,
-}));
-
 interface QuestDetailFormValues {
   status: boolean;
   title: string;
@@ -124,6 +123,27 @@ const QuestDetail: React.FC = () => {
   const [filteredEmails, setFilteredEmails] = useState<UserEmail[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+
+  const PlatformLabels: Record<QuestPlatformEnum, string> = {
+    [QuestPlatform.Other]: t("platform.other"),
+    [QuestPlatform.Facebook]: t("platform.facebook"),
+    [QuestPlatform.Instagram]: t("platform.instagram"),
+    [QuestPlatform.YouTube]: t("platform.youtube"),
+    [QuestPlatform.Telegram]: t("platform.telegram"),
+    [QuestPlatform.TikTok]: t("platform.tiktok"),
+    [QuestPlatform.Twitter]: t("platform.twitter"),
+    [QuestPlatform.Discord]: t("platform.discord"),
+  };
+
+  const PLATFORM_OPTIONS = Object.values(QuestPlatform).map((value) => ({
+    label: PlatformLabels[value],
+    value,
+  }));
+
+  const RANK_OPTIONS = Object.values(Rank).map((value) => ({
+    label: QuestRankLabels[value],
+    value,
+  }));
 
   useEffect(() => {
     const term = searchTerm.toLowerCase();
@@ -228,7 +248,7 @@ const QuestDetail: React.FC = () => {
         title={t("pageTitle")}
         actions={
           <Button type="primary" onClick={() => form.submit()}>
-            Update
+            {t("buttons.update")}
           </Button>
         }
       />
@@ -249,7 +269,7 @@ const QuestDetail: React.FC = () => {
               expiryDate: questData.expiryDate
                 ? dayjs(questData.expiryDate)
                 : undefined,
-              platform: questData.platform,
+              platform: questData.platform || QuestPlatform.Other,
               point: questData.point,
               accountRank: questData.accountRank,
               requiredUploadEvidence: questData.requiredUploadEvidence,
@@ -316,7 +336,11 @@ const QuestDetail: React.FC = () => {
                 },
               ]}
             >
-              <DatePicker style={{ width: "100%" }} format="MM/DD/YYYY" />
+              <DatePicker
+                placeholder={t("form.placeholders.selectDate")}
+                style={{ width: "100%" }}
+                format="MM/DD/YYYY"
+              />
             </Form.Item>
 
             <Form.Item
@@ -466,7 +490,7 @@ const QuestDetail: React.FC = () => {
 
             <Form.Item
               name="description"
-              label="Description"
+              label={t("form.labels.description")}
               rules={[
                 {
                   required: true,
@@ -512,7 +536,7 @@ const QuestDetail: React.FC = () => {
                       count: emailList?.length,
                     })}
                   </Text>
-                  <Input.Group style={{ width: "max-content" }} compact>
+                  <Space.Compact style={{ width: "max-content" }}>
                     <Input
                       style={{ width: 247 }}
                       placeholder={t("table.searchPlaceholder")}
@@ -520,7 +544,7 @@ const QuestDetail: React.FC = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <Button icon={<SearchOutlined />} />
-                  </Input.Group>
+                  </Space.Compact>
                 </StatsContainer>
 
                 <Table<UserEmail>
