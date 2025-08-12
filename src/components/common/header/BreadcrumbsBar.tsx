@@ -2,11 +2,12 @@ import { Breadcrumb } from "antd";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { namespaces } from "../../../i18n/namespaces";
 
 type Props = { isMobile: boolean; className?: string };
 
 function BreadcrumbsBar({ isMobile, className }: Props) {
-  const { t } = useTranslation("header");
+  const { t } = useTranslation(namespaces.header);
   const location = useLocation();
 
   const items = useMemo(() => {

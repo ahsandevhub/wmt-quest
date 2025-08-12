@@ -16,7 +16,6 @@ function LanguageSwitcher() {
 
   const onClick: MenuProps["onClick"] = async ({ key }) => {
     await i18n.changeLanguage(key);
-    // using t after language change still shows the old value in this tick, but toast is fine
   };
 
   return (

@@ -1,10 +1,13 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Button, Typography } from "antd";
+import { Button, Grid } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-
-const { Title } = Typography;
+import {
+  ActionsContainer,
+  BackLink,
+  HeaderWrapper,
+  StyledTitle,
+} from "./TitleBarHeader.styles";
 
 export interface TitleBarHeaderProps {
   /** Text to display as the title */
@@ -15,29 +18,7 @@ export interface TitleBarHeaderProps {
   actions?: React.ReactNode;
 }
 
-const HeaderWrapper = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-  margin-bottom: 1.5rem;
-`;
-
-const BackLink = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const StyledTitle = styled(Title)`
-  margin-bottom: 0 !important;
-`;
-
-const ActionsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
+// styles extracted to TitleBarHeader.styles.ts
 
 export const TitleBarHeader: React.FC<TitleBarHeaderProps> = ({
   title,
@@ -45,6 +26,8 @@ export const TitleBarHeader: React.FC<TitleBarHeaderProps> = ({
   actions,
 }) => {
   const navigate = useNavigate();
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md; // treat < md as mobile
 
   const handleBack = React.useCallback(() => {
     if (onBack) return onBack();
@@ -56,11 +39,13 @@ export const TitleBarHeader: React.FC<TitleBarHeaderProps> = ({
       <BackLink>
         <Button
           onClick={handleBack}
-          size="large"
+          size={isMobile ? "middle" : "large"}
           type="text"
           icon={<ArrowLeftOutlined />}
-        ></Button>
-        <StyledTitle level={4}>{title}</StyledTitle>
+        />
+        <StyledTitle level={4} $isMobile={isMobile}>
+          {title}
+        </StyledTitle>
       </BackLink>
 
       {actions && <ActionsContainer>{actions}</ActionsContainer>}

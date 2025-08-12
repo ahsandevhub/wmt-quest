@@ -1,150 +1,91 @@
-// src/routes/point-request/$pointRequestId.tsx
-import {
-  Button,
-  Descriptions,
-  Divider,
-  Image,
-  Modal,
-  Tag,
-  message,
-} from "antd";
+// Quest Request Detail Page
+import { Descriptions, Divider, message, Modal, Skeleton } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData, useRevalidator } from "react-router-dom";
 import styled from "styled-components";
-<<<<<<< HEAD:src/containers/quests/QuestRequestDetailContainer.tsx
-import TitleBarHeader from "../../components/common/TitleBarHeader";
+import TitleBarHeader from "../../components/common/layout/TitleBarHeader";
+import {
+  ActionButtons,
+  EvidenceGallery,
+  RelatedLink,
+  Section,
+  StatusTag,
+} from "../../components/quests/quest-request/detail";
+import {
+  getQuestRequestStatusLabel,
+  getQuestTypeLabel,
+} from "../../constants/labels";
+import { namespaces } from "../../i18n/namespaces";
 import api from "../../services/http";
-
-import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
-import {
-  QuestRequestStatus,
-  type QuestRequestStatusEnum,
-  QuestRequestStatusLabels,
-} from "../../types/questRequestStatus";
-import {
-  QuestType,
-  type QuestTypeEnum,
-  QuestTypeLabels,
-} from "../../types/questType";
-=======
-import TitleBarHeader from "../components/TitleBarHeader";
-import api from "../lib/api/axiosInstance";
-import {
-  QuestRequestStatus,
-  type QuestRequestStatusEnum,
-} from "../types/questRequestStatus";
-import { QuestType, type QuestTypeEnum } from "../types/questType";
->>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/pages/QuestRequestDetails.tsx
-
-interface Evidence {
-  fileName: string;
-  fileUrl: string;
-  mimeType: string;
-}
-
-interface QuestRequest {
-  id: number;
-  code: string;
-  challengeCode: string;
-  challengeType: QuestTypeEnum;
-  title: string;
-  platform: string;
-  point: number | null;
-  description: string;
-  evidence: Evidence[];
-  relatedLink: string | null;
-  fullName: string;
-  email: string;
-  status: QuestRequestStatusEnum;
-  submittedDate: string;
-  updatedAt?: string;
-  updatedBy?: string;
-  rejectedReason?: string;
-}
+import type { QuestRequest } from "../../types/questRequest";
+import { QuestRequestStatus } from "../../types/questRequestStatus";
+import { QuestType } from "../../types/questType";
 
 const PageWrapper = styled.div`
   padding: 1.5rem;
   background: #ffffff;
   border: 1px solid #0000000f;
   border-radius: 0.5rem;
+  @media (max-width: 768px) {
+    padding: 1rem 1rem 1.25rem;
+  }
 `;
 
 const DescriptionsWrappper = styled.div`
   display: flex;
-`;
-
-const ImagesContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-`;
-
-const ImageWrapper = styled.div`
-  cursor: pointer;
-`;
-
-const StyledLink = styled.a`
-  color: #1890ff;
-  text-decoration: underline;
-`;
-
-const StyledDescriptions = styled(Descriptions)`
-  && {
-    .ant-descriptions-item-label {
-      font-weight: 600;
-      color: #000000e0;
-      width: 200px;
-    }
-    .ant-descriptions-item-content {
-      font-size: 14px;
-    }
+  align-items: flex-start;
+  gap: 48px;
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: 32px;
   }
 `;
-
-const statusColor: Record<QuestRequestStatusEnum, string> = {
-  [QuestRequestStatus.Pending]: "blue",
-  [QuestRequestStatus.Approved]: "green",
-  [QuestRequestStatus.Rejected]: "red",
-};
+// ===== Helpers ==================================================
+const formatDate = (iso?: string | null, fallback = "-") =>
+  iso ? dayjs(iso).format("MM/DD/YYYY HH:mm:ss") : fallback;
 
 export default function QuestRequestDetail() {
   const data = useLoaderData() as QuestRequest;
-  const { t } = useTranslation("quest_request_detail");
+  const { t } = useTranslation(namespaces.questRequestDetail);
   const { revalidate } = useRevalidator();
 
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState<null | "approve" | "reject">(
+    null
+  );
 
-  const QuestTypeLabels: Record<QuestTypeEnum, string> = {
-    [QuestType.Common]: t("labels.questType"),
-    [QuestType.Welcome]: t("questType.welcome"),
-    [QuestType.Tournament]: t("questType.tournament"),
-  };
+  // Memoized labels (avoid re-computing objects every render)
+  const questTypeLabel = useMemo(
+    () => getQuestTypeLabel(data.challengeType, t),
+    [data.challengeType, t]
+  );
+  const statusLabel = useMemo(
+    () => getQuestRequestStatusLabel(data.status, t),
+    [data.status, t]
+  );
 
-  const QuestRequestStatusLabels: Record<QuestRequestStatusEnum, string> = {
-    [QuestRequestStatus.Pending]: t("questRequestStatus.pending"),
-    [QuestRequestStatus.Approved]: t("questRequestStatus.approved"),
-    [QuestRequestStatus.Rejected]: t("questRequestStatus.rejected"),
-  };
-
-  const handleApprove = async () => {
+  const handleApprove = useCallback(async () => {
     try {
+      setIsSubmitting("approve");
       await api.post(`/api/v1/wmt/point-request/${data.id}/approved`);
       message.success(t("messages.approveSuccess"));
       setIsApproveModalOpen(false);
       revalidate();
     } catch {
       message.error(t("messages.approveError"));
+    } finally {
+      setIsSubmitting(null);
     }
-  };
+  }, [data.id, revalidate, t]);
 
-  const handleReject = async () => {
+  const handleReject = useCallback(async () => {
     try {
+      setIsSubmitting("reject");
       await api.post(`/api/v1/wmt/point-request/${data.id}/rejected`, {
         rejectedReason: rejectReason.trim(),
       });
@@ -153,37 +94,31 @@ export default function QuestRequestDetail() {
       revalidate();
     } catch {
       message.error(t("messages.rejectError"));
+    } finally {
+      setIsSubmitting(null);
     }
-  };
+  }, [data.id, rejectReason, revalidate, t]);
+
+  if (!data) return <Skeleton active />; // Guard (shouldn't happen)
 
   return (
     <PageWrapper>
       <TitleBarHeader
         title={data.code}
         actions={
-          data.status === QuestRequestStatus.Pending && (
-            <>
-              <Button onClick={() => setIsRejectModalOpen(true)}>
-                {t("buttons.reject")}
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => setIsApproveModalOpen(true)}
-              >
-                {t("buttons.approve")}
-              </Button>
-            </>
-          )
+          <ActionButtons
+            show={data.status === QuestRequestStatus.Pending}
+            loadingAction={isSubmitting}
+            onReject={() => setIsRejectModalOpen(true)}
+            onApprove={() => setIsApproveModalOpen(true)}
+            approveLabel={t("buttons.approve")}
+            rejectLabel={t("buttons.reject")}
+          />
         }
       />
 
       <DescriptionsWrappper>
-        <StyledDescriptions
-          column={1}
-          layout="horizontal"
-          colon={false}
-          style={{ marginBottom: 24 }}
-        >
+        <Section style={{ marginBottom: 24 }}>
           <Descriptions.Item label={t("labels.requestId")}>
             {data.code}
           </Descriptions.Item>
@@ -197,7 +132,7 @@ export default function QuestRequestDetail() {
           </Descriptions.Item>
 
           <Descriptions.Item label={t("labels.questType")}>
-            {QuestTypeLabels[data.challengeType]}
+            {questTypeLabel}
           </Descriptions.Item>
 
           <Descriptions.Item label={t("labels.platform")}>
@@ -213,14 +148,9 @@ export default function QuestRequestDetail() {
           <Descriptions.Item label={t("labels.description")} span={2}>
             {data.description}
           </Descriptions.Item>
-        </StyledDescriptions>
+        </Section>
 
-        <StyledDescriptions
-          column={1}
-          layout="horizontal"
-          colon={false}
-          style={{ marginBottom: 24 }}
-        >
+        <Section style={{ marginBottom: 24 }}>
           <Descriptions.Item label={t("labels.fullName")}>
             {data.fullName}
           </Descriptions.Item>
@@ -230,9 +160,7 @@ export default function QuestRequestDetail() {
           </Descriptions.Item>
 
           <Descriptions.Item label={t("labels.status")}>
-            <Tag color={statusColor[data.status]}>
-              {QuestRequestStatusLabels[data.status]}
-            </Tag>
+            <StatusTag status={data.status} label={statusLabel} />
           </Descriptions.Item>
 
           {data.status === QuestRequestStatus.Rejected && (
@@ -242,62 +170,34 @@ export default function QuestRequestDetail() {
           )}
 
           <Descriptions.Item label={t("labels.submittedDate")}>
-            {dayjs(data.submittedDate).format("MM/DD/YYYY hh:mm:ss")}
+            {formatDate(data.submittedDate)}
           </Descriptions.Item>
 
           {(data.status === QuestRequestStatus.Approved ||
             data.status === QuestRequestStatus.Rejected) && (
             <>
               <Descriptions.Item label={t("labels.updatedDate")}>
-                {dayjs(data.updatedAt).format("MM/DD/YYYY hh:mm:ss")}
+                {formatDate(data.updatedAt)}
               </Descriptions.Item>
               <Descriptions.Item label={t("labels.updatedBy")}>
                 {data.updatedBy}
               </Descriptions.Item>
             </>
           )}
-        </StyledDescriptions>
+        </Section>
       </DescriptionsWrappper>
 
       <Divider />
 
-      <StyledDescriptions
-        column={1}
-        layout="horizontal"
-        colon={false}
-        style={{ marginBottom: 24 }}
-      >
+      <Section style={{ marginBottom: 24 }}>
         <Descriptions.Item label={t("labels.evidence")}>
-          {data.evidence.length > 0 ? (
-            <ImagesContainer>
-              {data.evidence.map((e) => (
-                <ImageWrapper
-                  key={e.fileUrl}
-                  onClick={() => window.open(e.fileUrl, "_blank")}
-                >
-                  <Image preview={false} src={e.fileUrl} width={200} />
-                </ImageWrapper>
-              ))}
-            </ImagesContainer>
-          ) : (
-            <span>-</span>
-          )}
+          <EvidenceGallery evidence={data.evidence} />
         </Descriptions.Item>
 
         <Descriptions.Item label={t("labels.relatedLink")}>
-          {data.relatedLink ? (
-            <StyledLink
-              href={data.relatedLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {data.relatedLink}
-            </StyledLink>
-          ) : (
-            <span>-</span>
-          )}
+          <RelatedLink url={data.relatedLink} />
         </Descriptions.Item>
-      </StyledDescriptions>
+      </Section>
 
       {/* Approve Modal */}
       <Modal
@@ -308,6 +208,7 @@ export default function QuestRequestDetail() {
         okText={t("buttons.approve")}
         cancelText={t("buttons.cancel")}
         closable
+        confirmLoading={isSubmitting === "approve"}
       >
         <p>{t("modals.approveConfirm")}</p>
       </Modal>
@@ -321,7 +222,11 @@ export default function QuestRequestDetail() {
         okText={t("buttons.reject")}
         cancelText={t("buttons.cancel")}
         closable
-        okButtonProps={{ disabled: !rejectReason.trim() }}
+        okButtonProps={{
+          disabled: !rejectReason.trim(),
+          loading: isSubmitting === "reject",
+        }}
+        confirmLoading={isSubmitting === "reject"}
       >
         <p style={{ marginBottom: 4 }}>
           <span style={{ color: "red", marginRight: 4 }}>*</span>

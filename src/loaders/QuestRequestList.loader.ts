@@ -41,8 +41,17 @@ export async function questRequestListLoader({ request }: LoaderFunctionArgs) {
 
   const res = await api.post("/api/v1/wmt/point-request/search", payload);
 
+  // Normalize list items to match QuestRequestListRow shape (challengeType)
+  const questRequests = Array.isArray(res.data.data)
+    ? res.data.data.map((item: any) => ({
+        ...item,
+        // ensure challengeType key exists (backend might already send it)
+        challengeType: item.challengeType ?? item.questType ?? item.type,
+      }))
+    : [];
+
   return {
-    questRequests: res.data.data,
+    questRequests,
     totalItems: res.data.paging.totalItem,
     filters: {
       page,

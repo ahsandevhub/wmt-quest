@@ -1,10 +1,9 @@
 import { message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginForm, {
-  type LoginFormValues,
-} from "../../components/auth/LoginForm";
+import LoginForm from "../../components/auth/LoginForm";
 import { useAuth } from "../../hooks/useAuth";
+import type { LoginFormValues } from "../../types/auth";
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();

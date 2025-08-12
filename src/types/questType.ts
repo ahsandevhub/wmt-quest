@@ -5,9 +5,3 @@ export const QuestType = {
 } as const;
 
 export type QuestTypeEnum = (typeof QuestType)[keyof typeof QuestType];
-
-export const QUEST_LIST = [
-  { id: 1, questType: QuestType.Common },
-  { id: 2, questType: QuestType.Welcome },
-  { id: 3, questType: QuestType.Tournament },
-];

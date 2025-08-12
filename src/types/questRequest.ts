@@ -1,8 +1,8 @@
-// src/types/questRequest.ts
+import type { QuestPlatformEnum } from "./questPlatform";
+import type { QuestRequestStatusEnum } from "./questRequestStatus";
+import type { QuestTypeEnum } from "./questType";
 
-/**
- * Represents a single piece of evidence (e.g. an uploaded image).
- */
+/** Represents a single piece of evidence (e.g. an uploaded image). */
 export interface Evidence {
   /** Original file name on upload */
   fileName: string;
@@ -13,7 +13,7 @@ export interface Evidence {
 }
 
 /**
- * Data shape for a quest point/request, as returned by
+ * Data shape for a quest point/request, as returned by:
  * GET /api/v1/wmt/point-request/:pointRequestId
  */
 export interface QuestRequest {
@@ -22,33 +22,38 @@ export interface QuestRequest {
   /** ID of the user who made the request */
   userId: number;
 
-  /** Formatted request code, e.g. "PR00006" */
+  /** Formatted request code, e.g., "PR00006" */
   code: string;
 
   /** Numeric quest ID */
   challengeId: number;
-  /** Formatted quest code, e.g. "C0000001" */
+  /** Formatted quest code, e.g., "C0000001" */
   challengeCode: string;
-  /** Quest type: 1 = Common, 2 = Welcome, 3 = Tournament */
-  challengeType: 1 | 2 | 3;
+
+  /** Quest type (backend enum code) */
+  challengeType: QuestTypeEnum;
 
   /** Quest title */
   title: string;
-  /** Quest platform, e.g. "Instagram" */
-  platform: string;
+
+  /** Platform (backend enum code) */
+  platform: QuestPlatformEnum;
+
   /** Quest description (HTML string) */
   description: string;
 
-  /** Points awarded by this quest (null for some types) */
+  /** Points awarded by this quest (nullable for some types) */
   point: number | null;
 
-  /** Request status: 1 = Pending, 2 = Approved, 3 = Rejected */
-  status: 1 | 2 | 3;
+  /** Request status (backend enum code) */
+  status: QuestRequestStatusEnum;
+
   /** Reason provided when rejecting */
   rejectedReason: string | null;
 
   /** Uploaded evidence files */
   evidence: Evidence[];
+
   /** Optional related link provided by the user */
   relatedLink: string | null;
 
@@ -63,6 +68,7 @@ export interface QuestRequest {
   createdAt: string;
   /** ISO timestamp when last updated (only present if approved/rejected) */
   updatedAt: string | null;
+
   /** Username or ID of the actor who created this record */
   createdBy: string;
   /** Username or ID of the actor who last updated this record */

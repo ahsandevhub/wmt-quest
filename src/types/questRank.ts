@@ -5,9 +5,3 @@ export const Rank = {
 } as const;
 
 export type QuestRankEnum = (typeof Rank)[keyof typeof Rank];
-
-export const QuestRankLabels: Record<QuestRankEnum, string> = {
-  [Rank.Silver]: "Silver",
-  [Rank.Gold]: "Gold",
-  [Rank.Diamond]: "Diamond",
-};

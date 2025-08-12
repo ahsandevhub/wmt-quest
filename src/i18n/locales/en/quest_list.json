@@ -21,12 +21,8 @@
       "label": "Keywords:",
       "placeholder": "Search by Quest ID/Quest Title"
     },
-<<<<<<< HEAD:src/i18n/locales/en/quest_list.json
-    "status_filter": {
-      "placeholder": "All Statusses",
-=======
     "statusFilter": {
->>>>>>> 96ba1770cf821f161fafd983f790e6759aff38b6:src/locales/en/quest_list.json
+      "placeholder": "All Statusses",
       "label": "Status:",
       "all": "All Statuses",
       "active": "Active",

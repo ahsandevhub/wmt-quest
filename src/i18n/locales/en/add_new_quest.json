@@ -53,6 +53,7 @@
     "emailDuplicate": "This email has already been added",
     "enterTitle": "Please enter a title",
     "titleMax": "Title cannot exceed {{count}} characters",
+    "futureDateOnly": "Please select a future date",
     "enterPoint": "Please enter a point value",
     "pointRange": "Point must be between {{min}} and {{max}}",
     "selectRank": "Please select at least one account rank",

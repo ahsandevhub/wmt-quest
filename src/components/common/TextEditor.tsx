@@ -65,16 +65,7 @@ export default function TextEditor({
   );
 
   const formats = useMemo(
-    () => [
-      "bold",
-      "italic",
-      "strike",
-      "size",
-      "color",
-      "link",
-      "list",
-      "bullet",
-    ],
+    () => ["bold", "italic", "strike", "size", "color", "link", "list"],
     []
   );
 
