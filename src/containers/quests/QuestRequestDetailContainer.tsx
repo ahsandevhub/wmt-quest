@@ -1,11 +1,9 @@
 // Quest Request Detail Page
 import { Descriptions, Divider, message, Modal, Skeleton } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import dayjs from "dayjs";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData, useRevalidator } from "react-router-dom";
-import styled from "styled-components";
 import TitleBarHeader from "../../components/common/layout/TitleBarHeader";
 import {
   ActionButtons,
@@ -19,33 +17,18 @@ import {
   getQuestTypeLabel,
 } from "../../constants/labels";
 import { namespaces } from "../../i18n/namespaces";
-import api from "../../services/http";
+import {
+  approveQuestRequest,
+  rejectQuestRequest,
+} from "../../services/quests/questRequest.service";
 import type { QuestRequest } from "../../types/questRequest";
 import { QuestRequestStatus } from "../../types/questRequestStatus";
 import { QuestType } from "../../types/questType";
-
-const PageWrapper = styled.div`
-  padding: 1.5rem;
-  background: #ffffff;
-  border: 1px solid #0000000f;
-  border-radius: 0.5rem;
-  @media (max-width: 768px) {
-    padding: 1rem 1rem 1.25rem;
-  }
-`;
-
-const DescriptionsWrappper = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 48px;
-  @media (max-width: 992px) {
-    flex-direction: column;
-    gap: 32px;
-  }
-`;
-// ===== Helpers ==================================================
-const formatDate = (iso?: string | null, fallback = "-") =>
-  iso ? dayjs(iso).format("MM/DD/YYYY HH:mm:ss") : fallback;
+import { formatDate } from "../../utils/format";
+import {
+  DescriptionsWrappper,
+  PageWrapper,
+} from "./QuestRequestDetailContainer.styles";
 
 export default function QuestRequestDetail() {
   const data = useLoaderData() as QuestRequest;
@@ -72,7 +55,7 @@ export default function QuestRequestDetail() {
   const handleApprove = useCallback(async () => {
     try {
       setIsSubmitting("approve");
-      await api.post(`/api/v1/wmt/point-request/${data.id}/approved`);
+      await approveQuestRequest(data.id);
       message.success(t("messages.approveSuccess"));
       setIsApproveModalOpen(false);
       revalidate();
@@ -86,9 +69,7 @@ export default function QuestRequestDetail() {
   const handleReject = useCallback(async () => {
     try {
       setIsSubmitting("reject");
-      await api.post(`/api/v1/wmt/point-request/${data.id}/rejected`, {
-        rejectedReason: rejectReason.trim(),
-      });
+      await rejectQuestRequest(data.id, rejectReason);
       message.success(t("messages.rejectSuccess"));
       setIsRejectModalOpen(false);
       revalidate();

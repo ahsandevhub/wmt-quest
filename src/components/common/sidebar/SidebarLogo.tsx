@@ -1,20 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 
-const LogoWrapper = styled.div`
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  overflow: hidden;
-
-  img {
-    max-height: 26px;
-    transition: all 0.2s ease;
-  }
-`;
+import { LogoWrapper } from "./SidebarLogo.styles";
 
 type SidebarLogoProps = {
   to?: string;

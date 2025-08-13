@@ -1,9 +1,9 @@
 import { Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import dayjs from "dayjs";
 import type { TFunction } from "i18next";
 import { getPlatformLabel } from "../../../constants/labels";
 import { type QuestListRow } from "../../../types/questList";
+import { formatDate } from "../../../utils/format";
 import { DetailLink, EllipsisText } from "./ListWrappers";
 
 export const buildQuestColumns = (t: TFunction): ColumnsType<QuestListRow> => [
@@ -43,14 +43,13 @@ export const buildQuestColumns = (t: TFunction): ColumnsType<QuestListRow> => [
     dataIndex: "expiryDate",
     key: "expiryDate",
     render: (expiryDate: string | null) =>
-      expiryDate ? dayjs(expiryDate).format("MM/DD/YYYY HH:mm:ss") : "—",
+      expiryDate ? formatDate(expiryDate) : "—",
   },
   {
     title: t("columns.createdAt"),
     dataIndex: "createdAt",
     key: "createdAt",
-    render: (createdAt: string) =>
-      dayjs(createdAt).format("MM/DD/YYYY HH:mm:ss"),
+    render: (createdAt: string) => formatDate(createdAt),
   },
   {
     title: t("columns.status"),

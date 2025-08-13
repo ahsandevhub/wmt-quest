@@ -1,12 +1,12 @@
 import { Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import dayjs from "dayjs";
 import type { TFunction } from "i18next";
 import {
   getQuestRequestStatusLabel,
   getQuestTypeLabel,
 } from "../../../constants/labels";
 import { type QuestRequestListRow } from "../../../types/questRequestList";
+import { formatDate } from "../../../utils/format";
 import { DetailLink, EllipsisText } from "../shared/ListWrappers";
 
 export const buildQuestRequestColumns = (
@@ -75,13 +75,13 @@ export const buildQuestRequestColumns = (
     title: t("columns.submittedDate"),
     dataIndex: "submittedDate",
     key: "submittedDate",
-    render: (date: string) => dayjs(date).format("MM/DD/YYYY HH:mm:ss"),
+    render: (date: string) => formatDate(date),
   },
   {
     title: t("columns.updatedDate"),
     dataIndex: "createdAt",
     key: "createdAt",
-    render: (date: string) => dayjs(date).format("MM/DD/YYYY HH:mm:ss"),
+    render: (date: string) => formatDate(date),
   },
   {
     title: t("columns.status"),

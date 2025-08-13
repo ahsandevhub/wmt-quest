@@ -22,6 +22,7 @@
     },
     "placeholders": {
       "enterTitle": "Enter title",
+      "selectDate": "Select date",
       "enterEmail": "Enter email"
     },
     "tooltips": {

@@ -1,8 +1,9 @@
 import type { MenuProps } from "antd";
-import { Menu } from "antd";
+
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+
+import { StyledMenu } from "./SidebarMenu.styles";
 
 export type NavItem = { key: string; label: string; path: string };
 export type NavSection = {
@@ -11,12 +12,6 @@ export type NavSection = {
   title: string;
   items: NavItem[];
 };
-
-const StyledMenu = styled(Menu)`
-  .ant-menu-submenu-title {
-    color: rgba(0, 0, 0, 0.88) !important;
-  }
-`;
 
 type SidebarMenuProps = {
   sections: NavSection[];

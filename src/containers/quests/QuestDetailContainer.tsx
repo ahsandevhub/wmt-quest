@@ -3,7 +3,6 @@ import { Button, Form, Layout } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData } from "react-router-dom";
-import styled from "styled-components";
 import TitleBarHeader from "../../components/common/layout/TitleBarHeader";
 import QuestDetailForm, {
   type QuestDetailFormValues,
@@ -11,19 +10,10 @@ import QuestDetailForm, {
 import { useUpdateQuest } from "../../hooks/useUpdateQuest";
 import { namespaces } from "../../i18n/namespaces";
 import type { QuestDetail } from "../../types/questDetail";
+import { ContentWrapper, PageContainer } from "./QuestDetailContainer.styles";
 
 const { Content } = Layout;
-
-const PageContainer = styled.div`
-  padding: 1.5rem;
-  background: #ffffff;
-  border: 1px solid #0000000f;
-  border-radius: 0.5rem;
-`;
-const ContentWrapper = styled.div`
-  width: 100%;
-  max-width: 1000px;
-`;
+// styles moved to QuestDetailContainer.styles.ts
 
 const QuestDetailContainer: React.FC = () => {
   const questData = useLoaderData() as QuestDetail;

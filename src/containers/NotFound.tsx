@@ -2,22 +2,9 @@ import { LeftOutlined } from "@ant-design/icons";
 import { Button, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import { Wrapper } from "./NotFound.styles";
 
 const { Title, Text } = Typography;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  background: #ffffff;
-  text-align: center;
-  padding: 0 24px;
-  border-radius: 8px;
-  border: 1px solid #0000000f;
-`;
 
 export default function NotFound() {
   const { t } = useTranslation("not_found");
