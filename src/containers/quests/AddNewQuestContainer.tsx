@@ -10,7 +10,6 @@ import { namespaces } from "../../i18n/namespaces.ts";
 import { ContentWrapper, PageContainer } from "./AddNewQuestContainer.styles";
 
 const { Content } = Layout;
-// styles moved to AddNewQuestContainer.styles.ts
 
 const AddNewQuestContainer: React.FC = () => {
   const { t } = useTranslation(namespaces.addNewQuest);

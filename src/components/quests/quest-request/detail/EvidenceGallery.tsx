@@ -21,7 +21,7 @@ const ProgressiveThumb: React.FC<ProgressiveThumbProps> = ({
         alt={fileName}
         width={200}
         height={200}
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        style={{ width: "100%", height: "100%", objectFit: "contain" }}
         placeholder={
           <div style={{ width: "100%", height: "100%" }}>
             <Skeleton.Image
