@@ -1,9 +1,7 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
 import {
   Checkbox,
   DatePicker,
   Form,
-  Grid,
   Input,
   InputNumber,
   Select,
@@ -15,24 +13,25 @@ import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-
+import { QUEST_FORM_DATE_FORMAT } from "../../../constants/form";
 import { getPlatformOptions, getRankOptions } from "../../../constants/labels";
 import { useEmailList, type UserEmail } from "../../../hooks/useEmailList";
+import { useResponsiveFormLayout } from "../../../hooks/useResponsiveFormLayout";
 import {
   QuestPlatform,
   type QuestPlatformEnum,
 } from "../../../types/questPlatform";
 import type { QuestRankEnum } from "../../../types/questRank";
-import { isFutureOrToday, validatePoint } from "../../../utils/validators";
+import {
+  descriptionRules,
+  futureDateRule,
+  pointRules,
+} from "../../../utils/formRules";
 import TextEditor from "../../common/TextEditor";
-
-import EmailControls from "./EmailControls";
-import EmailTable from "./EmailTable";
-/* ================= Styled ================= */
-const QuestionIcon = styled(QuestionCircleOutlined)`
-  margin: 0 4px;
-`;
+import EmailControls from "../shared/EmailControls";
+import EmailTable from "../shared/EmailTable";
+import { QuestionIcon } from "../shared/QuestionIcon.styles";
+/* Using shared QuestionIcon */
 
 /* ================= Types ================= */
 export type QuestDetailFormValues = {
@@ -60,8 +59,8 @@ type Props = {
 /* ================ Component =============== */
 const QuestDetailForm: React.FC<Props> = ({ form, questData, onSubmit }) => {
   const { t } = useTranslation("quest_detail");
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md; // match AddNewQuestForm breakpoint logic
+  // Unified responsive layout hook
+  const layoutProps = useResponsiveFormLayout();
 
   const {
     emailList,
@@ -83,20 +82,11 @@ const QuestDetailForm: React.FC<Props> = ({ form, questData, onSubmit }) => {
   const platformOptions = useMemo(() => getPlatformOptions(t), [t]);
   const rankOptions = useMemo(() => getRankOptions(t), [t]);
 
-  const formLayoutProps = isMobile
-    ? { layout: "vertical" as const, colon: true }
-    : {
-        layout: "horizontal" as const,
-        colon: true,
-        labelCol: { flex: "0 0 300px" },
-        wrapperCol: { flex: "1 1 0%" },
-      };
-
   return (
     <Form<QuestDetailFormValues>
       form={form}
       labelAlign="left"
-      {...formLayoutProps}
+      {...layoutProps}
       onFinish={(values) => {
         const newlyAddedUserIds = emailList
           .map((u) => u.userId)
@@ -147,18 +137,11 @@ const QuestDetailForm: React.FC<Props> = ({ form, questData, onSubmit }) => {
             </Tooltip>
           </>
         }
-        rules={[
-          {
-            validator: (_, value: Dayjs | undefined) =>
-              isFutureOrToday(value)
-                ? Promise.resolve()
-                : Promise.reject(new Error(t("validation.futureDateOnly"))),
-          },
-        ]}
+        rules={[futureDateRule(t("validation.futureDateOnly"))]}
       >
         <DatePicker
           placeholder={t("form.placeholders.selectDate")}
-          format="MM/DD/YYYY"
+          format={QUEST_FORM_DATE_FORMAT}
           style={{ width: "100%" }}
         />
       </Form.Item>
@@ -188,23 +171,7 @@ const QuestDetailForm: React.FC<Props> = ({ form, questData, onSubmit }) => {
           </>
         }
         validateTrigger={["onChange", "onBlur"]}
-        rules={[
-          { required: true, message: t("validation.enterPoint") },
-          {
-            validator: (_, value) => {
-              const code = validatePoint(value);
-              return code
-                ? Promise.reject(
-                    new Error(
-                      code === "pointRange"
-                        ? t("validation.pointRange", { min: 1, max: 100000 })
-                        : t(`validation.${code}`)
-                    )
-                  )
-                : Promise.resolve();
-            },
-          },
-        ]}
+        rules={pointRules(t)}
       >
         <InputNumber<number>
           style={{ width: "100%" }}
@@ -304,21 +271,7 @@ const QuestDetailForm: React.FC<Props> = ({ form, questData, onSubmit }) => {
         name="description"
         label={t("form.labels.description")}
         validateFirst
-        rules={[
-          { required: true, message: t("validation.enterDescription") },
-          {
-            validator: (_, value) => {
-              const plainText = value?.replace(/<[^>]+>/g, "") || "";
-              if (!plainText.trim())
-                return Promise.reject(t("validation.enterDescription"));
-              if (plainText.length > 2000)
-                return Promise.reject(
-                  t("validation.descriptionMax", { count: 2000 })
-                );
-              return Promise.resolve();
-            },
-          },
-        ]}
+        rules={descriptionRules(t)}
       >
         <TextEditor defaultValue={questData.description} />
       </Form.Item>

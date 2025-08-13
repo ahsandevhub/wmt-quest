@@ -1,16 +1,27 @@
-// Shared FieldLabelWithHelp for add-quest and quest-detail
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Tooltip } from "antd";
 import React from "react";
 
-interface Props {
+export interface FieldLabelWithHelpProps {
   label: React.ReactNode;
-  help?: React.ReactNode;
+  help?: string | React.ReactNode;
 }
 
-const FieldLabelWithHelp: React.FC<Props> = ({ label, help }) => (
-  <span>
-    {label}
-    {help && <span style={{ marginLeft: 4 }}>{help}</span>}
-  </span>
-);
+const iconStyle: React.CSSProperties = { marginLeft: 4, fontSize: 14 };
 
-export default FieldLabelWithHelp;
+const FieldLabelWithHelp: React.FC<FieldLabelWithHelpProps> = ({
+  label,
+  help,
+}) => {
+  if (!help) return <>{label}</>;
+  return (
+    <>
+      {label}
+      <Tooltip title={help}>
+        <QuestionCircleOutlined style={iconStyle} />
+      </Tooltip>
+    </>
+  );
+};
+
+export default React.memo(FieldLabelWithHelp);

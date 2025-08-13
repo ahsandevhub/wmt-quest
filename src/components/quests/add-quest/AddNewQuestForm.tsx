@@ -1,9 +1,8 @@
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import type { FormInstance } from "antd";
 import {
   Checkbox,
   DatePicker,
   Form,
-  Grid,
   Input,
   InputNumber,
   Select,
@@ -13,23 +12,25 @@ import {
 import type { Dayjs } from "dayjs";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import { QUEST_FORM_DATE_FORMAT } from "../../../constants/form";
 import { getPlatformOptions, getRankOptions } from "../../../constants/labels";
 import { useEmailList } from "../../../hooks/useEmailList";
+import { useResponsiveFormLayout } from "../../../hooks/useResponsiveFormLayout";
 import { namespaces } from "../../../i18n/namespaces";
 import {
   QuestPlatform,
   type QuestPlatformEnum,
 } from "../../../types/questPlatform";
 import type { QuestRankEnum } from "../../../types/questRank";
-import { isFutureOrToday, validatePoint } from "../../../utils/validators";
+import {
+  descriptionRules,
+  futureDateRule,
+  pointRules,
+} from "../../../utils/formRules";
 import TextEditor from "../../common/TextEditor";
-import EmailControls from "./EmailControls";
-import EmailTable from "./EmailTable";
-
-const QuestionIcon = styled(QuestionCircleOutlined)`
-  margin: 0 4px;
-`;
+import EmailControls from "../shared/EmailControls";
+import EmailTable from "../shared/EmailTable";
+import { QuestionIcon } from "../shared/QuestionIcon.styles";
 
 export interface AddNewQuestFormValues {
   status: boolean;
@@ -45,7 +46,7 @@ export interface AddNewQuestFormValues {
 }
 
 interface Props {
-  form: any;
+  form: FormInstance<AddNewQuestFormValues>;
   onSubmit: (
     values: AddNewQuestFormValues,
     userIds: number[]
@@ -54,8 +55,7 @@ interface Props {
 
 const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
   const { t } = useTranslation(namespaces.addNewQuest);
-  const screens = Grid.useBreakpoint();
-  const isMobile = !screens.md; // below ~768px
+  const layoutProps = useResponsiveFormLayout();
   const {
     emailList,
     filteredEmails,
@@ -83,23 +83,11 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
     }
   };
 
-  const formLayoutProps = isMobile
-    ? {
-        layout: "vertical" as const,
-        colon: true,
-      }
-    : {
-        layout: "horizontal" as const,
-        colon: true,
-        labelCol: { flex: "0 0 300px" },
-        wrapperCol: { flex: "1 1 0%" },
-      };
-
   return (
     <Form<AddNewQuestFormValues>
       form={form}
       labelAlign="left"
-      {...formLayoutProps}
+      {...layoutProps}
       onFinish={handleFinish}
       initialValues={{
         status: true,
@@ -136,24 +124,17 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
         name="expiryDate"
         label={
           <>
-            {t("form.labels.expiryDate")}
+            <span>{t("form.labels.expiryDate")}</span>
             <Tooltip title={t("form.tooltips.expiryDate")}>
               <QuestionIcon />
             </Tooltip>
           </>
         }
-        rules={[
-          {
-            validator: (_, value: Dayjs | undefined) =>
-              isFutureOrToday(value)
-                ? Promise.resolve()
-                : Promise.reject(new Error(t("validation.futureDateOnly"))),
-          },
-        ]}
+        rules={[futureDateRule(t("validation.futureDateOnly"))]}
       >
         <DatePicker
           placeholder={t("form.placeholders.selectDate")}
-          format="MM/DD/YYYY"
+          format={QUEST_FORM_DATE_FORMAT}
           style={{ width: "100%" }}
         />
       </Form.Item>
@@ -162,7 +143,7 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
         name="platform"
         label={
           <>
-            {t("form.labels.platform")}
+            <span>{t("form.labels.platform")}</span>
             <Tooltip title={t("form.tooltips.platform")}>
               <QuestionIcon />
             </Tooltip>
@@ -176,37 +157,25 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
         name="point"
         label={
           <>
-            {t("form.labels.point")}
+            <span>{t("form.labels.point")}</span>
             <Tooltip title={t("form.tooltips.point")}>
               <QuestionIcon />
             </Tooltip>
           </>
         }
         validateTrigger={["onChange", "onBlur"]}
-        rules={[
-          { required: true, message: t("validation.enterPoint") },
-          {
-            validator: (_, value) => {
-              const code = validatePoint(value);
-              return code
-                ? Promise.reject(
-                    new Error(
-                      code === "pointRange"
-                        ? t("validation.pointRange", { min: 1, max: 100000 })
-                        : t(`validation.${code}`)
-                    )
-                  )
-                : Promise.resolve();
-            },
-          },
-        ]}
+        rules={pointRules(t)}
       >
         <InputNumber<number>
           style={{ width: "100%" }}
           min={1}
           step={1}
-          formatter={(v) => `${v ?? ""}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          parser={(v) => Number((v ?? "").replace(/[\s,]/g, ""))}
+          formatter={(v: number | string | undefined) =>
+            `${v ?? ""}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          }
+          parser={(v: string | undefined) =>
+            Number((v ?? "").replace(/[\s,]/g, ""))
+          }
         />
       </Form.Item>
 
@@ -214,7 +183,7 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
         name="accountRank"
         label={
           <>
-            {t("form.labels.accountRanks")}
+            <span>{t("form.labels.accountRanks")}</span>
             <Tooltip title={t("form.tooltips.accountRanks")}>
               <QuestionIcon />
             </Tooltip>
@@ -226,16 +195,16 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
       </Form.Item>
 
       <Form.Item
+        name="requiredUploadEvidence"
+        valuePropName="checked"
         label={
           <>
-            {t("form.labels.uploadImage")}
+            <span>{t("form.labels.uploadImage")}</span>
             <Tooltip title={t("form.tooltips.uploadImage")}>
               <QuestionIcon />
             </Tooltip>
           </>
         }
-        name="requiredUploadEvidence"
-        valuePropName="checked"
         dependencies={["requiredEnterLink"]}
         rules={[
           ({ getFieldValue }) => ({
@@ -253,16 +222,16 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
       </Form.Item>
 
       <Form.Item
+        name="requiredEnterLink"
+        valuePropName="checked"
         label={
           <>
-            {t("form.labels.enterLink")}
+            <span>{t("form.labels.enterLink")}</span>
             <Tooltip title={t("form.tooltips.enterLink")}>
               <QuestionIcon />
             </Tooltip>
           </>
         }
-        name="requiredEnterLink"
-        valuePropName="checked"
         dependencies={["requiredUploadEvidence"]}
         rules={[
           ({ getFieldValue }) => ({
@@ -284,7 +253,7 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
         valuePropName="checked"
         label={
           <>
-            {t("form.labels.allowMultiple")}
+            <span>{t("form.labels.allowMultiple")}</span>
             <Tooltip title={t("form.tooltips.allowMultiple")}>
               <QuestionIcon />
             </Tooltip>
@@ -298,21 +267,7 @@ const AddNewQuestForm: React.FC<Props> = ({ form, onSubmit }) => {
         name="description"
         label={t("form.labels.description")}
         validateFirst
-        rules={[
-          { required: true, message: t("validation.enterDescription") },
-          {
-            validator: (_, value) => {
-              const text = value?.replace(/<[^>]+>/g, "") || "";
-              if (!text.trim())
-                return Promise.reject(t("validation.enterDescription"));
-              if (text.length > 2000)
-                return Promise.reject(
-                  t("validation.descriptionMax", { count: 2000 })
-                );
-              return Promise.resolve();
-            },
-          },
-        ]}
+        rules={descriptionRules(t)}
       >
         <TextEditor />
       </Form.Item>
