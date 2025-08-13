@@ -5,13 +5,10 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData, useRevalidator } from "react-router-dom";
 import TitleBarHeader from "../../components/common/layout/TitleBarHeader";
-import {
-  ActionButtons,
-  EvidenceGallery,
-  RelatedLink,
-  Section,
-  StatusTag,
-} from "../../components/quests/quest-request/detail";
+import { ActionButtons } from "../../components/quests/quest-request/detail/ActionButtons";
+import { EvidenceGallery } from "../../components/quests/quest-request/detail/EvidenceGallery";
+import { RelatedLink } from "../../components/quests/quest-request/detail/RelatedLink";
+import { StatusTag } from "../../components/quests/quest-request/detail/StatusTag";
 import {
   getQuestRequestStatusLabel,
   getQuestTypeLabel,
@@ -27,6 +24,7 @@ import { QuestType } from "../../types/questType";
 import { formatDate } from "../../utils/format";
 import {
   DescriptionsWrappper,
+  InfoColumn,
   PageWrapper,
 } from "./QuestRequestDetailContainer.styles";
 
@@ -99,7 +97,7 @@ export default function QuestRequestDetail() {
       />
 
       <DescriptionsWrappper>
-        <Section style={{ marginBottom: 24 }}>
+        <InfoColumn bordered={false} column={1}>
           <Descriptions.Item label={t("labels.requestId")}>
             {data.code}
           </Descriptions.Item>
@@ -125,13 +123,8 @@ export default function QuestRequestDetail() {
               {data.point?.toLocaleString() || "-"}
             </Descriptions.Item>
           )}
-
-          <Descriptions.Item label={t("labels.description")} span={2}>
-            {data.description}
-          </Descriptions.Item>
-        </Section>
-
-        <Section style={{ marginBottom: 24 }}>
+        </InfoColumn>
+        <InfoColumn bordered={false} column={1}>
           <Descriptions.Item label={t("labels.fullName")}>
             {data.fullName}
           </Descriptions.Item>
@@ -165,12 +158,17 @@ export default function QuestRequestDetail() {
               </Descriptions.Item>
             </>
           )}
-        </Section>
+        </InfoColumn>
       </DescriptionsWrappper>
+      <Descriptions bordered={false} column={1} style={{ marginBottom: 24 }}>
+        <Descriptions.Item label={t("labels.description")}>
+          {data.description}
+        </Descriptions.Item>
+      </Descriptions>
 
-      <Divider />
+      <Divider style={{ margin: "16px 0 24px" }} />
 
-      <Section style={{ marginBottom: 24 }}>
+      <Descriptions bordered={false} column={1} style={{ marginBottom: 24 }}>
         <Descriptions.Item label={t("labels.evidence")}>
           <EvidenceGallery evidence={data.evidence} />
         </Descriptions.Item>
@@ -178,7 +176,7 @@ export default function QuestRequestDetail() {
         <Descriptions.Item label={t("labels.relatedLink")}>
           <RelatedLink url={data.relatedLink} />
         </Descriptions.Item>
-      </Section>
+      </Descriptions>
 
       {/* Approve Modal */}
       <Modal

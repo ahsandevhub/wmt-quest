@@ -1,3 +1,4 @@
+import { Descriptions } from "antd";
 import styled from "styled-components";
 
 export const PageWrapper = styled.div`
@@ -17,5 +18,21 @@ export const DescriptionsWrappper = styled.div`
   @media (max-width: 992px) {
     flex-direction: column;
     gap: 0;
+  }
+`;
+
+export const InfoColumn = styled(Descriptions)`
+  flex: 1;
+  min-width: 360px;
+  .ant-descriptions-item-label {
+    font-weight: 600;
+    width: 140px;
+  }
+  .ant-descriptions-item {
+    padding-bottom: 8px;
+  }
+  .ant-descriptions-row > th,
+  .ant-descriptions-row > td {
+    padding-bottom: 8px;
   }
 `;

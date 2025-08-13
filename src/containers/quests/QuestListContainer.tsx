@@ -2,16 +2,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLoaderData } from "react-router-dom";
 
+import QuestActionsBar from "../../components/quests/quest-list/QuestActionsBar";
+import QuestFilters from "../../components/quests/quest-list/QuestFilters";
+import QuestPagination from "../../components/quests/quest-list/QuestPagination";
+import QuestTable from "../../components/quests/quest-list/QuestTable";
 import {
   ActionsBar,
   PageWrapper,
   PaginationBar,
   TableCard,
-} from "../../components/quests/quest-list/ListWrappers";
-import QuestActionsBar from "../../components/quests/quest-list/QuestActionsBar";
-import QuestFilters from "../../components/quests/quest-list/QuestFilters";
-import QuestPagination from "../../components/quests/quest-list/QuestPagination";
-import QuestTable from "../../components/quests/quest-list/QuestTable";
+} from "../../components/quests/shared/ListWrappers";
 import { namespaces } from "../../i18n/namespaces";
 import {
   type QuestListLoaderData,

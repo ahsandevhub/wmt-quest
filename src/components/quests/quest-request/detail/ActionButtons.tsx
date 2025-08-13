@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import React from "react";
-import styled from "styled-components";
+
+import { ActionsWrap } from "./ActionButtons.styles";
 
 interface Props {
   loadingAction: null | "approve" | "reject";
@@ -10,17 +11,6 @@ interface Props {
   rejectLabel: string;
   show: boolean;
 }
-
-const ActionsWrap = styled.div`
-  display: flex;
-  gap: 12px;
-  @media (max-width: 768px) {
-    width: 100%;
-    button {
-      flex: 1;
-    }
-  }
-`;
 
 export const ActionButtons: React.FC<Props> = ({
   loadingAction,

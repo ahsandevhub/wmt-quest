@@ -4,7 +4,7 @@ import type { TFunction } from "i18next";
 import { getPlatformLabel } from "../../../constants/labels";
 import { type QuestListRow } from "../../../types/questList";
 import { formatDate } from "../../../utils/format";
-import { DetailLink, EllipsisText } from "./ListWrappers";
+import { DetailLink, EllipsisText } from "../shared/ListWrappers";
 
 export const buildQuestColumns = (t: TFunction): ColumnsType<QuestListRow> => [
   {
