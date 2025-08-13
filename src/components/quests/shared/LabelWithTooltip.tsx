@@ -22,4 +22,4 @@ export const LabelWithTooltip: React.FC<LabelWithTooltipProps> = ({
   </span>
 );
 
-export default React.memo(LabelWithTooltip);
+export default LabelWithTooltip;

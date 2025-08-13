@@ -23,10 +23,13 @@ const ProgressiveThumb: React.FC<ProgressiveThumbProps> = ({
         height={200}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
         placeholder={
-          <Skeleton.Image
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            active
-          />
+          <div style={{ width: "100%", height: "100%" }}>
+            <Skeleton.Image
+              style={{ width: "100%", height: "100%" }}
+              active
+              className="placeholder-cover"
+            />
+          </div>
         }
         fallback={fileUrl}
         onLoad={() => setLoaded(true)}

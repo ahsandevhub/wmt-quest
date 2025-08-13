@@ -20,6 +20,12 @@ export const ThumbWrapper = styled.div<{ $loaded: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Placeholder skeleton should also cover fully */
+  .placeholder-cover {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
   .fade-img {
     width: 100%;
     height: 100%;

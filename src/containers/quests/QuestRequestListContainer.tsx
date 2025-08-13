@@ -29,7 +29,7 @@ const QuestRequestListContainer: React.FC = () => {
     useLoaderData() as QuestRequestListLoaderData;
 
   const handleAddNew = useCallback(() => {
-    navigate("/quest/request/add");
+    navigate("/quest/add-quest-request");
   }, [navigate]);
 
   const handlePageChange = useCallback(

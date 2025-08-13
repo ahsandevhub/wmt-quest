@@ -43,4 +43,4 @@ const LoginFields: React.FC = () => {
   );
 };
 
-export default React.memo(LoginFields);
+export default LoginFields;

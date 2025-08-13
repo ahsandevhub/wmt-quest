@@ -1,6 +1,5 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import React from "react";
 import { useTranslation } from "react-i18next";
 
 type Props = { collapsed: boolean; onToggle: () => void };
@@ -20,4 +19,4 @@ function ToggleSidebarButton({ collapsed, onToggle }: Props) {
   );
 }
 
-export default React.memo(ToggleSidebarButton);
+export default ToggleSidebarButton;

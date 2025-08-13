@@ -117,13 +117,20 @@ export const QuestTypeLabels: Record<QuestTypeEnum, string> = {
   [QuestType.Tournament]: "Tournament quest",
 } as const;
 
+// Runtime-safe lookup: if value is not a valid QuestType member return dash
+const isQuestTypeValue = (v: unknown): v is QuestTypeEnum =>
+  (Object.values(QuestType) as unknown[]).includes(v);
+
 export const getQuestTypeLabel = (
-  value: QuestTypeEnum,
+  value: QuestTypeEnum | number | null | undefined,
   t?: TFunction
-): string =>
-  t
+): string => {
+  if (value === null || value === undefined) return "-";
+  if (!isQuestTypeValue(value)) return "-";
+  return t
     ? t(`toolbar.quest_type_filter.options.${value}`, QuestTypeLabels[value])
     : QuestTypeLabels[value];
+};
 
 export const getQuestTypeOptions = (t?: TFunction): Option<QuestTypeEnum>[] =>
   (Object.values(QuestType) as QuestTypeEnum[]).map((value) => ({

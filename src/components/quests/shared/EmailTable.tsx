@@ -1,5 +1,4 @@
 import { Button, Input, Table, Typography } from "antd";
-import React from "react";
 import styled from "styled-components";
 import { QUEST_FORM_PAGE_SIZE } from "../../../constants/form";
 import type { UserEmail } from "../../../hooks/useEmailList";
@@ -108,4 +107,4 @@ const EmailTable: React.FC<EmailTableProps> = ({
   );
 };
 
-export default React.memo(EmailTable);
+export default EmailTable;

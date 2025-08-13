@@ -1,7 +1,7 @@
 import { SearchOutlined, SyncOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Form, Input, Select } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
@@ -298,4 +298,4 @@ const QuestRequestFilters: React.FC = () => {
   );
 };
 
-export default React.memo(QuestRequestFilters);
+export default QuestRequestFilters;

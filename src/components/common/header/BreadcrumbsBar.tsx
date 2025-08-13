@@ -1,7 +1,7 @@
 import { Breadcrumb } from "antd";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { namespaces } from "../../../i18n/namespaces";
 
 type Props = { isMobile: boolean; className?: string };
@@ -11,27 +11,44 @@ function BreadcrumbsBar({ isMobile, className }: Props) {
   const location = useLocation();
 
   const items = useMemo(() => {
-    const segs = location.pathname.split("/").filter(Boolean);
-    const format = (seg: string) =>
-      seg
+    const pathSegments = location.pathname.split("/").filter(Boolean);
+    if (pathSegments.length === 0) return [{ title: t("home"), key: "home" }];
+
+    const humanize = (segment: string) =>
+      segment
         .split("-")
         .filter(Boolean)
-        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 
-    const crumbs: { title: string }[] = [];
-    if (!isMobile) {
-      crumbs.push({ title: segs[0] ? format(segs[0]) : t("home") });
+    // Mobile: only show last segment (current page)
+    if (isMobile) {
+      return [
+        {
+          title: humanize(pathSegments[pathSegments.length - 1]) || t("home"),
+          key: pathSegments[pathSegments.length - 1] || "home",
+        },
+      ];
     }
-    const tail = isMobile
-      ? format(segs[segs.length - 1] ?? "")
-      : format(segs[1] ?? segs[0] ?? "");
-    crumbs.push({ title: tail || t("home") });
 
-    return crumbs;
+    // Desktop: show full path; link all but last
+    let cumulative = "";
+    return pathSegments.map((segment, idx) => {
+      cumulative += `/${segment}`;
+      const title = humanize(segment) || t("home");
+      return {
+        key: cumulative,
+        title:
+          idx < pathSegments.length - 1 ? (
+            <Link to={cumulative}>{title}</Link>
+          ) : (
+            title
+          ),
+      };
+    });
   }, [isMobile, location.pathname, t]);
 
   return <Breadcrumb className={className} items={items} />;
 }
 
-export default React.memo(BreadcrumbsBar);
+export default BreadcrumbsBar;

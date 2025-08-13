@@ -1,6 +1,6 @@
 import { GlobalOutlined } from "@ant-design/icons";
 import { Dropdown, type MenuProps } from "antd";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 function LanguageSwitcher() {
@@ -39,4 +39,4 @@ function LanguageSwitcher() {
   );
 }
 
-export default React.memo(LanguageSwitcher);
+export default LanguageSwitcher;

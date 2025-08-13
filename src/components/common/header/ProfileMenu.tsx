@@ -4,7 +4,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Dropdown, type MenuProps } from "antd";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 type Props = { onProfile: () => void; onLogout: () => void };
@@ -42,4 +42,4 @@ function ProfileMenu({ onProfile, onLogout }: Props) {
   );
 }
 
-export default React.memo(ProfileMenu);
+export default ProfileMenu;

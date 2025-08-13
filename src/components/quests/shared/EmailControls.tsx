@@ -1,5 +1,5 @@
 import { Button, Input } from "antd";
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { emailRegex } from "../../../utils/validators";
 
@@ -95,4 +95,4 @@ const EmailControls: React.FC<EmailControlsProps> = ({
   );
 };
 
-export default React.memo(EmailControls);
+export default EmailControls;

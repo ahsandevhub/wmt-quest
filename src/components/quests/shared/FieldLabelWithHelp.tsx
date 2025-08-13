@@ -24,4 +24,4 @@ const FieldLabelWithHelp: React.FC<FieldLabelWithHelpProps> = ({
   );
 };
 
-export default React.memo(FieldLabelWithHelp);
+export default FieldLabelWithHelp;

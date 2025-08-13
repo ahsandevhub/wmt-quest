@@ -1,6 +1,6 @@
 import { SearchOutlined, SyncOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select } from "antd";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
@@ -104,4 +104,4 @@ const QuestFilters: React.FC = () => {
   );
 };
 
-export default React.memo(QuestFilters);
+export default QuestFilters;

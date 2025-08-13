@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 import { LogoWrapper } from "./SidebarLogo.styles";
@@ -23,4 +22,4 @@ function SidebarLogo({
   );
 }
 
-export default React.memo(SidebarLogo);
+export default SidebarLogo;

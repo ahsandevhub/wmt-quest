@@ -1,6 +1,5 @@
 import { BellOutlined } from "@ant-design/icons";
 import { Badge, Button } from "antd";
-import React from "react";
 import { useTranslation } from "react-i18next";
 
 function NotificationsBell() {
@@ -22,4 +21,4 @@ function NotificationsBell() {
   );
 }
 
-export default React.memo(NotificationsBell);
+export default NotificationsBell;

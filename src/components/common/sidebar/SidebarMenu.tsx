@@ -1,6 +1,6 @@
 import type { MenuProps } from "antd";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 import { StyledMenu } from "./SidebarMenu.styles";
@@ -59,4 +59,4 @@ function SidebarMenu({ sections, currentPath, onItemClick }: SidebarMenuProps) {
   );
 }
 
-export default React.memo(SidebarMenu);
+export default SidebarMenu;

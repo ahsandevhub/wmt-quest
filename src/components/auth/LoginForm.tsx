@@ -1,5 +1,4 @@
 import { Button, Form } from "antd";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { namespaces } from "../../i18n/namespaces";
 import type { LoginFormValues } from "../../types/auth";
@@ -56,4 +55,4 @@ const LoginForm: React.FC<LoginFormProps> = ({
   );
 };
 
-export default React.memo(LoginForm);
+export default LoginForm;
