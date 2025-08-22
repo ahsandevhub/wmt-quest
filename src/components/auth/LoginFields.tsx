@@ -16,6 +16,7 @@ const LoginFields: React.FC = () => {
       >
         <Input
           size="large"
+          name="username"
           placeholder={t("usernamePlaceholder")}
           prefix={
             <IconWrap>
@@ -31,6 +32,7 @@ const LoginFields: React.FC = () => {
       >
         <Input.Password
           size="large"
+          name="password"
           placeholder={t("passwordPlaceholder")}
           prefix={
             <IconWrap>
