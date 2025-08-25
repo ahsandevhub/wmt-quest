@@ -13,18 +13,22 @@ export class LoginPage {
 
   async open() {
     await this.driver.get(this.url);
+    // wait for login form to appear
+    await this.driver.wait(until.elementLocated(this.selectors.username), 5000);
   }
 
   async login(username, password) {
+    // wait for fields and submit credentials
     const usernameField = await this.driver.wait(
       until.elementLocated(this.selectors.username),
       10000
     );
-    const passwordField = await this.driver.findElement(
-      this.selectors.password
-    );
+    const passwordField = await this.driver.findElement(this.selectors.password);
+    await usernameField.clear?.();
     await usernameField.sendKeys(username);
     await passwordField.sendKeys(password);
     await this.driver.findElement(this.selectors.submit).click();
+    // wait until redirected to the quest list (post-login)
+    await this.driver.wait(until.urlContains("/quest/quest-list"), 10000);
   }
 }
