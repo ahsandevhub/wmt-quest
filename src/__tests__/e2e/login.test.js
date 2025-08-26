@@ -1,6 +1,16 @@
+import "dotenv/config";
 import { Builder, until } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
 import { LoginPage } from "./pages/login.page.js"; // Adjust path as needed
+
+const USER = process.env.LOGIN_USER;
+const PASS = process.env.LOGIN_PASS;
+
+if (!USER || !PASS) {
+  throw new Error(
+    "LOGIN_USER and LOGIN_PASS environment variables must be set."
+  );
+}
 
 (async () => {
   // Set up Chrome browser with additional options
@@ -14,8 +24,6 @@ import { LoginPage } from "./pages/login.page.js"; // Adjust path as needed
     .forBrowser("chrome")
     .setChromeOptions(options)
     .build();
-  const USER = "peter-bo-3@yopmail.com";
-  const PASS = "kbfSMcG71saaC280UCAiDg==";
 
   try {
     const loginPage = new LoginPage(driver);

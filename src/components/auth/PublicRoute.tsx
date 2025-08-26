@@ -1,14 +1,7 @@
 import { Spin } from "antd";
 import { Navigate, Outlet } from "react-router-dom";
-import styled from "styled-components";
 import { useAuth } from "../../hooks/useAuth";
-
-const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
+import { LoadingWrapper } from "./PublicRoute.styles";
 
 /**
  * PublicRoute - For routes that should only be accessible when NOT authenticated

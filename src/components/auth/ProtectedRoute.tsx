@@ -1,14 +1,7 @@
 import { Spin } from "antd";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import styled from "styled-components";
 import { useAuth } from "../../hooks/useAuth";
-
-const LoadingWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
+import { LoadingWrapper } from "./ProtectedRoute.styles";
 
 export default function ProtectedRoute() {
   const { isAuthenticated, isInitializing } = useAuth();
