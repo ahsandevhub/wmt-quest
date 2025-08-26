@@ -1,5 +1,7 @@
 {
   "statusCode": "404",
-  "message": "Oops — the page you’re looking for doesn’t exist.",
-  "goBack": "Go Back"
+  "message": "Oops — the page you're looking for doesn't exist.",
+  "goBack": "Go Back",
+  "goToQuests": "Go to Quests",
+  "goToLogin": "Go to Login"
 }

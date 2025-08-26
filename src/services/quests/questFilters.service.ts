@@ -1,4 +1,5 @@
-import { QuestStatusLabels } from "../../constants/labels";
+import type { TFunction } from "i18next";
+import { getQuestStatusLabel } from "../../constants/labels";
 import { QuestStatus, type QuestStatusEnum } from "../../types/questStatus";
 
 export type QuestFilterValues = {
@@ -6,10 +7,10 @@ export type QuestFilterValues = {
   status?: QuestStatusEnum;
 };
 
-export const buildStatusOptions = () =>
+export const buildStatusOptions = (t: TFunction) =>
   Object.values(QuestStatus).map((value) => ({
     value: value as QuestStatusEnum,
-    label: QuestStatusLabels[value as QuestStatusEnum],
+    label: getQuestStatusLabel(value as QuestStatusEnum, t),
   }));
 
 export const getInitialValuesFromSearchParams = (

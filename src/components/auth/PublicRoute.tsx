@@ -1,5 +1,5 @@
 import { Spin } from "antd";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -10,9 +10,12 @@ const LoadingWrapper = styled.div`
   height: 100vh;
 `;
 
-export default function ProtectedRoute() {
+/**
+ * PublicRoute - For routes that should only be accessible when NOT authenticated
+ * (like login page). If user is authenticated, redirect to the main app.
+ */
+export default function PublicRoute() {
   const { isAuthenticated, isInitializing } = useAuth();
-  const location = useLocation();
 
   // Show loading spinner while checking authentication
   if (isInitializing) {
@@ -23,8 +26,8 @@ export default function ProtectedRoute() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace state={{ from: location }} />;
+  if (isAuthenticated) {
+    return <Navigate to="/quest/quest-list" replace />;
   }
 
   return <Outlet />;

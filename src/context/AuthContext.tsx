@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import React, {
   createContext,
   useCallback,
@@ -16,9 +17,14 @@ import {
   setRefreshToken,
 } from "../utils/storage";
 
+interface TokenData {
+  exp: number;
+}
+
 export interface AuthContextType {
   accessToken: string | null;
   isAuthenticated: boolean;
+  isInitializing: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -27,13 +33,36 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
+// Helper to validate token
+const isTokenValid = (token: string | null): boolean => {
+  if (!token) return false;
+  try {
+    const decoded = jwtDecode<TokenData>(token);
+    return decoded.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [accessTokenState, setAccessTokenState] = useState<string | null>(
-    getAccessToken()
-  );
+  const [accessTokenState, setAccessTokenState] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Initialize auth state on mount
+  useEffect(() => {
+    const token = getAccessToken();
+    if (isTokenValid(token)) {
+      setAccessTokenState(token);
+    } else {
+      // Clear invalid tokens
+      removeAccessToken();
+      removeRefreshToken();
+    }
+    setIsInitializing(false);
+  }, []);
 
   const login = useCallback(async (username: string, password: string) => {
     setLoading(true);
@@ -64,21 +93,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     navigate("/", { replace: true });
   }, [navigate]);
 
-  useEffect(() => {
-    const token = getAccessToken();
-    if (token) setAccessTokenState(token);
-  }, []);
-
   const value = useMemo<AuthContextType>(
     () => ({
       accessToken: accessTokenState,
-      isAuthenticated: !!accessTokenState,
+      isAuthenticated: !!accessTokenState && isTokenValid(accessTokenState),
+      isInitializing,
       login,
       logout,
       loading,
       error,
     }),
-    [accessTokenState, loading, error, login, logout]
+    [accessTokenState, isInitializing, loading, error, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

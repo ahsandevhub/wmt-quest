@@ -23,6 +23,7 @@ const { Search } = Input;
 
 const QuestFilters: React.FC = () => {
   const { t } = useTranslation(namespaces.questList);
+  const { t: tLabels } = useTranslation(namespaces.labels);
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<QuestFilterValues>();
 
@@ -31,7 +32,7 @@ const QuestFilters: React.FC = () => {
     [searchParams]
   );
 
-  const statusOptions = useMemo(() => buildStatusOptions(), []);
+  const statusOptions = useMemo(() => buildStatusOptions(tLabels), [tLabels]);
 
   const submitFilters = (values: QuestFilterValues) => {
     const params = buildParamsFromValues(values);

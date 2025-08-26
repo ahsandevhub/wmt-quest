@@ -10,6 +10,7 @@ export const namespaces = {
   questRequestDetail: "quest_request_detail",
   notFound: "not_found",
   quickTabs: "quick_tabs",
+  labels: "labels",
 } as const;
 
 export type NamespaceKey = keyof typeof namespaces;

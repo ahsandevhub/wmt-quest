@@ -1,0 +1,36 @@
+{
+  "platform": {
+    "0": "Other",
+    "1": "Facebook",
+    "2": "Instagram",
+    "3": "YouTube",
+    "4": "Telegram",
+    "5": "TikTok",
+    "6": "Twitter",
+    "7": "Discord"
+  },
+  "rank": {
+    "1": "Silver",
+    "2": "Gold",
+    "3": "Diamond"
+  },
+  "toolbar": {
+    "statusFilter": {
+      "options": {
+        "1": "Pending",
+        "2": "Approved",
+        "3": "Rejected",
+        "": "All Statuses",
+        "true": "Active",
+        "false": "Inactive"
+      }
+    },
+    "quest_type_filter": {
+      "options": {
+        "1": "Common quest",
+        "2": "Welcome quest",
+        "3": "Tournament quest"
+      }
+    }
+  }
+}

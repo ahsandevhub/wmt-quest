@@ -1,21 +1,24 @@
 import { message } from "antd";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "../../components/auth/LoginForm";
 import { useAuth } from "../../hooks/useAuth";
 import type { LoginFormValues } from "../../types/auth";
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
-  const { accessToken, login } = useAuth();
+  const location = useLocation();
+  const { accessToken, login, isInitializing } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
-    if (accessToken) {
-      navigate("/quest/quest-list", { replace: true });
+    if (accessToken && !isInitializing) {
+      // Redirect to intended destination or default to quest-list
+      const from = location.state?.from?.pathname || "/quest/quest-list";
+      navigate(from, { replace: true });
     }
-  }, [accessToken, navigate]);
+  }, [accessToken, isInitializing, location.state, navigate]);
 
   const handleSubmit = async ({ username, password }: LoginFormValues) => {
     setIsSubmitting(true);
@@ -23,7 +26,7 @@ const LoginContainer: React.FC = () => {
     try {
       await login(username, password);
       message.success("Login successful!");
-      navigate("/quest/quest-list", { replace: true });
+      // Navigation is handled by the useEffect above
     } catch (error: any) {
       const fallback = "Login failed. Please try again.";
       const serverMessage =
@@ -33,6 +36,11 @@ const LoginContainer: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Don't render login form while checking authentication
+  if (isInitializing) {
+    return null;
+  }
 
   return (
     <LoginForm

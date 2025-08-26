@@ -31,6 +31,7 @@ import {
 export default function QuestRequestDetail() {
   const data = useLoaderData() as QuestRequest;
   const { t } = useTranslation(namespaces.questRequestDetail);
+  const { t: tLabels } = useTranslation(namespaces.labels);
   const { revalidate } = useRevalidator();
 
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
@@ -42,12 +43,12 @@ export default function QuestRequestDetail() {
 
   // Memoized labels (avoid re-computing objects every render)
   const questTypeLabel = useMemo(
-    () => getQuestTypeLabel(data.challengeType, t),
-    [data.challengeType, t]
+    () => getQuestTypeLabel(data.challengeType, tLabels),
+    [data.challengeType, tLabels]
   );
   const statusLabel = useMemo(
-    () => getQuestRequestStatusLabel(data.status, t),
-    [data.status, t]
+    () => getQuestRequestStatusLabel(data.status, tLabels),
+    [data.status, tLabels]
   );
 
   const handleApprove = useCallback(async () => {

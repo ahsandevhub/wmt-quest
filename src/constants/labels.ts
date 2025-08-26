@@ -13,72 +13,38 @@ import { QuestType, type QuestTypeEnum } from "../types/questType";
 type Option<T> = { value: T; label: string };
 
 /* ====================== Platform ====================== */
-export const QuestPlatformLabels: Record<QuestPlatformEnum, string> = {
-  [QuestPlatform.Other]: "Other",
-  [QuestPlatform.Facebook]: "Facebook",
-  [QuestPlatform.Instagram]: "Instagram",
-  [QuestPlatform.YouTube]: "YouTube",
-  [QuestPlatform.Telegram]: "Telegram",
-  [QuestPlatform.TikTok]: "TikTok",
-  [QuestPlatform.Twitter]: "Twitter",
-  [QuestPlatform.Discord]: "Discord",
-} as const;
-
 export const getPlatformLabel = (
   value: QuestPlatformEnum | null | undefined,
-  t?: TFunction
+  t: TFunction
 ): string => {
   if (value === null || value === undefined) return "—";
-  return t
-    ? t(`platform.${value}`, QuestPlatformLabels[value])
-    : QuestPlatformLabels[value];
+  return t(`labels:platform.${value}`);
 };
 
-export const getPlatformOptions = (
-  t?: TFunction
-): Option<QuestPlatformEnum>[] =>
+export const getPlatformOptions = (t: TFunction): Option<QuestPlatformEnum>[] =>
   (Object.values(QuestPlatform) as QuestPlatformEnum[]).map((value) => ({
     value,
     label: getPlatformLabel(value, t),
   }));
 
 /* ====================== Rank ====================== */
-export const QuestRankLabels: Record<QuestRankEnum, string> = {
-  [Rank.Silver]: "Silver",
-  [Rank.Gold]: "Gold",
-  [Rank.Diamond]: "Diamond",
-} as const;
+export const getRankLabel = (value: QuestRankEnum, t: TFunction): string =>
+  t(`labels:rank.${value}`);
 
-export const getRankLabel = (value: QuestRankEnum, t?: TFunction): string =>
-  t ? t(`rank.${value}`, QuestRankLabels[value]) : QuestRankLabels[value];
-
-export const getRankOptions = (t?: TFunction): Option<QuestRankEnum>[] =>
+export const getRankOptions = (t: TFunction): Option<QuestRankEnum>[] =>
   (Object.values(Rank) as QuestRankEnum[]).map((value) => ({
     value,
     label: getRankLabel(value, t),
   }));
 
 /* ====================== Quest Request Status ====================== */
-export const QuestRequestStatusLabels: Record<QuestRequestStatusEnum, string> =
-  {
-    [QuestRequestStatus.Pending]: "Pending",
-    [QuestRequestStatus.Approved]: "Approved",
-    [QuestRequestStatus.Rejected]: "Rejected",
-  } as const;
-
 export const getQuestRequestStatusLabel = (
   value: QuestRequestStatusEnum,
-  t?: TFunction
-): string =>
-  t
-    ? t(
-        `toolbar.statusFilter.options.${value}`,
-        QuestRequestStatusLabels[value]
-      )
-    : QuestRequestStatusLabels[value];
+  t: TFunction
+): string => t(`labels:toolbar.statusFilter.options.${value}`);
 
 export const getQuestRequestStatusOptions = (
-  t?: TFunction
+  t: TFunction
 ): Option<QuestRequestStatusEnum>[] =>
   (Object.values(QuestRequestStatus) as QuestRequestStatusEnum[]).map(
     (value) => ({
@@ -88,22 +54,13 @@ export const getQuestRequestStatusOptions = (
   );
 
 /* ====================== Quest Status (filter) ====================== */
-export const QuestStatusLabels: Record<QuestStatusEnum, string> = {
-  [QuestStatus.All]: "All Statusses",
-  [QuestStatus.Active]: "Active",
-  [QuestStatus.Inactive]: "Inactive",
-} as const;
-
 export const getQuestStatusLabel = (
   value: QuestStatusEnum,
-  t?: TFunction
-): string =>
-  t
-    ? t(`toolbar.statusFilter.options.${value}`, QuestStatusLabels[value])
-    : QuestStatusLabels[value];
+  t: TFunction
+): string => t(`labels:toolbar.statusFilter.options.${value}`);
 
 export const getQuestStatusOptions = (
-  t?: TFunction
+  t: TFunction
 ): Option<QuestStatusEnum>[] =>
   (Object.values(QuestStatus) as QuestStatusEnum[]).map((value) => ({
     value,
@@ -111,28 +68,20 @@ export const getQuestStatusOptions = (
   }));
 
 /* ====================== Quest Type ====================== */
-export const QuestTypeLabels: Record<QuestTypeEnum, string> = {
-  [QuestType.Common]: "Common quest",
-  [QuestType.Welcome]: "Welcome quest",
-  [QuestType.Tournament]: "Tournament quest",
-} as const;
-
 // Runtime-safe lookup: if value is not a valid QuestType member return dash
 const isQuestTypeValue = (v: unknown): v is QuestTypeEnum =>
   (Object.values(QuestType) as unknown[]).includes(v);
 
 export const getQuestTypeLabel = (
   value: QuestTypeEnum | number | null | undefined,
-  t?: TFunction
+  t: TFunction
 ): string => {
   if (value === null || value === undefined) return "-";
   if (!isQuestTypeValue(value)) return "-";
-  return t
-    ? t(`toolbar.quest_type_filter.options.${value}`, QuestTypeLabels[value])
-    : QuestTypeLabels[value];
+  return t(`labels:toolbar.quest_type_filter.options.${value}`);
 };
 
-export const getQuestTypeOptions = (t?: TFunction): Option<QuestTypeEnum>[] =>
+export const getQuestTypeOptions = (t: TFunction): Option<QuestTypeEnum>[] =>
   (Object.values(QuestType) as QuestTypeEnum[]).map((value) => ({
     value,
     label: getQuestTypeLabel(value, t),
