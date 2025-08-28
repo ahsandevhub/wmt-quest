@@ -11,6 +11,22 @@ vi.mock("../../../hooks/useAuth", () => ({
 }));
 const mockUseAuth = useAuthModule.useAuth as unknown as Mock;
 
+// Mock react-i18next
+vi.mock("react-i18next", () => ({
+  useTranslation: vi.fn(() => ({
+    t: vi.fn((key: string) => {
+      const translations: Record<string, string> = {
+        statusCode: "404 Not Found",
+        message: "The page you are looking for does not exist",
+        goBack: "Go Back",
+        goToQuests: "Go to Quests",
+        goToLogin: "Go to Login",
+      };
+      return translations[key] || key;
+    }),
+  })),
+}));
+
 describe("ConditionalNotFound", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,6 +70,10 @@ describe("ConditionalNotFound", () => {
       </MemoryRouter>
     );
     // Should render NotFound component content
-    expect(screen.getByText(/not found/i)).toBeInTheDocument();
+    expect(screen.getByText("404 Not Found")).toBeInTheDocument();
+    expect(
+      screen.getByText("The page you are looking for does not exist")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Go Back")).toBeInTheDocument();
   });
 });

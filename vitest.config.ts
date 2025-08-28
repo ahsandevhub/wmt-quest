@@ -6,6 +6,8 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
-    setupFiles: "./src/test/setup.ts",
+    setupFiles: "./src/__tests__/setup.ts",
+    // Exclude E2E tests from Vitest (they run with Node.js/Selenium)
+    exclude: ["**/node_modules/**", "**/dist/**", "**/e2e/**", "**/*.e2e.*"],
   },
 });
