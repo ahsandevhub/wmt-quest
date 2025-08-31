@@ -1,9 +1,10 @@
 import { BellOutlined } from "@ant-design/icons";
 import { Badge, Button } from "antd";
 import { useTranslation } from "react-i18next";
+import { namespaces } from "../../../i18n/namespaces";
 
 function NotificationsBell() {
-  const { t } = useTranslation("header");
+  const { t } = useTranslation(namespaces.header);
   return (
     <Badge>
       <Button

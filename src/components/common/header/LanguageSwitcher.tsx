@@ -2,9 +2,10 @@ import { GlobalOutlined } from "@ant-design/icons";
 import { Dropdown, type MenuProps } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { namespaces } from "../../../i18n/namespaces";
 
 function LanguageSwitcher() {
-  const { t, i18n } = useTranslation("header");
+  const { t, i18n } = useTranslation(namespaces.header);
 
   const items: MenuProps["items"] = useMemo(
     () => [

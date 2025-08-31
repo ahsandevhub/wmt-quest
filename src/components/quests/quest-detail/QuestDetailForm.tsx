@@ -17,6 +17,7 @@ import { QUEST_FORM_DATE_FORMAT } from "../../../constants/form";
 import { getPlatformOptions, getRankOptions } from "../../../constants/labels";
 import { useEmailList, type UserEmail } from "../../../hooks/useEmailList";
 import { useResponsiveFormLayout } from "../../../hooks/useResponsiveFormLayout";
+import { namespaces } from "../../../i18n/namespaces";
 import {
   QuestPlatform,
   type QuestPlatformEnum,
@@ -58,7 +59,7 @@ type Props = {
 
 /* ================ Component =============== */
 const QuestDetailForm: React.FC<Props> = ({ form, questData, onSubmit }) => {
-  const { t } = useTranslation("quest_detail");
+  const { t } = useTranslation(namespaces.questDetail);
   // Unified responsive layout hook
   const layoutProps = useResponsiveFormLayout();
 

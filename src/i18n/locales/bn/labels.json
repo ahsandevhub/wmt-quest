@@ -25,7 +25,7 @@
         "false": "নিষ্ক্রিয়"
       }
     },
-    "quest_type_filter": {
+    "questTypeFilter": {
       "options": {
         "1": "সাধারণ কোয়েস্ট",
         "2": "স্বাগতম কোয়েস্ট",

@@ -1,16 +1,17 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useTranslation } from "react-i18next";
+import { namespaces } from "../../../i18n/namespaces";
 
 type Props = { collapsed: boolean; onToggle: () => void };
 
 function ToggleSidebarButton({ collapsed, onToggle }: Props) {
-  const { t } = useTranslation("header");
+  const { t } = useTranslation(namespaces.header);
   return (
     <Button
       type="text"
       aria-label={
-        collapsed ? t("actions.expand_sidebar") : t("actions.collapse_sidebar")
+        collapsed ? t("actions.expandSidebar") : t("actions.collapseSidebar")
       }
       icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
       onClick={onToggle}

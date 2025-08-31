@@ -1,5 +1,6 @@
-import { Button, Form } from "antd";
+import { Button, Form, Image } from "antd";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { namespaces } from "../../i18n/namespaces";
 import type { LoginFormValues } from "../../types/auth";
 import LoginFields from "./LoginFields";
@@ -22,9 +23,14 @@ const LoginForm: React.FC<LoginFormProps> = ({
     <PageWrapper>
       <Card aria-label={t("logoAlt")}>
         <LogoWrapper>
-          <a href="/" aria-label={t("logoAlt")}>
-            <img src="/src/assets/WeMasterTrade-logo.png" alt={t("logoAlt")} />
-          </a>
+          <Link to="/" aria-label={t("logoAlt")}>
+            <Image
+              src="/src/assets/WeMasterTrade-logo.png"
+              alt={t("logoAlt")}
+              preview={false}
+              width={180}
+            />
+          </Link>
         </LogoWrapper>
 
         {errorMessage ? (

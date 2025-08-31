@@ -1,21 +1,21 @@
 {
   "quests": "Quests",
-  "quest_list": "Quest List",
-  "welcome_quests": "Welcome Quests",
-  "quest_requests": "Quest Requests",
+  "questList": "Quest List",
+  "welcomeQuests": "Welcome Quests",
+  "questRequests": "Quest Requests",
   "redeem": "Redeem",
-  "quest_config": "Configuration",
-  "tournament_quests": "Tournament Quests",
+  "questConfig": "Configuration",
+  "tournamentQuests": "Tournament Quests",
 
   "discount": "Discount Code",
-  "discount_main": "Discount Code",
-  "ap_discount": "AP Discount Code",
-  "discount_config": "Configuration",
+  "discountMain": "Discount Code",
+  "apDiscount": "AP Discount Code",
+  "discountConfig": "Configuration",
 
   "blindbox": "Blind Box",
-  "box_list": "Box List",
-  "secret_config": "Secret Configuration",
+  "boxList": "Box List",
+  "secretConfig": "Secret Configuration",
   "probability": "Probability",
-  "spin_config": "Spin Configuration",
+  "spinConfig": "Spin Configuration",
   "rewards": "Rewards"
 }

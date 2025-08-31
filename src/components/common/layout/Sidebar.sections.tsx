@@ -10,28 +10,28 @@ export function buildSidebarSections(t: (k: string) => string): NavSection[] {
       items: [
         {
           key: "quest-list",
-          label: t("quest_list"),
+          label: t("questList"),
           path: "/quest/quest-list",
         },
         {
           key: "welcome-quests",
-          label: t("welcome_quests"),
+          label: t("welcomeQuests"),
           path: "/quest/welcome",
         },
         {
           key: "quest-requests",
-          label: t("quest_requests"),
+          label: t("questRequests"),
           path: "/quest/quest-requests",
         },
         { key: "redeem", label: t("redeem"), path: "/quest/redeem" },
         {
           key: "quest-config",
-          label: t("quest_config"),
+          label: t("questConfig"),
           path: "/quest/configuration",
         },
         {
           key: "tournament-quests",
-          label: t("tournament_quests"),
+          label: t("tournamentQuests"),
           path: "/quest/tournament",
         },
       ],
@@ -41,11 +41,11 @@ export function buildSidebarSections(t: (k: string) => string): NavSection[] {
       icon: <TagOutlined />,
       title: t("discount"),
       items: [
-        { key: "discount-main", label: t("discount_main"), path: "/discount" },
-        { key: "ap-discount", label: t("ap_discount"), path: "/discount/ap" },
+        { key: "discount-main", label: t("discountMain"), path: "/discount" },
+        { key: "ap-discount", label: t("apDiscount"), path: "/discount/ap" },
         {
           key: "discount-config",
-          label: t("discount_config"),
+          label: t("discountConfig"),
           path: "/discount/configuration",
         },
       ],
@@ -55,10 +55,10 @@ export function buildSidebarSections(t: (k: string) => string): NavSection[] {
       icon: <GiftOutlined />,
       title: t("blindbox"),
       items: [
-        { key: "box-list", label: t("box_list"), path: "/blindbox" },
+        { key: "box-list", label: t("boxList"), path: "/blindbox" },
         {
           key: "secret-config",
-          label: t("secret_config"),
+          label: t("secretConfig"),
           path: "/blindbox/secret",
         },
         {
@@ -66,7 +66,7 @@ export function buildSidebarSections(t: (k: string) => string): NavSection[] {
           label: t("probability"),
           path: "/blindbox/probability",
         },
-        { key: "spin-config", label: t("spin_config"), path: "/blindbox/spin" },
+        { key: "spin-config", label: t("spinConfig"), path: "/blindbox/spin" },
         { key: "rewards", label: t("rewards"), path: "/blindbox/rewards" },
       ],
     },

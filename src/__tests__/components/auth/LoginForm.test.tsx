@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Form } from "antd";
+import { Form, Input } from "antd";
+import { MemoryRouter } from "react-router-dom";
 import { vi } from "vitest";
 import LoginForm from "../../../components/auth/LoginForm";
 
@@ -20,16 +21,17 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-// Mock LoginFields to avoid duplicate field rendering logic
+// Mock LoginFields to avoid duplicate field rendering logic.
+// Use AntD Input so the <Form> collects values during tests.
 vi.mock("../../../components/auth/LoginFields", () => ({
   __esModule: true,
   default: () => (
     <>
       <Form.Item name="username">
-        <input name="username" placeholder="Enter your username" />
+        <Input name="username" placeholder="Enter your username" />
       </Form.Item>
       <Form.Item name="password">
-        <input
+        <Input
           name="password"
           placeholder="Enter your password"
           type="password"
@@ -41,7 +43,11 @@ vi.mock("../../../components/auth/LoginFields", () => ({
 
 describe("LoginForm", () => {
   it("renders logo, fields, and submit button", () => {
-    render(<LoginForm isSubmitting={false} onSubmit={vi.fn()} />);
+    render(
+      <MemoryRouter>
+        <LoginForm isSubmitting={false} onSubmit={vi.fn()} />
+      </MemoryRouter>
+    );
     expect(screen.getByAltText("WeMasterTrade Logo")).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText("Enter your username")
@@ -54,18 +60,24 @@ describe("LoginForm", () => {
 
   it("shows error message when errorMessage prop is provided", () => {
     render(
-      <LoginForm
-        isSubmitting={false}
-        errorMessage="Invalid credentials"
-        onSubmit={vi.fn()}
-      />
+      <MemoryRouter>
+        <LoginForm
+          isSubmitting={false}
+          errorMessage="Invalid credentials"
+          onSubmit={vi.fn()}
+        />
+      </MemoryRouter>
     );
     expect(screen.getByRole("alert")).toHaveTextContent("Invalid credentials");
   });
 
   it("calls onSubmit with form values when submitted", async () => {
     const handleSubmit = vi.fn();
-    render(<LoginForm isSubmitting={false} onSubmit={handleSubmit} />);
+    render(
+      <MemoryRouter>
+        <LoginForm isSubmitting={false} onSubmit={handleSubmit} />
+      </MemoryRouter>
+    );
     fireEvent.change(screen.getByPlaceholderText("Enter your username"), {
       target: { value: "testuser" },
     });
@@ -82,7 +94,11 @@ describe("LoginForm", () => {
   });
 
   it("shows loading spinner and loading class when isSubmitting is true", () => {
-    render(<LoginForm isSubmitting={true} onSubmit={vi.fn()} />);
+    render(
+      <MemoryRouter>
+        <LoginForm isSubmitting={true} onSubmit={vi.fn()} />
+      </MemoryRouter>
+    );
     const button = screen.getByRole("button", { name: /sign in/i });
     // Check for loading spinner icon
     expect(button.querySelector(".ant-btn-loading-icon")).toBeInTheDocument();

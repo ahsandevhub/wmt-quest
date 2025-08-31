@@ -25,7 +25,7 @@
         "false": "Inactive"
       }
     },
-    "quest_type_filter": {
+    "questTypeFilter": {
       "options": {
         "1": "Common quest",
         "2": "Welcome quest",

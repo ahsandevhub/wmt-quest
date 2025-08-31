@@ -23,7 +23,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ collapsed, onToggle }) => {
 
   const handleLogout = useCallback(() => {
     logout();
-    message.success(t("logout_success"));
+    message.success(t("logoutSuccess"));
   }, [logout, t]);
 
   const handleProfile = useCallback(() => {

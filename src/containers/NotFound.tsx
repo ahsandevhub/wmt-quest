@@ -3,12 +3,13 @@ import { Button, Space, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { namespaces } from "../i18n/namespaces";
 import { Wrapper } from "./NotFound.styles";
 
 const { Title, Text } = Typography;
 
 export default function NotFound() {
-  const { t } = useTranslation("not_found");
+  const { t } = useTranslation(namespaces.notFound);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 

@@ -4,8 +4,10 @@ import NotFound from "../../containers/NotFound";
 import { useAuth } from "../../hooks/useAuth";
 import AppHeader from "../common/layout/Header";
 import Sidebar from "../common/layout/Sidebar";
+import { LoadingWrapper } from "./ProtectedRoute.styles";
 
 // Import the layout styles from MainLayout
+import { Spin } from "antd";
 import {
   InnerLayout,
   RootLayout,
@@ -16,14 +18,18 @@ import {
  * ConditionalNotFound - Shows 404 page for authenticated users,
  * redirects unauthenticated users to login page
  */
-export default function ConditionalNotFound() {
+const ConditionalNotFound = () => {
   const { isAuthenticated, isInitializing } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const toggle = () => setCollapsed((prev) => !prev);
 
   // Show nothing while checking authentication
   if (isInitializing) {
-    return null;
+    return (
+      <LoadingWrapper>
+        <Spin size="large" />
+      </LoadingWrapper>
+    );
   }
 
   // If not authenticated, redirect to login
@@ -43,4 +49,6 @@ export default function ConditionalNotFound() {
       </InnerLayout>
     </RootLayout>
   );
-}
+};
+
+export default ConditionalNotFound;

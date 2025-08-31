@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
+import { namespaces } from "../../../i18n/namespaces";
 
 import {
   getQuestRequestStatusOptions,
@@ -146,7 +147,7 @@ type FormValues = {
 
 /* ================ Component =============== */
 const QuestRequestFilters: React.FC = () => {
-  const { t } = useTranslation("quest_request_list");
+  const { t } = useTranslation(namespaces.questRequestList);
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<FormValues>();
 

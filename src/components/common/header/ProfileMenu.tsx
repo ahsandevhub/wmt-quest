@@ -6,22 +6,23 @@ import {
 import { Avatar, Dropdown, type MenuProps } from "antd";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { namespaces } from "../../../i18n/namespaces";
 
 type Props = { onProfile: () => void; onLogout: () => void };
 
 function ProfileMenu({ onProfile, onLogout }: Props) {
-  const { t } = useTranslation("header");
+  const { t } = useTranslation(namespaces.header);
 
   const items: MenuProps["items"] = useMemo(
     () => [
       {
-        label: t("profile.my_profile"),
+        label: t("profile.myProfile"),
         key: "profile",
         icon: <ProfileOutlined />,
       },
       { type: "divider" as const },
       {
-        label: t("profile.logout_button"),
+        label: t("profile.logoutButton"),
         key: "logout",
         icon: <LogoutOutlined />,
         danger: true,

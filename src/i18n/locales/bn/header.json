@@ -1,13 +1,18 @@
 {
   "home": "হোম",
-  "logout_success": "সাফল্যের সাথে লগআউট করা হয়েছে",
+  "logoutSuccess": "সাফল্যের সাথে লগআউট করা হয়েছে",
+  "notifications": "বিজ্ঞপ্তি",
   "language": {
-    "changed_message": "ভাষা সফলভাবে পরিবর্তিত হয়েছে",
+    "changedMessage": "ভাষা সফলভাবে পরিবর্তিত হয়েছে",
     "english": "English",
     "bengali": "বাংলা"
   },
   "profile": {
-    "my_profile": "আমার প্রোফাইল",
-    "logout_button": "লগআউট"
+    "myProfile": "আমার প্রোফাইল",
+    "logoutButton": "লগআউট"
+  },
+  "actions": {
+    "expandSidebar": "সাইডবার প্রসারিত করুন",
+    "collapseSidebar": "সাইডবার সংকুচিত করুন"
   }
 }

@@ -3,10 +3,11 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import type { QuestDetailFormValues } from "../components/quests/quest-detail/QuestDetailForm";
+import { namespaces } from "../i18n/namespaces";
 import api from "../services/http";
 
 export function useUpdateQuest(questId: number) {
-  const { t } = useTranslation("quest_detail");
+  const { t } = useTranslation(namespaces.questDetail);
   const navigate = useNavigate();
 
   const handleUpdateQuest = useCallback(

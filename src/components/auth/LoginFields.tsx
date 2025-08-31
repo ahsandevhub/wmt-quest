@@ -1,11 +1,10 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input } from "antd";
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { namespaces } from "../../i18n/namespaces";
 import { IconWrap } from "./LoginForm.styles";
 
-const LoginFields: React.FC = () => {
+const LoginFields = () => {
   const { t } = useTranslation(namespaces.login);
 
   return (

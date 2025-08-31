@@ -1,14 +1,19 @@
 {
   "home": "Home",
-  "logout_success": "Logged out successfully",
+  "logoutSuccess": "Logged out successfully",
+  "notifications": "Notifications",
   "language": {
-    "changed_message": "Language changed successfully",
+    "changedMessage": "Language changed successfully",
     "english": "English",
     "bengali": "বাংলা"
   },
   "profile": {
-    "my_profile": "My Profile",
-    "logout_button": "Logout",
-    "logout_success": "Logout successful!"
+    "myProfile": "My Profile",
+    "logoutButton": "Logout",
+    "logoutSuccess": "Logout successful!"
+  },
+  "actions": {
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar"
   }
 }
