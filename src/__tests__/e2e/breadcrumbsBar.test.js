@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { Builder } from "selenium-webdriver";
 import chrome from "selenium-webdriver/chrome.js";
-import { BreadcrumbsBarPageObject } from "./pages/breadcrumbsBarPageObject.page.js";
+import { BreadcrumbsBarPageObject } from "./pages/breadcrumbsBar.page.js";
 import { LoginPage } from "./pages/login.page.js";
 
 // Test configuration
