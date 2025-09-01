@@ -98,6 +98,7 @@ export default function QuestRequestDetail() {
       />
 
       <DescriptionsWrappper>
+        {/* Request Information */}
         <InfoColumn bordered={false} column={1}>
           <Descriptions.Item label={t("labels.requestId")}>
             {data.code}
@@ -124,7 +125,13 @@ export default function QuestRequestDetail() {
               {data.point?.toLocaleString() || "-"}
             </Descriptions.Item>
           )}
+
+          <Descriptions.Item label={t("labels.description")}>
+            {data.description}
+          </Descriptions.Item>
         </InfoColumn>
+
+        {/* User Information */}
         <InfoColumn bordered={false} column={1}>
           <Descriptions.Item label={t("labels.fullName")}>
             {data.fullName}
@@ -161,23 +168,20 @@ export default function QuestRequestDetail() {
           )}
         </InfoColumn>
       </DescriptionsWrappper>
-      <Descriptions bordered={false} column={1} style={{ marginBottom: 24 }}>
-        <Descriptions.Item label={t("labels.description")}>
-          {data.description}
-        </Descriptions.Item>
-      </Descriptions>
 
-      <Divider style={{ margin: "16px 0 24px" }} />
+      <Divider />
 
-      <Descriptions bordered={false} column={1} style={{ marginBottom: 24 }}>
-        <Descriptions.Item label={t("labels.evidence")}>
-          <EvidenceGallery evidence={data.evidence} />
-        </Descriptions.Item>
+      <DescriptionsWrappper>
+        <InfoColumn bordered={false} column={1}>
+          <Descriptions.Item label={t("labels.evidence")}>
+            <EvidenceGallery evidence={data.evidence} />
+          </Descriptions.Item>
 
-        <Descriptions.Item label={t("labels.relatedLink")}>
-          <RelatedLink url={data.relatedLink} />
-        </Descriptions.Item>
-      </Descriptions>
+          <Descriptions.Item label={t("labels.relatedLink")}>
+            <RelatedLink url={data.relatedLink} />
+          </Descriptions.Item>
+        </InfoColumn>
+      </DescriptionsWrappper>
 
       {/* Approve Modal */}
       <Modal

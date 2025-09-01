@@ -17,7 +17,7 @@ export const DescriptionsWrappper = styled.div`
   gap: 48px;
   @media (max-width: 992px) {
     flex-direction: column;
-    gap: 0;
+    gap: 16px;
   }
 `;
 
@@ -26,13 +26,18 @@ export const InfoColumn = styled(Descriptions)`
   min-width: 360px;
   .ant-descriptions-item-label {
     font-weight: 600;
-    width: 140px;
+    width: 250px;
+    color: #000000d9;
   }
-  .ant-descriptions-item {
-    padding-bottom: 8px;
-  }
-  .ant-descriptions-row > th,
-  .ant-descriptions-row > td {
-    padding-bottom: 8px;
+  /* Mobile: stack label above value */
+  @media (max-width: 576px) {
+    .ant-descriptions-item-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+    .ant-descriptions-item-label {
+      width: 100%; /* take full width so value drops below */
+    }
   }
 `;

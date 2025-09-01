@@ -12,7 +12,10 @@ type QuestRequestTableProps = {
 const QuestRequestTable: React.FC<QuestRequestTableProps> = ({ rows }) => {
   const { t } = useTranslation(namespaces.questRequestList);
   const { t: tLabels } = useTranslation(namespaces.labels);
-  const columns = useMemo(() => buildQuestRequestColumns(tLabels), [tLabels]);
+  const columns = useMemo(
+    () => buildQuestRequestColumns(t, tLabels),
+    [t, tLabels]
+  );
   const dataSource = useMemo(
     () => rows.map((r) => ({ ...r, key: r.id })),
     [rows]

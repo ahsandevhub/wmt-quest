@@ -1,8 +1,10 @@
 import { message } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import LoginForm from "../../components/auth/LoginForm";
 import { useAuth } from "../../hooks/useAuth";
+import { namespaces } from "../../i18n/namespaces";
 import type { LoginFormValues } from "../../types/auth";
 
 const LoginContainer: React.FC = () => {
@@ -11,6 +13,7 @@ const LoginContainer: React.FC = () => {
   const { accessToken, login, isInitializing } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const { t } = useTranslation(namespaces.login);
 
   useEffect(() => {
     if (accessToken && !isInitializing) {
@@ -25,10 +28,10 @@ const LoginContainer: React.FC = () => {
     setSubmitError("");
     try {
       await login(username, password);
-      message.success("Login successful!");
+      message.success(t("loginSuccess"));
       // Navigation is handled by the useEffect above
     } catch (error: any) {
-      const fallback = "Login failed. Please try again.";
+      const fallback = t("loginFailed");
       const serverMessage =
         error?.response?.data?.message || error?.message || fallback;
       setSubmitError(serverMessage);

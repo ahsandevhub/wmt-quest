@@ -78,7 +78,7 @@ export const getQuestTypeLabel = (
 ): string => {
   if (value === null || value === undefined) return "-";
   if (!isQuestTypeValue(value)) return "-";
-  return t(`labels:toolbar.quest_type_filter.options.${value}`);
+  return t(`labels:toolbar.questTypeFilter.options.${value}`);
 };
 
 export const getQuestTypeOptions = (t: TFunction): Option<QuestTypeEnum>[] =>

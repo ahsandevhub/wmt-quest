@@ -4,8 +4,14 @@ import dayjs, { Dayjs } from "dayjs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
-import styled from "styled-components";
+// styles are imported from companion .styles file
 import { namespaces } from "../../../i18n/namespaces";
+import {
+  ButtonRow,
+  ControlWrap,
+  FieldWrap,
+  ToolbarContainer,
+} from "./QuestRequestFilters.styles";
 
 import {
   getQuestRequestStatusOptions,
@@ -17,125 +23,7 @@ import type { QuestTypeEnum } from "../../../types/questType";
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 
-/* ================= Styled (Local Only) ================= */
-// NOTE: These styles are intentionally NOT shared with quest-list filters
-// because quest request filters have unique layout requirements
-// (single-line on very large screens >=1440px and custom button alignment).
-const ToolbarContainer = styled.div`
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap; /* allow wrapping if overflow */
-  align-items: center;
-  gap: 20px 28px; /* row gap / column gap */
-  background: #fff;
-  padding: 16px 24px;
-  border: 1px solid #0000000f;
-  border-radius: 8px;
-
-  /* large screens: keep items inline (they'll wrap only if truly overflowing) */
-  @media (min-width: 1440px) {
-    flex-wrap: nowrap;
-    overflow-x: auto; /* just in case extremely many fields */
-  }
-
-  /* small screens: stack */
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-    > * {
-      width: 100%;
-    }
-  }
-`;
-
-const FieldWrap = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  flex: 0 0 auto;
-  min-width: 0;
-  white-space: nowrap;
-
-  span {
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    /* Keep label + control on one line like QuestFilters small layout */
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    span {
-      width: auto;
-    }
-    ${/* ensure control stretches */ ""}
-    & > div {
-      flex: 1 1 auto;
-    }
-  }
-
-  @media (min-width: 1440px) {
-    flex: 1 1 0; /* let each block grow to consume width */
-    & > div {
-      flex: 1 1 auto;
-    }
-  }
-`;
-
-const ControlWrap = styled.div`
-  min-width: 0;
-  display: flex;
-  align-items: center;
-
-  .ant-input-group-wrapper,
-  .ant-input-group,
-  .ant-input-affix-wrapper,
-  .ant-select,
-  .ant-select-selector,
-  .ant-picker {
-    min-width: 0;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-    .ant-input-group-wrapper,
-    .ant-input-group,
-    .ant-input-affix-wrapper,
-    .ant-select,
-    .ant-select-selector,
-    .ant-picker {
-      width: 100%;
-    }
-  }
-
-  @media (min-width: 1440px) {
-    width: 100%;
-    .ant-input-group-wrapper,
-    .ant-input-group,
-    .ant-input-affix-wrapper,
-    .ant-select,
-    .ant-select-selector,
-    .ant-picker {
-      width: 100%;
-    }
-  }
-`;
-
-const ButtonRow = styled.div`
-  display: inline-flex;
-  gap: 12px;
-  flex: 0 0 auto;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    display: flex;
-    > * {
-      flex: 1;
-    }
-  }
-`;
+/* imported styles */
 
 /* ================= Types ================= */
 type FormValues = {
@@ -242,10 +130,7 @@ const QuestRequestFilters: React.FC = () => {
               <Select<QuestRequestStatusEnum>
                 allowClear
                 options={statusOptions}
-                placeholder={t(
-                  "toolbar.statusFilter.placeholder",
-                  "All Statuses"
-                )}
+                placeholder={t("toolbar.statusFilter.all", "All Statuses")}
               />
             </Form.Item>
           </ControlWrap>
@@ -253,16 +138,13 @@ const QuestRequestFilters: React.FC = () => {
 
         {/* Quest Type */}
         <FieldWrap>
-          <span>{t("toolbar.quest_type_filter.label", "Quest Type:")}</span>
+          <span>{t("toolbar.questTypeFilter.label", "Quest Type:")}</span>
           <ControlWrap>
             <Form.Item name="questType" noStyle>
               <Select<QuestTypeEnum>
                 allowClear
                 options={questTypeOptions}
-                placeholder={t(
-                  "toolbar.quest_type_filter.placeholder",
-                  "All Quests"
-                )}
+                placeholder={t("toolbar.questTypeFilter.all", "All Quests")}
               />
             </Form.Item>
           </ControlWrap>
@@ -270,7 +152,7 @@ const QuestRequestFilters: React.FC = () => {
 
         {/* Submitted Date Range */}
         <FieldWrap>
-          <span>{t("toolbar.submitted_range.label", "Submitted Date:")}</span>
+          <span>{t("toolbar.submittedDate.label", "Submitted Date:")}</span>
           <ControlWrap>
             <Form.Item name="submittedRange" noStyle>
               <RangePicker allowClear />

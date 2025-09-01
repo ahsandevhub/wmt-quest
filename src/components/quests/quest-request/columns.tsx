@@ -10,7 +10,8 @@ import { formatDate } from "../../../utils/format";
 import { DetailLink, EllipsisText } from "../shared/ListWrappers";
 
 export const buildQuestRequestColumns = (
-  t: TFunction
+  t: TFunction,
+  tLabels: TFunction
 ): ColumnsType<QuestRequestListRow> => [
   {
     title: t("columns.requestId"),
@@ -19,15 +20,15 @@ export const buildQuestRequestColumns = (
   },
   {
     title: t("columns.questType"),
-    dataIndex: "challengeId",
+    dataIndex: "challengeType",
     key: "challengeType",
-    render: (type) => getQuestTypeLabel(type, t) ?? "—",
+    render: (type) => getQuestTypeLabel(type, tLabels) ?? "—",
   },
-  {
-    title: t("columns.questId"),
-    dataIndex: "challengeCode",
-    key: "challengeCode",
-  },
+  // {
+  //   title: t("columns.questId"),
+  //   dataIndex: "challengeCode",
+  //   key: "challengeCode",
+  // },
   {
     title: t("columns.questTitle"),
     dataIndex: "title",
@@ -77,18 +78,18 @@ export const buildQuestRequestColumns = (
     key: "submittedDate",
     render: (date: string) => formatDate(date),
   },
-  {
-    title: t("columns.updatedDate"),
-    dataIndex: "createdAt",
-    key: "createdAt",
-    render: (date: string) => formatDate(date),
-  },
+  // {
+  //   title: t("columns.updatedDate"),
+  //   dataIndex: "createdAt",
+  //   key: "createdAt",
+  //   render: (date: string) => formatDate(date),
+  // },
   {
     title: t("columns.status"),
     dataIndex: "status",
     key: "status",
     render: (status) => {
-      const label = getQuestRequestStatusLabel(status, t);
+      const label = getQuestRequestStatusLabel(status, tLabels);
       switch (status) {
         case 1:
           return <Tag color="blue">{label}</Tag>;
