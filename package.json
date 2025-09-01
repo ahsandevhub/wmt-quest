@@ -9,7 +9,15 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:e2e": "node src/__tests__/e2e/testRunner.js",
+    "test:e2e:auth": "node src/__tests__/e2e/authentication.test.js",
+    "test:e2e:nav": "node src/__tests__/e2e/navigation.test.js",
+    "test:e2e:quest-list": "node src/__tests__/e2e/questList.test.js",
+    "test:e2e:quest-detail": "node src/__tests__/e2e/questDetail.test.js",
+    "test:e2e:quest-requests": "node src/__tests__/e2e/questRequestManagement.test.js",
+    "test:e2e:comprehensive": "node src/__tests__/e2e/comprehensive.test.js",
+    "test:e2e:debug": "HEADLESS=false node src/__tests__/e2e/testRunner.js"
   },
   "dependencies": {
     "@ant-design/compatible": "^5.1.4",
