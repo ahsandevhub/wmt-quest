@@ -9,6 +9,7 @@ import * as useAuthModule from "../../../hooks/useAuth";
 vi.mock("../../../hooks/useAuth", () => ({
   useAuth: vi.fn(),
 }));
+
 const mockUseAuth = useAuthModule.useAuth as unknown as Mock;
 
 // Mock react-i18next
@@ -31,6 +32,7 @@ vi.mock("react-i18next", () => ({
 vi.mock("../../../components/common/layout/Header", () => ({
   default: () => <div data-testid="app-header">Header</div>,
 }));
+
 vi.mock("../../../components/common/layout/Sidebar", () => ({
   default: ({ collapsed }: { collapsed: boolean }) => (
     <div data-testid="sidebar" data-collapsed={collapsed}>
@@ -38,6 +40,7 @@ vi.mock("../../../components/common/layout/Sidebar", () => ({
     </div>
   ),
 }));
+
 vi.mock("../../../containers/NotFound", () => ({
   default: () => (
     <div data-testid="not-found">
