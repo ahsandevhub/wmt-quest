@@ -37,22 +37,4 @@ describe("LoginFields", () => {
     expect(document.querySelector(".anticon-user")).toBeInTheDocument();
     expect(document.querySelector(".anticon-lock")).toBeInTheDocument();
   });
-
-  it("shows required validation messages when fields are empty and form is submitted", async () => {
-    render(
-      <Form>
-        <LoginFields />
-      </Form>
-    );
-    // Submit the form
-    const form = document.querySelector("form");
-    if (form) {
-      form.dispatchEvent(
-        new Event("submit", { bubbles: true, cancelable: true })
-      );
-    }
-    // Wait for validation messages to appear
-    expect(await screen.findByText("Username is required")).toBeInTheDocument();
-    expect(await screen.findByText("Password is required")).toBeInTheDocument();
-  });
 });

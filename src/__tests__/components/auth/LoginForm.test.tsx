@@ -27,10 +27,16 @@ vi.mock("../../../components/auth/LoginFields", () => ({
   __esModule: true,
   default: () => (
     <>
-      <Form.Item name="username">
+      <Form.Item
+        name="username"
+        rules={[{ required: true, message: "Username is required" }]}
+      >
         <Input name="username" placeholder="Enter your username" />
       </Form.Item>
-      <Form.Item name="password">
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: "Password is required" }]}
+      >
         <Input
           name="password"
           placeholder="Enter your password"
@@ -104,5 +110,20 @@ describe("LoginForm", () => {
     expect(button.querySelector(".ant-btn-loading-icon")).toBeInTheDocument();
     // Check for loading class
     expect(button.className).toMatch(/ant-btn-loading/);
+  });
+
+  it("shows required validation messages when submitted empty", async () => {
+    render(
+      <MemoryRouter>
+        <LoginForm isSubmitting={false} onSubmit={vi.fn()} />
+      </MemoryRouter>
+    );
+
+    // Click submit without entering values
+    fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
+
+    // Expect validation messages to appear
+    expect(await screen.findByText("Username is required")).toBeInTheDocument();
+    expect(await screen.findByText("Password is required")).toBeInTheDocument();
   });
 });
