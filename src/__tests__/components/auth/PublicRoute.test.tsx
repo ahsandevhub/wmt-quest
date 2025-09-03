@@ -20,7 +20,6 @@ describe("PublicRoute", () => {
       <MemoryRouter initialEntries={initialEntries}>
         <Routes>
           <Route element={<PublicRoute />}>
-            {" "}
             {/* Public route */}
             <Route path="/login" element={<div>Login Page</div>} />
           </Route>

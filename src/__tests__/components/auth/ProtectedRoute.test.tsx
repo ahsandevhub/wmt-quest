@@ -20,7 +20,6 @@ describe("ProtectedRoute", () => {
       <MemoryRouter initialEntries={initialEntries}>
         <Routes>
           <Route element={<ProtectedRoute />}>
-            {" "}
             {/* Protected route */}
             <Route path="/protected" element={<div>Protected Content</div>} />
           </Route>

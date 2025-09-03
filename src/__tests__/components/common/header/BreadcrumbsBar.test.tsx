@@ -1,12 +1,20 @@
 import { render, screen } from "@testing-library/react";
-import { useTranslation } from "react-i18next";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import BreadcrumbsBar from "../../../../components/common/header/BreadcrumbsBar";
 
-// Mock react-i18next
+// Mock react-i18next with an inline-return t() implementation
 vi.mock("react-i18next", () => ({
-  useTranslation: vi.fn(),
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        home: "Home",
+      };
+      return translations[key] || key;
+    },
+    i18n: {} as any,
+    ready: true,
+  }),
 }));
 
 // Mock namespaces
@@ -15,16 +23,6 @@ vi.mock("../../../../i18n/namespaces", () => ({
     header: "header",
   },
 }));
-
-const mockedUseTranslation = vi.mocked(useTranslation);
-
-// Mock translation function
-const mockedTranslateFunction = vi.fn((key: string) => {
-  const translations: Record<string, string> = {
-    home: "Home",
-  };
-  return translations[key] || key;
-}) as any;
 
 // Test wrapper component
 function RouterTestWrapper({
@@ -42,11 +40,6 @@ function RouterTestWrapper({
 describe("BreadcrumbsBar Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockedUseTranslation.mockReturnValue({
-      t: mockedTranslateFunction,
-      i18n: {} as any,
-      ready: true,
-    } as any);
   });
 
   describe("Home route rendering", () => {
